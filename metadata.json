@@ -1,0 +1,6 @@
+{
+  "name": "SciMath Academy",
+  "description": "BrightMind Learning — Interactive Science & Mathematics learning platform for Classes 6 to 10 with concept paths, interactive simulations, worked examples, and mastery assessments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

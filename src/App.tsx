@@ -341,4 +341,320 @@ function AppContent() {
             onLoginSuccess={handleLoginSuccess}
             onNavigateRegister={() => {
               setAppRoute('student-register');
-              window.history.pushState
+              window.history.pushState({}, '', '/student/register');
+            }}
+            onNavigateForgotPassword={() => {
+              setAppRoute('student-forgot-password');
+              window.history.pushState({}, '', '/student/forgot-password');
+            }}
+            onReturnToHome={handleReturnToAcademy}
+            onOpenAdminLogin={handleOpenAdmin}
+            onOpenSupabaseSetup={() => setIsSupabaseSetupOpen(true)}
+            redirectNotice={loginRedirectNotice}
+          />
+        </main>
+        <SupabaseSetupModal
+          isOpen={isSupabaseSetupOpen}
+          onClose={() => setIsSupabaseSetupOpen(false)}
+        />
+      </div>
+    );
+  }
+
+  if (appRoute === 'student-register') {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA] text-[#333333] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white relative">
+        <div
+          className="fixed inset-0 pointer-events-none opacity-40 z-0"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0)`,
+            backgroundSize: '32px 32px'
+          }}
+        />
+        <main className="flex-1 flex items-center justify-center p-4 relative z-10">
+          <StudentRegister
+            onRegisterSuccess={handleLoginSuccess}
+            onNavigateLogin={() => {
+              setAppRoute('student-login');
+              window.history.pushState({}, '', '/student/login');
+            }}
+            onReturnToHome={handleReturnToAcademy}
+          />
+        </main>
+      </div>
+    );
+  }
+
+  if (appRoute === 'student-forgot-password') {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA] text-[#333333] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white relative">
+        <div
+          className="fixed inset-0 pointer-events-none opacity-40 z-0"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0)`,
+            backgroundSize: '32px 32px'
+          }}
+        />
+        <main className="flex-1 flex items-center justify-center p-4 relative z-10">
+          <ForgotPassword
+            onNavigateLogin={() => {
+              setAppRoute('student-login');
+              window.history.pushState({}, '', '/student/login');
+            }}
+            onReturnToHome={handleReturnToAcademy}
+          />
+        </main>
+      </div>
+    );
+  }
+
+  if (appRoute === 'student-reset-password') {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA] text-[#333333] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white relative">
+        <div
+          className="fixed inset-0 pointer-events-none opacity-40 z-0"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0)`,
+            backgroundSize: '32px 32px'
+          }}
+        />
+        <main className="flex-1 flex items-center justify-center p-4 relative z-10">
+          <ResetPassword
+            onSuccess={() => {
+              setAppRoute('home');
+              setCurrentView('dashboard');
+              window.history.pushState({}, '', '/');
+            }}
+            onNavigateLogin={() => {
+              setAppRoute('student-login');
+              window.history.pushState({}, '', '/student/login');
+            }}
+          />
+        </main>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // RENDER MAIN SCIMATH ACADEMY APP
+  // ==========================================
+  return (
+    <div className="min-h-screen bg-[#FAFAFA] text-[#333333] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white relative">
+      {/* Background Texture */}
+      <div
+        className="fixed inset-0 pointer-events-none opacity-40 z-0"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0)`,
+          backgroundSize: '32px 32px'
+        }}
+      />
+
+      {/* Top Navbar */}
+      <Navbar
+        currentView={currentView as NavView}
+        onNavigate={handleNavViewChange}
+        onOpenProfile={() => setIsProfileOpen(true)}
+        onOpenAdmin={handleOpenAdmin}
+        onNavigateStudentLogin={() => navigateToStudentLogin()}
+        onNavigateStudentRegister={navigateToStudentRegister}
+      />
+
+      {/* Main View Area */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 relative z-10">
+        {/* PUBLIC HOMEPAGE */}
+        {currentView === 'home' && (
+          <LandingPage
+            isAuthenticated={isStudentAuthenticated}
+            onStartLearning={handleStartLearning}
+            onExploreCourses={() => {
+              if (isStudentAuthenticated) {
+                setCurrentView('classes');
+              } else {
+                navigateToStudentLogin(
+                  'Please sign in as a student to explore all curriculum chapters.',
+                  'classes'
+                );
+              }
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onSelectClass={(c) => {
+              setActiveClass(c);
+              if (isStudentAuthenticated) {
+                setCurrentView('classes');
+              } else {
+                navigateToStudentLogin(
+                  `Please sign in as a student to access Class ${c} lessons.`,
+                  'classes'
+                );
+              }
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onSelectSubject={(s) => {
+              setActiveSubject(s);
+              if (isStudentAuthenticated) {
+                setCurrentView(s);
+              } else {
+                navigateToStudentLogin(
+                  `Please sign in as a student to access the ${s} curriculum.`,
+                  s
+                );
+              }
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onNavigateStudentLogin={() => navigateToStudentLogin()}
+            onNavigateStudentRegister={navigateToStudentRegister}
+            onRequireAuthPrompt={(msg, target) => {
+              setAuthPrompt({
+                isOpen: true,
+                message: msg,
+                targetView: target as any
+              });
+            }}
+          />
+        )}
+
+        {/* STUDENT DASHBOARD (PROTECTED) */}
+        {currentView === 'dashboard' && isStudentAuthenticated && (
+          <StudentDashboard
+            onContinueLearning={(conceptId, subConceptId) => {
+              setSelectedConceptId(conceptId);
+              setSelectedSubConceptId(subConceptId);
+              setLastActiveSubConcept(subConceptId);
+              setCurrentView('lesson');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onNavigateSyllabus={(lvl, subj) => {
+              setActiveClass(lvl);
+              setActiveSubject(subj);
+              setCurrentView(subj);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
+        {/* SYLLABUS / CHAPTERS BROWSER (PROTECTED) */}
+        {(currentView === 'classes' ||
+          currentView === 'science' ||
+          currentView === 'mathematics') &&
+          isStudentAuthenticated && (
+            <SyllabusView
+              currentClass={state.currentClass}
+              currentSubject={state.currentSubject}
+              onSelectClass={(c) => setActiveClass(c)}
+              onSelectSubject={(s) => setActiveSubject(s)}
+              onSelectConcept={handleOpenConcept}
+            />
+          )}
+
+        {/* VERTICAL SUB-CONCEPTS LEARNING PATH (PROTECTED) */}
+        {currentView === 'concept' && isStudentAuthenticated && activeConcept && (
+          <ConceptDetailView
+            concept={activeConcept}
+            onBack={() => setCurrentView(activeConcept.subjectId)}
+            onSelectSubConcept={handleOpenSubConcept}
+          />
+        )}
+
+        {/* INTERACTIVE LESSON EXPERIENCE (PROTECTED) */}
+        {currentView === 'lesson' &&
+          isStudentAuthenticated &&
+          activeConcept &&
+          activeSubConcept && (
+            <LessonView
+              concept={activeConcept}
+              subConcept={activeSubConcept}
+              onBackToConcepts={() => setCurrentView('concept')}
+              onNavigateSubConcept={(nextId) => {
+                setSelectedSubConceptId(nextId);
+                setLastActiveSubConcept(nextId);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
+          )}
+      </main>
+
+      {/* Footer */}
+      <Footer onNavigate={handleNavViewChange} onOpenAdmin={handleOpenAdmin} />
+
+      {/* Student Profile & Settings Modal */}
+      <ProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        onOpenSupabaseSetup={() => setIsSupabaseSetupOpen(true)}
+        onLogout={async () => {
+          await studentLogout();
+          setCurrentView('home');
+        }}
+      />
+
+      {/* Supabase Setup & SQL Schema Modal */}
+      <SupabaseSetupModal
+        isOpen={isSupabaseSetupOpen}
+        onClose={() => setIsSupabaseSetupOpen(false)}
+      />
+
+      {/* Auth Gate Required Prompt Modal */}
+      {authPrompt.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/20 backdrop-blur-md animate-fade-in">
+          <div className="bg-white border border-gray-200 rounded-3xl w-full max-w-md p-6 shadow-2xl relative text-center">
+            <button
+              onClick={() => setAuthPrompt({ isOpen: false, message: '' })}
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB] mx-auto mb-4">
+              <Lock className="w-6 h-6" />
+            </div>
+
+            <h3 className="text-xl font-extrabold text-gray-900 mb-2">
+              Student Account Required
+            </h3>
+            <p className="text-xs text-gray-600 leading-relaxed mb-6">
+              {authPrompt.message ||
+                'Please sign in with your student account or create a new one to access interactive lessons, physics manipulatives, and progress tracking.'}
+            </p>
+
+            <div className="space-y-2.5">
+              <button
+                onClick={() => {
+                  const target = authPrompt.targetView;
+                  setAuthPrompt({ isOpen: false, message: '' });
+                  navigateToStudentLogin(authPrompt.message, target);
+                }}
+                className="w-full py-3 bg-[#2563EB] hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-900/10 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Student Login</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setAuthPrompt({ isOpen: false, message: '' });
+                  navigateToStudentRegister();
+                }}
+                className="w-full py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 text-[#2563EB] hover:text-blue-700 font-semibold text-xs rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>Create Student Account</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <StudentAuthProvider>
+      <ProgressProvider>
+        <AdminAuthProvider>
+          <AppContent />
+        </AdminAuthProvider>
+      </ProgressProvider>
+    </StudentAuthProvider>
+  );
+}

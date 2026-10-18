@@ -1,42 +1,160 @@
+
 @import "tailwindcss";
+
+/* ========================================
+   SciMathenova — Premium Light Theme
+   ======================================== */
+
+:root {
+  color-scheme: light;
+
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-active: #1E40AF;
+  --primary-soft: #EAF2FF;
+
+  --background: #F8FAFF;
+  --surface: #FFFFFF;
+  --surface-muted: #F1F5FC;
+  --surface-hover: #F3F7FF;
+
+  --foreground: #172033;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+
+  --border: #DCE5F2;
+  --border-strong: #B8C7DC;
+
+  --nav-bg: rgba(255, 255, 255, 0.88);
+  --nav-border: rgba(203, 213, 225, 0.75);
+
+  --gradient-hero: linear-gradient(
+    135deg,
+    #F8FAFF 0%,
+    #EAF2FF 52%,
+    #F5F3FF 100%
+  );
+
+  --gradient-brand: linear-gradient(
+    110deg,
+    #2563EB 0%,
+    #3B82F6 55%,
+    #6366F1 100%
+  );
+
+  --gradient-section: linear-gradient(
+    180deg,
+    #FFFFFF 0%,
+    #F3F7FF 100%
+  );
+
+  --radius-card: 18px;
+  --radius-button: 10px;
+
+  --shadow-card:
+    0 4px 20px rgba(30, 64, 175, 0.06);
+
+  --shadow-hover:
+    0 12px 32px rgba(37, 99, 235, 0.12);
+}
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    color-scheme: dark;
+    color-scheme: light;
   }
-  
+
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: #070d1e;
-    color: #f8fafc;
+    font-family: 'Plus Jakarta Sans', system-ui,
+      -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+
+    background-color: var(--background);
+    color: var(--foreground);
     overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--foreground);
   }
 
   code, pre, .font-mono {
     font-family: 'JetBrains Mono', monospace;
   }
+
+  a {
+    transition: color 180ms ease;
+  }
+
+  a:hover {
+    color: var(--primary-hover);
+  }
+
+  button:focus-visible,
+  a:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+  }
 }
 
-/* Custom Sleek Scrollbar */
+/* Premium scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0b132b;
+  background: #F1F5FC;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #B8C7DC;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #64748B;
 }
 
+/* Reusable card styles */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition: border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.card:hover {
+  border-color: #BFDBFE;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+}
+
+/* Primary button styles */
+.btn-primary {
+  background: var(--primary);
+  color: #FFFFFF;
+  border: 1px solid transparent;
+  border-radius: var(--radius-button);
+  transition: background 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  box-shadow: var(--shadow-hover);
+}
+
+.btn-primary:active {
+  background: var(--primary-active);
+  transform: translateY(1px);
+}
+
+/* Slow rotating science decorations */
 @keyframes spinSlow {
   from {
     transform: rotate(0deg);
@@ -49,3 +167,15 @@
 .animate-spin-slow {
   animation: spinSlow 20s linear infinite;
 }
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

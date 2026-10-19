@@ -111,25 +111,25 @@ export function AdminRulesView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EDF2F7]">
         <div>
-          <h2 className="text-xl font-bold text-white">80% Completion &amp; Unlocking Rules</h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <h2 className="text-xl font-bold text-[#111827]">80% Completion &amp; Unlocking Rules</h2>
+          <p className="text-xs text-[#475569] mt-0.5">
             Configure weighted progression criteria and the mandatory assessment threshold.
           </p>
         </div>
       </div>
 
       {saveStatus && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-800/80 text-emerald-200 text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           <span>{saveStatus}</span>
         </div>
       )}
 
       {errorStatus && (
-        <div className="p-3.5 rounded-xl bg-rose-950/80 border border-rose-800/80 text-rose-200 text-xs flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-400" />
+        <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-red-600" />
           <span>{errorStatus}</span>
         </div>
       )}
@@ -137,18 +137,18 @@ export function AdminRulesView() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Rules Form (7 cols) */}
         <form onSubmit={handleSave} className="lg:col-span-7 space-y-5">
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-5 shadow-xl">
+          <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 space-y-5 shadow-sm">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-cyan-400" />
+              <span className="text-xs font-bold text-[#111827] uppercase tracking-wider flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#2563EB]" />
                 <span>Weighted Completion Formula (Sum = 100%)</span>
               </span>
 
               <span
                 className={`font-mono text-xs font-bold px-2.5 py-1 rounded-md border ${
                   isWeightValid
-                    ? 'bg-emerald-950 text-emerald-300 border-emerald-800'
-                    : 'bg-rose-950 text-rose-300 border-rose-800'
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                    : 'bg-red-50 text-red-700 border-red-200'
                 }`}
               >
                 Total: {currentTotalWeight}% / 100%
@@ -157,7 +157,7 @@ export function AdminRulesView() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
-                <label className="text-slate-300 font-semibold block mb-1">
+                <label className="text-[#475569] font-semibold block mb-1">
                   Lesson Sections Completed (%)
                 </label>
                 <input
@@ -168,12 +168,12 @@ export function AdminRulesView() {
                   onChange={(e) =>
                     setRules({ ...rules, lessonWeight: parseInt(e.target.value, 10) || 0 })
                   }
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-mono"
+                  className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] focus:border-[#2563EB] focus:ring-1 focus:ring-[#93C5FD] rounded-lg text-[#111827] font-mono focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-slate-300 font-semibold block mb-1">
+                <label className="text-[#475569] font-semibold block mb-1">
                   Interactive Activity Lab (%)
                 </label>
                 <input
@@ -184,12 +184,12 @@ export function AdminRulesView() {
                   onChange={(e) =>
                     setRules({ ...rules, activityWeight: parseInt(e.target.value, 10) || 0 })
                   }
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-mono"
+                  className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] focus:border-[#2563EB] focus:ring-1 focus:ring-[#93C5FD] rounded-lg text-[#111827] font-mono focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-slate-300 font-semibold block mb-1">
+                <label className="text-[#475569] font-semibold block mb-1">
                   Guided Practice (%)
                 </label>
                 <input
@@ -200,12 +200,12 @@ export function AdminRulesView() {
                   onChange={(e) =>
                     setRules({ ...rules, practiceWeight: parseInt(e.target.value, 10) || 0 })
                   }
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-mono"
+                  className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] focus:border-[#2563EB] focus:ring-1 focus:ring-[#93C5FD] rounded-lg text-[#111827] font-mono focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-slate-300 font-semibold block mb-1">
+                <label className="text-[#475569] font-semibold block mb-1">
                   Final Assessment Weight (%)
                 </label>
                 <input
@@ -216,19 +216,19 @@ export function AdminRulesView() {
                   onChange={(e) =>
                     setRules({ ...rules, assessmentWeight: parseInt(e.target.value, 10) || 0 })
                   }
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-mono"
+                  className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] focus:border-[#2563EB] focus:ring-1 focus:ring-[#93C5FD] rounded-lg text-[#111827] font-mono focus:outline-none"
                 />
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-800 space-y-4">
-              <span className="text-xs font-bold text-white uppercase tracking-wider block">
+            <div className="pt-4 border-t border-[#EDF2F7] space-y-4">
+              <span className="text-xs font-bold text-[#111827] uppercase tracking-wider block">
                 Passing &amp; Unlocking Thresholds
               </span>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">
+                  <label className="text-[#475569] font-semibold block mb-1">
                     Minimum Assessment Score to Pass (%)
                   </label>
                   <input
@@ -239,13 +239,13 @@ export function AdminRulesView() {
                     onChange={(e) =>
                       setRules({ ...rules, minAssessmentScore: parseInt(e.target.value, 10) || 80 })
                     }
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-cyan-300 font-mono font-bold"
+                    className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] focus:border-[#2563EB] focus:ring-1 focus:ring-[#93C5FD] rounded-lg text-[#2563EB] font-mono font-bold focus:outline-none"
                   />
-                  <span className="text-[10px] text-slate-500 mt-0.5 block">Standard: 80%</span>
+                  <span className="text-[10px] text-[#64748B] mt-0.5 block">Standard: 80%</span>
                 </div>
 
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">
+                  <label className="text-[#475569] font-semibold block mb-1">
                     Minimum Overall Sub-concept Completion (%)
                   </label>
                   <input
@@ -256,30 +256,30 @@ export function AdminRulesView() {
                     onChange={(e) =>
                       setRules({ ...rules, minCompletionScore: parseInt(e.target.value, 10) || 80 })
                     }
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-emerald-300 font-mono font-bold"
+                    className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] focus:border-[#2563EB] focus:ring-1 focus:ring-[#93C5FD] rounded-lg text-[#16A34A] font-mono font-bold focus:outline-none"
                   />
-                  <span className="text-[10px] text-slate-500 mt-0.5 block">Standard: 80%</span>
+                  <span className="text-[10px] text-[#64748B] mt-0.5 block">Standard: 80%</span>
                 </div>
               </div>
 
               <div className="pt-2">
-                <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
+                <label className="flex items-center gap-2 cursor-pointer text-xs text-[#475569]">
                   <input
                     type="checkbox"
                     checked={rules.allowRevisit}
                     onChange={(e) => setRules({ ...rules, allowRevisit: e.target.checked })}
-                    className="accent-blue-600 rounded w-4 h-4"
+                    className="accent-[#2563EB] rounded w-4 h-4 cursor-pointer"
                   />
                   <span>Allow students to revisit and practice previously unlocked lessons</span>
                 </label>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-800 flex justify-end">
+            <div className="pt-4 border-t border-[#EDF2F7] flex justify-end">
               <button
                 type="submit"
                 disabled={!isWeightValid}
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold text-xs rounded-xl shadow-md transition-colors flex items-center gap-2"
+                className="btn-primary px-6 py-2.5 text-xs font-bold flex items-center gap-2 cursor-pointer shadow-sm"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Learning Rules</span>
@@ -290,8 +290,8 @@ export function AdminRulesView() {
 
         {/* Live Simulation & Preview of Learner Impact (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            <Scale className="w-4 h-4 text-cyan-400" />
+          <h3 className="text-sm font-bold text-[#111827] uppercase tracking-wider flex items-center gap-2">
+            <Scale className="w-4 h-4 text-[#2563EB]" />
             <span>Learner Progression Preview</span>
           </h3>
 
@@ -313,23 +313,23 @@ export function AdminRulesView() {
               return (
                 <div
                   key={i}
-                  className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-xs space-y-2"
+                  className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E2E8F0] text-xs space-y-2 shadow-2xs"
                 >
-                  <div className="font-bold text-white">{sc.name}</div>
-                  <div className="flex items-center justify-between text-[11px] text-slate-400">
+                  <div className="font-bold text-[#111827]">{sc.name}</div>
+                  <div className="flex items-center justify-between text-[11px] text-[#64748B]">
                     <span>Computed Completion:</span>
-                    <span className="font-mono font-bold text-cyan-300 text-xs">
+                    <span className="font-mono font-bold text-[#2563EB] text-xs">
                       {calculatedScore}%
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
-                    <span className="text-slate-400">Next Sub-concept:</span>
+                  <div className="flex items-center justify-between pt-2 border-t border-[#EDF2F7]">
+                    <span className="text-[#64748B]">Next Sub-concept:</span>
                     <span
                       className={`font-bold px-2 py-0.5 rounded text-[10px] ${
                         isUnlocked
-                          ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                          : 'bg-rose-950 text-rose-300 border border-rose-800'
+                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                          : 'bg-red-50 text-red-700 border border-red-200'
                       }`}
                     >
                       {isUnlocked ? '✓ UNLOCKED' : '🔒 REMAINS LOCKED'}

@@ -124,20 +124,20 @@ export function AdminLessonEditorView({
   return (
     <div className="space-y-6">
       {/* Top Header & Selector */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
         <div className="flex items-center gap-3">
           <button
             onClick={onBackToConcepts}
-            className="p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-400 hover:text-white"
+            className="p-2 rounded-lg bg-[#FFFFFF] border border-[#E2E8F0] text-[#64748B] hover:text-[#111827] hover:bg-[#F1F5FF] transition-colors cursor-pointer"
             title="Back to Chapters"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#2563EB] block">
               Lesson Content Management
             </span>
-            <h2 className="text-lg font-bold text-white">
+            <h2 className="text-lg font-bold text-[#111827]">
               {subConceptData.title}
             </h2>
           </div>
@@ -148,7 +148,7 @@ export function AdminLessonEditorView({
           <select
             value={selectedConceptId}
             onChange={(e) => handleConceptChange(e.target.value)}
-            className="bg-slate-950 border border-slate-800 text-xs text-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-cyan-400 max-w-[200px] truncate"
+            className="bg-[#FFFFFF] border border-[#E2E8F0] text-xs text-[#111827] rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#2563EB] max-w-[200px] truncate"
           >
             {concepts.map((c) => (
               <option key={c.id} value={c.id}>
@@ -160,7 +160,7 @@ export function AdminLessonEditorView({
           <select
             value={selectedSubId}
             onChange={(e) => handleSubConceptChange(e.target.value)}
-            className="bg-slate-950 border border-slate-800 text-xs text-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-cyan-400 max-w-[220px] truncate"
+            className="bg-[#FFFFFF] border border-[#E2E8F0] text-xs text-[#111827] rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#2563EB] max-w-[220px] truncate"
           >
             {concepts
               .find((c) => c.id === selectedConceptId)
@@ -174,16 +174,16 @@ export function AdminLessonEditorView({
           <button
             onClick={() => handleSaveLesson(false)}
             disabled={isSaving}
-            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg border border-slate-700 flex items-center gap-1.5 cursor-pointer"
+            className="btn-secondary px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-2xs"
           >
-            <Save className="w-3.5 h-3.5 text-slate-300" />
+            <Save className="w-3.5 h-3.5 text-[#64748B]" />
             <span>Save Draft</span>
           </button>
 
           <button
             onClick={() => handleSaveLesson(true)}
             disabled={isSaving}
-            className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow-md flex items-center gap-1.5 cursor-pointer"
+            className="btn-primary px-4 py-1.5 text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm"
           >
             <CheckCircle2 className="w-3.5 h-3.5 text-white" />
             <span>Publish Live</span>
@@ -192,14 +192,14 @@ export function AdminLessonEditorView({
       </div>
 
       {saveStatus && (
-        <div className="p-3 rounded-xl bg-emerald-950/80 border border-emerald-800/80 text-emerald-200 text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           <span>{saveStatus}</span>
         </div>
       )}
 
       {/* Editor Section Tabs */}
-      <div className="flex items-center gap-1.5 bg-slate-900/60 p-1.5 rounded-xl border border-slate-800 overflow-x-auto pb-1 text-xs">
+      <div className="flex items-center gap-1.5 bg-[#F1F5FF] p-1.5 rounded-xl border border-[#BFDBFE] overflow-x-auto pb-1 text-xs">
         {[
           { key: 'objectives', label: '1. Objectives' },
           { key: 'explanation', label: '2. Concept Explanation' },
@@ -212,10 +212,10 @@ export function AdminLessonEditorView({
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key as any)}
-            className={`px-3 py-1.5 rounded-lg font-semibold transition-all whitespace-nowrap shrink-0 ${
+            className={`px-3 py-1.5 rounded-lg font-semibold transition-all whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === tab.key
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[#2563EB] text-white shadow-sm'
+                : 'text-[#475569] hover:text-[#111827] hover:bg-white/60'
             }`}
           >
             {tab.label}
@@ -224,12 +224,12 @@ export function AdminLessonEditorView({
       </div>
 
       {/* Tab Panels */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
+      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 shadow-sm">
         {/* TAB 1: OBJECTIVES */}
         {activeTab === 'objectives' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+              <h3 className="text-sm font-bold text-[#111827] uppercase tracking-wider">
                 Learning Objectives (2-3 items)
               </h3>
               <button
@@ -239,7 +239,7 @@ export function AdminLessonEditorView({
                     learningObjectives: [...subConceptData.learningObjectives, '']
                   });
                 }}
-                className="text-xs text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1"
+                className="text-xs text-[#2563EB] hover:text-[#1D4ED8] font-semibold flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" /> Add Objective
               </button>
@@ -248,7 +248,7 @@ export function AdminLessonEditorView({
             <div className="space-y-3">
               {subConceptData.learningObjectives.map((obj, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-md bg-slate-950 text-cyan-400 border border-slate-800 text-xs font-bold flex items-center justify-center shrink-0">
+                  <span className="w-6 h-6 rounded-md bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-xs font-bold flex items-center justify-center shrink-0">
                     {i + 1}
                   </span>
                   <input
@@ -259,14 +259,14 @@ export function AdminLessonEditorView({
                       updated[i] = e.target.value;
                       setSubConceptData({ ...subConceptData, learningObjectives: updated });
                     }}
-                    className="flex-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white"
+                    className="flex-1 px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] focus:border-[#2563EB] focus:ring-1 focus:ring-[#93C5FD] rounded-lg text-xs text-[#111827] focus:outline-none"
                   />
                   <button
                     onClick={() => {
                       const updated = subConceptData.learningObjectives.filter((_, idx) => idx !== i);
                       setSubConceptData({ ...subConceptData, learningObjectives: updated });
                     }}
-                    className="text-slate-500 hover:text-rose-400 p-1"
+                    className="text-[#94A3B8] hover:text-red-500 p-1 cursor-pointer"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -280,7 +280,7 @@ export function AdminLessonEditorView({
         {activeTab === 'explanation' && (
           <div className="space-y-5">
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
+              <label className="text-xs font-semibold text-[#475569] block mb-1">
                 Concept Introduction (Simple, age-appropriate prose)
               </label>
               <textarea
@@ -292,14 +292,14 @@ export function AdminLessonEditorView({
                     explanation: { ...subConceptData.explanation, introduction: e.target.value }
                   })
                 }
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
+                className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] focus:border-[#2563EB] focus:ring-1 focus:ring-[#93C5FD] rounded-xl text-xs text-[#111827] focus:outline-none"
               />
             </div>
 
             {/* Definitions */}
-            <div className="pt-4 border-t border-slate-800 space-y-3">
+            <div className="pt-4 border-t border-[#EDF2F7] space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-white uppercase tracking-wider">
+                <span className="text-xs font-bold text-[#111827] uppercase tracking-wider">
                   Key Definitions &amp; Formulas
                 </span>
                 <button
@@ -315,14 +315,14 @@ export function AdminLessonEditorView({
                       }
                     });
                   }}
-                  className="text-xs text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1"
+                  className="text-xs text-[#2563EB] hover:text-[#1D4ED8] font-semibold flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" /> Add Definition
                 </button>
               </div>
 
               {subConceptData.explanation.keyDefinitions.map((def, idx) => (
-                <div key={idx} className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+                <div key={idx} className="p-3 bg-[#F8FAFF] rounded-xl border border-[#E2E8F0] space-y-2">
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
@@ -336,7 +336,7 @@ export function AdminLessonEditorView({
                           explanation: { ...subConceptData.explanation, keyDefinitions: copy }
                         });
                       }}
-                      className="w-1/3 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white font-bold"
+                      className="w-1/3 px-3 py-1.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] font-bold focus:outline-none focus:border-[#2563EB]"
                     />
                     <input
                       type="text"
@@ -350,7 +350,7 @@ export function AdminLessonEditorView({
                           explanation: { ...subConceptData.explanation, keyDefinitions: copy }
                         });
                       }}
-                      className="w-2/3 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-cyan-300 font-mono"
+                      className="w-2/3 px-3 py-1.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#2563EB] font-mono focus:outline-none focus:border-[#2563EB]"
                     />
                     <button
                       onClick={() => {
@@ -360,7 +360,7 @@ export function AdminLessonEditorView({
                           explanation: { ...subConceptData.explanation, keyDefinitions: copy }
                         });
                       }}
-                      className="text-slate-500 hover:text-rose-400 p-1"
+                      className="text-[#94A3B8] hover:text-red-500 p-1 cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -377,15 +377,15 @@ export function AdminLessonEditorView({
                         explanation: { ...subConceptData.explanation, keyDefinitions: copy }
                       });
                     }}
-                    className="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200"
+                    className="w-full px-3 py-1.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#475569] focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
               ))}
             </div>
 
             {/* Key Takeaway */}
-            <div className="pt-4 border-t border-slate-800">
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
+            <div className="pt-4 border-t border-[#EDF2F7]">
+              <label className="text-xs font-semibold text-[#475569] block mb-1">
                 Core Takeaway Quote
               </label>
               <input
@@ -397,7 +397,7 @@ export function AdminLessonEditorView({
                     explanation: { ...subConceptData.explanation, keyTakeaway: e.target.value }
                   })
                 }
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-emerald-300 font-medium"
+                className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#16A34A] font-semibold focus:outline-none focus:border-[#2563EB]"
               />
             </div>
           </div>
@@ -406,13 +406,13 @@ export function AdminLessonEditorView({
         {/* TAB 3: ACTIVITY */}
         {activeTab === 'activity' && (
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+            <h3 className="text-sm font-bold text-[#111827] uppercase tracking-wider">
               Interactive Activity Configuration
             </h3>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-semibold text-[#475569] block mb-1">
                   Activity Type
                 </label>
                 <select
@@ -423,7 +423,7 @@ export function AdminLessonEditorView({
                       activity: { ...subConceptData.activity, type: e.target.value as any }
                     })
                   }
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white"
+                  className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] focus:outline-none focus:border-[#2563EB]"
                 >
                   <option value="balance-scale">Virtual Balance Scale (Algebra)</option>
                   <option value="ray-optics">Ray Optics Reflection Lab (Physics)</option>
@@ -433,7 +433,7 @@ export function AdminLessonEditorView({
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-semibold text-[#475569] block mb-1">
                   Activity Title
                 </label>
                 <input
@@ -445,13 +445,13 @@ export function AdminLessonEditorView({
                       activity: { ...subConceptData.activity, title: e.target.value }
                     })
                   }
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white"
+                  className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] focus:outline-none focus:border-[#2563EB]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
+              <label className="text-xs font-semibold text-[#475569] block mb-1">
                 Student Instructions
               </label>
               <textarea
@@ -463,12 +463,12 @@ export function AdminLessonEditorView({
                     activity: { ...subConceptData.activity, instructions: e.target.value }
                   })
                 }
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white"
+                className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] focus:outline-none focus:border-[#2563EB]"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
+              <label className="text-xs font-semibold text-[#475569] block mb-1">
                 Activity Goal / Victory Condition
               </label>
               <input
@@ -480,7 +480,7 @@ export function AdminLessonEditorView({
                     activity: { ...subConceptData.activity, goal: e.target.value }
                   })
                 }
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-cyan-300"
+                className="w-full px-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#2563EB] font-medium focus:outline-none focus:border-[#2563EB]"
               />
             </div>
           </div>
@@ -490,7 +490,7 @@ export function AdminLessonEditorView({
         {activeTab === 'examples' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+              <h3 className="text-sm font-bold text-[#111827] uppercase tracking-wider">
                 Step-by-Step Solved Examples
               </h3>
               <button
@@ -510,22 +510,22 @@ export function AdminLessonEditorView({
                     ]
                   });
                 }}
-                className="text-xs text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1"
+                className="text-xs text-[#2563EB] hover:text-[#1D4ED8] font-semibold flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" /> Add Solved Example
               </button>
             </div>
 
             {subConceptData.workedExamples.map((ex, exIdx) => (
-              <div key={ex.id} className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
+              <div key={ex.id} className="p-4 bg-[#F8FAFF] rounded-xl border border-[#E2E8F0] space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-cyan-400">Example {exIdx + 1}</span>
+                  <span className="text-xs font-bold text-[#2563EB]">Example {exIdx + 1}</span>
                   <button
                     onClick={() => {
                       const updated = subConceptData.workedExamples.filter((_, i) => i !== exIdx);
                       setSubConceptData({ ...subConceptData, workedExamples: updated });
                     }}
-                    className="text-slate-500 hover:text-rose-400"
+                    className="text-[#94A3B8] hover:text-red-500 cursor-pointer"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -540,7 +540,7 @@ export function AdminLessonEditorView({
                     copy[exIdx].problem = e.target.value;
                     setSubConceptData({ ...subConceptData, workedExamples: copy });
                   }}
-                  className="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white font-bold"
+                  className="w-full px-3 py-1.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] font-bold focus:outline-none focus:border-[#2563EB]"
                 />
 
                 <input
@@ -552,7 +552,7 @@ export function AdminLessonEditorView({
                     copy[exIdx].realWorldApplication = e.target.value;
                     setSubConceptData({ ...subConceptData, workedExamples: copy });
                   }}
-                  className="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 italic"
+                  className="w-full px-3 py-1.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#475569] italic focus:outline-none focus:border-[#2563EB]"
                 />
               </div>
             ))}
@@ -562,12 +562,12 @@ export function AdminLessonEditorView({
         {/* TAB 5: GUIDED PRACTICE */}
         {activeTab === 'practice' && (
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+            <h3 className="text-sm font-bold text-[#111827] uppercase tracking-wider">
               Guided Practice Warmup
             </h3>
             {subConceptData.guidedPractice.map((gp, i) => (
-              <div key={gp.id} className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-                <span className="text-xs font-bold text-cyan-400">Warmup {i + 1}</span>
+              <div key={gp.id} className="p-4 bg-[#F8FAFF] rounded-xl border border-[#E2E8F0] space-y-2">
+                <span className="text-xs font-bold text-[#2563EB]">Warmup {i + 1}</span>
                 <input
                   type="text"
                   value={gp.question}
@@ -576,7 +576,7 @@ export function AdminLessonEditorView({
                     copy[i].question = e.target.value;
                     setSubConceptData({ ...subConceptData, guidedPractice: copy });
                   }}
-                  className="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
+                  className="w-full px-3 py-1.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] focus:outline-none focus:border-[#2563EB]"
                 />
                 <input
                   type="text"
@@ -587,7 +587,7 @@ export function AdminLessonEditorView({
                     copy[i].hint = e.target.value;
                     setSubConceptData({ ...subConceptData, guidedPractice: copy });
                   }}
-                  className="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-amber-300"
+                  className="w-full px-3 py-1.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#D97706] font-medium focus:outline-none focus:border-[#2563EB]"
                 />
               </div>
             ))}
@@ -597,7 +597,7 @@ export function AdminLessonEditorView({
         {/* TAB 6: REVISION */}
         {activeTab === 'revision' && (
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+            <h3 className="text-sm font-bold text-[#111827] uppercase tracking-wider">
               Quick Revision Flash Summary
             </h3>
             <input
@@ -609,11 +609,11 @@ export function AdminLessonEditorView({
                   revisionSummary: { ...subConceptData.revisionSummary, title: e.target.value }
                 })
               }
-              className="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white font-bold"
+              className="w-full px-3 py-1.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] font-bold focus:outline-none focus:border-[#2563EB]"
             />
             {subConceptData.revisionSummary.points.map((pt, i) => (
               <div key={i} className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-[#2563EB] shrink-0" />
                 <input
                   type="text"
                   value={pt}
@@ -625,7 +625,7 @@ export function AdminLessonEditorView({
                       revisionSummary: { ...subConceptData.revisionSummary, points: copy }
                     })
                   }}
-                  className="flex-1 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200"
+                  className="flex-1 px-3 py-1.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg text-xs text-[#475569] focus:outline-none focus:border-[#2563EB]"
                 />
               </div>
             ))}
@@ -634,22 +634,22 @@ export function AdminLessonEditorView({
 
         {/* TAB 7: LIVE STUDENT PREVIEW */}
         {activeTab === 'preview' && (
-          <div className="p-5 bg-slate-950 rounded-2xl border border-slate-800 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+          <div className="p-5 bg-[#F8FAFF] rounded-2xl border border-[#E2E8F0] space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EDF2F7]">
+              <span className="text-xs font-bold text-[#2563EB] uppercase tracking-wider flex items-center gap-1.5">
                 <Eye className="w-4 h-4" /> Live Student View Preview
               </span>
-              <span className="text-[11px] text-slate-400">
+              <span className="text-[11px] text-[#64748B]">
                 {subConceptData.estimatedMinutes} mins · Part {subConceptData.order}
               </span>
             </div>
 
-            <h1 className="text-xl font-extrabold text-white">{subConceptData.title}</h1>
-            <p className="text-xs text-slate-300">{subConceptData.shortDescription}</p>
+            <h1 className="text-xl font-extrabold text-[#111827]">{subConceptData.title}</h1>
+            <p className="text-xs text-[#475569]">{subConceptData.shortDescription}</p>
 
-            <div className="p-4 bg-slate-900 rounded-xl border border-slate-800 space-y-2">
-              <span className="text-xs font-bold text-white block">Concept Overview:</span>
-              <p className="text-xs text-slate-300 leading-relaxed">
+            <div className="p-4 bg-[#FFFFFF] rounded-xl border border-[#E2E8F0] space-y-2 shadow-2xs">
+              <span className="text-xs font-bold text-[#111827] block">Concept Overview:</span>
+              <p className="text-xs text-[#475569] leading-relaxed">
                 {subConceptData.explanation.introduction}
               </p>
             </div>

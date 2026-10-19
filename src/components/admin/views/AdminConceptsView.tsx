@@ -152,17 +152,17 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EDF2F7]">
         <div>
-          <h2 className="text-xl font-bold text-white">Manage Chapters &amp; Concepts</h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <h2 className="text-xl font-bold text-[#111827]">Manage Chapters &amp; Concepts</h2>
+          <p className="text-xs text-[#64748B] mt-0.5">
             Organize educational units, publish status, and sub-concept learning paths.
           </p>
         </div>
 
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl shadow-md transition-colors flex items-center gap-1.5 self-start sm:self-auto"
+          className="btn-primary px-4 py-2 text-xs font-semibold rounded-xl shadow-md transition-colors flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Chapter</span>
@@ -170,15 +170,15 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-[#FFFFFF] p-3.5 rounded-2xl border border-[#E2E8F0] shadow-xs">
         <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]" />
           <input
             type="text"
             placeholder="Search chapters by title or category..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+            className="w-full pl-9 pr-3 py-1.5 bg-[#F8FAFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:bg-[#FFFFFF]"
           />
         </div>
 
@@ -186,7 +186,7 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
           <select
             value={filterClass}
             onChange={(e) => setFilterClass(e.target.value === 'all' ? 'all' : parseInt(e.target.value, 10))}
-            className="bg-slate-950 border border-slate-800 text-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-cyan-400"
+            className="bg-[#F8FAFF] border border-[#E2E8F0] text-[#475569] rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-[#2563EB] focus:bg-[#FFFFFF]"
           >
             <option value="all">All Classes</option>
             <option value="6">Class 6</option>
@@ -199,7 +199,7 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
           <select
             value={filterSubject}
             onChange={(e) => setFilterSubject(e.target.value)}
-            className="bg-slate-950 border border-slate-800 text-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-cyan-400"
+            className="bg-[#F8FAFF] border border-[#E2E8F0] text-[#475569] rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-[#2563EB] focus:bg-[#FFFFFF]"
           >
             <option value="all">All Subjects</option>
             <option value="mathematics">Mathematics</option>
@@ -209,10 +209,10 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
       </div>
 
       {/* Chapters Table / List */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 uppercase text-[10px] font-bold tracking-wider">
+            <thead className="bg-[#F8FAFF] border-b border-[#E2E8F0] text-[#64748B] uppercase text-[10px] font-bold tracking-wider">
               <tr>
                 <th className="py-3.5 px-4">Chapter Title</th>
                 <th className="py-3.5 px-4">Class</th>
@@ -223,36 +223,36 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80">
+            <tbody className="divide-y divide-[#EDF2F7]">
               {filtered.map((concept) => (
-                <tr key={concept.id} className="hover:bg-slate-800/40 transition-colors">
+                <tr key={concept.id} className="hover:bg-[#F8FAFF] transition-colors">
                   <td className="py-3.5 px-4">
-                    <div className="font-bold text-white text-sm">{concept.title}</div>
-                    <div className="text-[11px] text-slate-400 line-clamp-1 max-w-sm mt-0.5">
+                    <div className="font-bold text-[#111827] text-sm">{concept.title}</div>
+                    <div className="text-[11px] text-[#64748B] line-clamp-1 max-w-sm mt-0.5">
                       {concept.description}
                     </div>
                   </td>
-                  <td className="py-3.5 px-4 font-mono font-bold text-cyan-300">
+                  <td className="py-3.5 px-4 font-mono font-bold text-[#2563EB]">
                     Class {concept.classLevel}
                   </td>
-                  <td className="py-3.5 px-4 capitalize text-slate-300">
+                  <td className="py-3.5 px-4 capitalize text-[#475569] font-medium">
                     {concept.subjectId}
                   </td>
                   <td className="py-3.5 px-4">
-                    <span className="bg-slate-950 px-2 py-0.5 rounded border border-slate-800 text-slate-300 font-mono text-[11px]">
+                    <span className="bg-[#F1F5FF] px-2 py-0.5 rounded border border-[#E2E8F0] text-[#2563EB] font-mono text-[11px]">
                       {concept.category}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 font-mono text-slate-300">
+                  <td className="py-3.5 px-4 font-mono text-[#475569]">
                     {concept.subConcepts?.length || 0} modules
                   </td>
                   <td className="py-3.5 px-4">
                     <button
                       onClick={() => handleToggleStatus(concept.id, concept.status || 'published')}
-                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors ${
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors cursor-pointer ${
                         concept.status === 'published'
-                          ? 'bg-emerald-950/80 border-emerald-600 text-emerald-300 hover:bg-emerald-900'
-                          : 'bg-amber-950/80 border-amber-600 text-amber-300 hover:bg-amber-900'
+                          ? 'bg-[#F0FDF4] border-[#86EFAC] text-[#166534] hover:bg-[#DCFCE7]'
+                          : 'bg-[#FFFBEB] border-[#FDE68A] text-[#B45309] hover:bg-[#FEF3C7]'
                       }`}
                     >
                       {concept.status === 'published' ? '● Published' : '○ Draft Mode'}
@@ -262,15 +262,15 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => onEditLesson(concept.id)}
-                        className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg flex items-center gap-1 transition-colors"
+                        className="px-2.5 py-1.5 bg-[#F1F5FF] hover:bg-[#EFF6FF] text-[#2563EB] border border-[#E2E8F0] hover:border-[#BFDBFE] text-xs font-semibold rounded-lg flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
                         title="Edit Lessons in this chapter"
                       >
-                        <Edit3 className="w-3.5 h-3.5 text-cyan-400" />
+                        <Edit3 className="w-3.5 h-3.5 text-[#2563EB]" />
                         <span>Lessons</span>
                       </button>
                       <button
                         onClick={() => handleDelete(concept.id, concept.title)}
-                        className="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-950/50 rounded-lg transition-colors"
+                        className="p-1.5 text-[#64748B] hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
                         title="Delete Chapter"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -286,13 +286,13 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
 
       {/* Create Chapter Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-lg font-bold text-white">Create New Curriculum Chapter</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EDF2F7]">
+              <h3 className="text-lg font-bold text-[#111827]">Create New Curriculum Chapter</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-[#64748B] hover:text-[#111827] cursor-pointer"
               >
                 ✕
               </button>
@@ -300,7 +300,7 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
 
             <form onSubmit={handleCreateConcept} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-semibold text-[#111827] block mb-1">
                   Chapter Name
                 </label>
                 <input
@@ -309,12 +309,12 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
                   placeholder="e.g. Understanding Quadrilaterals"
                   value={newConceptForm.title}
                   onChange={(e) => setNewConceptForm({ ...newConceptForm, title: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white"
+                  className="w-full px-3 py-2 bg-[#F8FAFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] focus:border-[#2563EB] focus:bg-[#FFFFFF] outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
+                <label className="text-xs font-semibold text-[#111827] block mb-1">
                   Pedagogical Description
                 </label>
                 <textarea
@@ -323,13 +323,13 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
                   placeholder="Provide learning objectives and scope..."
                   value={newConceptForm.description}
                   onChange={(e) => setNewConceptForm({ ...newConceptForm, description: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white"
+                  className="w-full px-3 py-2 bg-[#F8FAFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] focus:border-[#2563EB] focus:bg-[#FFFFFF] outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1">Class</label>
+                  <label className="text-xs font-semibold text-[#111827] block mb-1">Class</label>
                   <select
                     value={newConceptForm.classLevel}
                     onChange={(e) =>
@@ -338,7 +338,7 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
                         classLevel: parseInt(e.target.value, 10) as ClassLevel
                       })
                     }
-                    className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white"
+                    className="w-full px-2.5 py-1.5 bg-[#F8FAFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] focus:border-[#2563EB] focus:bg-[#FFFFFF] outline-none"
                   >
                     {[6, 7, 8, 9, 10].map((l) => (
                       <option key={l} value={l}>
@@ -349,7 +349,7 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1">Subject</label>
+                  <label className="text-xs font-semibold text-[#111827] block mb-1">Subject</label>
                   <select
                     value={newConceptForm.subjectId}
                     onChange={(e) =>
@@ -358,7 +358,7 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
                         subjectId: e.target.value as SubjectId
                       })
                     }
-                    className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white"
+                    className="w-full px-2.5 py-1.5 bg-[#F8FAFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] focus:border-[#2563EB] focus:bg-[#FFFFFF] outline-none"
                   >
                     <option value="mathematics">Mathematics</option>
                     <option value="science">Science</option>
@@ -366,7 +366,7 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1">Category</label>
+                  <label className="text-xs font-semibold text-[#111827] block mb-1">Category</label>
                   <input
                     type="text"
                     required
@@ -375,22 +375,22 @@ export function AdminConceptsView({ onEditLesson }: AdminConceptsViewProps) {
                     onChange={(e) =>
                       setNewConceptForm({ ...newConceptForm, category: e.target.value })
                     }
-                    className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white"
+                    className="w-full px-2.5 py-1.5 bg-[#F8FAFF] border border-[#E2E8F0] rounded-lg text-xs text-[#111827] focus:border-[#2563EB] focus:bg-[#FFFFFF] outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+              <div className="flex justify-end gap-2 pt-3 border-t border-[#EDF2F7]">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg"
+                  className="px-4 py-2 bg-[#F1F5FF] hover:bg-[#E2E8F0] text-[#475569] text-xs font-semibold rounded-lg cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg"
+                  className="btn-primary px-5 py-2 text-white text-xs font-semibold rounded-lg cursor-pointer shadow-md"
                 >
                   Create Chapter
                 </button>

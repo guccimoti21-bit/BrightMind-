@@ -68,19 +68,19 @@ export function AdminAppearanceView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EDF2F7]">
         <div>
-          <h2 className="text-xl font-bold text-white">Website Appearance &amp; Copy Editor</h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <h2 className="text-xl font-bold text-[#111827]">Website Appearance &amp; Copy Editor</h2>
+          <p className="text-xs text-[#64748B] mt-0.5">
             Modify homepage headlines, announcement banners, and brand metadata with live preview.
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800">
+        <div className="flex items-center gap-1.5 bg-[#F1F5FF] p-1 rounded-xl border border-[#E2E8F0]">
           <button
             onClick={() => setPreviewMode('desktop')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 ${
-              previewMode === 'desktop' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors ${
+              previewMode === 'desktop' ? 'bg-[#2563EB] text-white shadow-xs' : 'text-[#64748B] hover:text-[#111827]'
             }`}
           >
             <Monitor className="w-3.5 h-3.5" />
@@ -88,8 +88,8 @@ export function AdminAppearanceView() {
           </button>
           <button
             onClick={() => setPreviewMode('mobile')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 ${
-              previewMode === 'mobile' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors ${
+              previewMode === 'mobile' ? 'bg-[#2563EB] text-white shadow-xs' : 'text-[#64748B] hover:text-[#111827]'
             }`}
           >
             <Smartphone className="w-3.5 h-3.5" />
@@ -99,8 +99,8 @@ export function AdminAppearanceView() {
       </div>
 
       {saveStatus && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-800/80 text-emerald-200 text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="p-3.5 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] text-[#166534] text-xs flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#16A34A]" />
           <span>{saveStatus}</span>
         </div>
       )}
@@ -108,40 +108,40 @@ export function AdminAppearanceView() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Editor Form (6 cols) */}
         <form onSubmit={handleSave} className="lg:col-span-6 space-y-4 text-xs">
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+          <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-5 space-y-4 shadow-sm">
             <div>
-              <label className="font-semibold text-slate-300 block mb-1">Hero Main Headline</label>
+              <label className="font-semibold text-[#111827] block mb-1">Hero Main Headline</label>
               <input
                 type="text"
                 value={appearance.heroHeadline}
                 onChange={(e) => setAppearance({ ...appearance, heroHeadline: e.target.value })}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-bold text-sm"
+                className="w-full px-3 py-2 bg-[#F8FAFF] border border-[#E2E8F0] rounded-lg text-[#111827] font-bold text-sm focus:border-[#2563EB] focus:bg-[#FFFFFF] outline-none"
               />
             </div>
 
             <div>
-              <label className="font-semibold text-slate-300 block mb-1">Hero Sub-Headline / Supporting Copy</label>
+              <label className="font-semibold text-[#111827] block mb-1">Hero Sub-Headline / Supporting Copy</label>
               <textarea
                 rows={3}
                 value={appearance.heroSubheadline}
                 onChange={(e) => setAppearance({ ...appearance, heroSubheadline: e.target.value })}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white"
+                className="w-full px-3 py-2 bg-[#F8FAFF] border border-[#E2E8F0] rounded-lg text-[#475569] focus:border-[#2563EB] focus:bg-[#FFFFFF] outline-none"
               />
             </div>
 
             <div>
-              <label className="font-semibold text-slate-300 block mb-1">Hero Kicker Badge</label>
+              <label className="font-semibold text-[#111827] block mb-1">Hero Kicker Badge</label>
               <input
                 type="text"
                 value={appearance.heroBadge}
                 onChange={(e) => setAppearance({ ...appearance, heroBadge: e.target.value })}
-                className="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-cyan-300"
+                className="w-full px-3 py-1.5 bg-[#F8FAFF] border border-[#E2E8F0] rounded-lg text-[#2563EB] font-medium focus:border-[#2563EB] focus:bg-[#FFFFFF] outline-none"
               />
             </div>
 
             {/* Announcement Banner */}
-            <div className="pt-3 border-t border-slate-800 space-y-3">
-              <label className="flex items-center gap-2 text-slate-300 font-semibold cursor-pointer">
+            <div className="pt-3 border-t border-[#EDF2F7] space-y-3">
+              <label className="flex items-center gap-2 text-[#111827] font-semibold cursor-pointer">
                 <input
                   type="checkbox"
                   checked={appearance.announcementBanner.enabled}
@@ -151,7 +151,7 @@ export function AdminAppearanceView() {
                       announcementBanner: { ...appearance.announcementBanner, enabled: e.target.checked }
                     })
                   }
-                  className="accent-blue-600 rounded"
+                  className="accent-[#2563EB] rounded cursor-pointer"
                 />
                 <span>Enable Top Announcement Banner</span>
               </label>
@@ -167,7 +167,7 @@ export function AdminAppearanceView() {
                         announcementBanner: { ...appearance.announcementBanner, text: e.target.value }
                       })
                     }
-                    className="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-white"
+                    className="w-full px-3 py-1.5 bg-[#F8FAFF] border border-[#E2E8F0] rounded-lg text-[#111827] focus:border-[#2563EB] focus:bg-[#FFFFFF] outline-none"
                     placeholder="Announcement text..."
                   />
                   <input
@@ -179,7 +179,7 @@ export function AdminAppearanceView() {
                         announcementBanner: { ...appearance.announcementBanner, linkText: e.target.value }
                       })
                     }
-                    className="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-cyan-400"
+                    className="w-full px-3 py-1.5 bg-[#F8FAFF] border border-[#E2E8F0] rounded-lg text-[#2563EB] focus:border-[#2563EB] focus:bg-[#FFFFFF] outline-none"
                     placeholder="Action link label..."
                   />
                 </div>
@@ -187,20 +187,20 @@ export function AdminAppearanceView() {
             </div>
 
             {/* Footer Notice */}
-            <div className="pt-3 border-t border-slate-800">
-              <label className="font-semibold text-slate-300 block mb-1">Footer Copyright Notice</label>
+            <div className="pt-3 border-t border-[#EDF2F7]">
+              <label className="font-semibold text-[#111827] block mb-1">Footer Copyright Notice</label>
               <input
                 type="text"
                 value={appearance.footerNotice}
                 onChange={(e) => setAppearance({ ...appearance, footerNotice: e.target.value })}
-                className="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-slate-400"
+                className="w-full px-3 py-1.5 bg-[#F8FAFF] border border-[#E2E8F0] rounded-lg text-[#64748B] focus:border-[#2563EB] focus:bg-[#FFFFFF] outline-none"
               />
             </div>
 
-            <div className="pt-3 border-t border-slate-800 flex justify-end">
+            <div className="pt-3 border-t border-[#EDF2F7] flex justify-end">
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-md transition-colors flex items-center gap-2"
+                className="btn-primary px-6 py-2.5 font-bold text-xs rounded-xl shadow-md transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Appearance Changes</span>
@@ -211,52 +211,52 @@ export function AdminAppearanceView() {
 
         {/* Live Preview Screen (6 cols) */}
         <div className="lg:col-span-6 space-y-3">
-          <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+          <span className="text-xs font-bold text-[#2563EB] uppercase tracking-wider flex items-center gap-1.5">
             <Eye className="w-4 h-4" />
             <span>Live {previewMode === 'desktop' ? 'Desktop (1440px)' : 'Mobile Phone'} Viewport</span>
           </span>
 
           <div
-            className={`mx-auto bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl p-6 transition-all ${
+            className={`mx-auto bg-[#FFFFFF] border border-[#E2E8F0] rounded-3xl overflow-hidden shadow-xl p-6 transition-all ${
               previewMode === 'mobile' ? 'max-w-[340px]' : 'w-full'
             }`}
           >
             {/* Announcement banner preview */}
             {appearance.announcementBanner.enabled && (
-              <div className="mb-4 p-2 rounded-lg bg-blue-950/80 border border-blue-800 text-[11px] text-cyan-300 text-center">
+              <div className="mb-4 p-2.5 rounded-lg bg-[#EFF6FF] border border-[#BFDBFE] text-[11px] text-[#2563EB] text-center">
                 <span>{appearance.announcementBanner.text} </span>
                 {appearance.announcementBanner.linkText && (
-                  <strong className="underline ml-1">{appearance.announcementBanner.linkText}</strong>
+                  <strong className="underline ml-1 cursor-pointer">{appearance.announcementBanner.linkText}</strong>
                 )}
               </div>
             )}
 
             {/* Hero preview */}
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-950 text-cyan-300 text-[10px] font-bold">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#EFF6FF] text-[#2563EB] text-[10px] font-bold">
                 <Sparkles className="w-3 h-3" />
                 <span>{appearance.heroBadge}</span>
               </div>
 
-              <h1 className="text-2xl font-black text-white leading-tight">
+              <h1 className="text-2xl font-black text-[#111827] leading-tight">
                 {appearance.heroHeadline}
               </h1>
 
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-[#475569] leading-relaxed">
                 {appearance.heroSubheadline}
               </p>
 
               <div className="flex gap-2 pt-2">
-                <div className="px-4 py-2 bg-blue-600 rounded-lg text-white font-bold text-[11px] text-center">
+                <div className="px-4 py-2 bg-[#2563EB] rounded-lg text-white font-bold text-[11px] text-center shadow-xs">
                   Start Learning
                 </div>
-                <div className="px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-300 text-[11px] text-center">
+                <div className="px-3 py-2 bg-[#F1F5FF] border border-[#E2E8F0] rounded-lg text-[#475569] text-[11px] text-center font-medium">
                   Explore Courses
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 pt-4 border-t border-slate-900 text-[10px] text-slate-500 text-center">
+            <div className="mt-8 pt-4 border-t border-[#EDF2F7] text-[10px] text-[#64748B] text-center">
               {appearance.footerNotice}
             </div>
           </div>

@@ -84,10 +84,14 @@ apiRouter.post('/admin/login', (req: Request, res: Response) => {
   const db = getDb();
   const admin = db.admin;
 
+  const trimmedUser = username.trim().toLowerCase();
   const matchesUser =
-    username.toLowerCase() === admin.username.toLowerCase() ||
-    username.toLowerCase() === admin.email.toLowerCase() ||
-    username.toLowerCase() === 'admin';
+    trimmedUser === admin.username.toLowerCase() ||
+    trimmedUser === admin.email.toLowerCase() ||
+    trimmedUser === 'admin' ||
+    trimmedUser === 'admin@brightmind.learning' ||
+    trimmedUser === 'admin@scimathenova.app' ||
+    trimmedUser === 'admin@scimathenova.com';
 
   if (!matchesUser) {
     const rate = recordFailedLogin(ip);

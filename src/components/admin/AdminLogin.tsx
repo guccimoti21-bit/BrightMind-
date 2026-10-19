@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Atom, Lock, Eye, EyeOff, User, ArrowRight, ShieldCheck, AlertCircle, Info } from 'lucide-react';
+import { Atom, Lock, Eye, EyeOff, User, ArrowRight, ShieldCheck, AlertCircle, Info, ArrowLeft } from 'lucide-react';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 
 interface AdminLoginProps {
@@ -41,50 +41,50 @@ export function AdminLogin({ onLoginSuccess, onReturnToStudent }: AdminLoginProp
       <div className="w-full max-w-md space-y-6">
         {/* Brand Lockup */}
         <div className="text-center">
-          <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-0.5 shadow-xl mb-4">
-            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-cyan-400">
+          <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#2563EB] to-[#60A5FA] p-0.5 shadow-md mb-4">
+            <div className="w-full h-full bg-[#FFFFFF] rounded-[14px] flex items-center justify-center text-[#2563EB]">
               <Atom className="w-8 h-8 animate-spin-slow" />
             </div>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
             Administrator Login
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            BrightMind Learning Content Management System &amp; Portal
+          <p className="text-xs text-[#64748B] mt-1">
+            SciMathenova Content Management System &amp; Portal
           </p>
         </div>
 
         {/* Login Box */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-7 shadow-2xl backdrop-blur-md space-y-6">
+        <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-3xl p-7 shadow-[0_16px_40px_rgba(37,99,235,0.08)] space-y-6 relative overflow-hidden">
           {/* Initial Setup Notification */}
-          <div className="p-3.5 rounded-xl bg-blue-950/60 border border-blue-800/60 text-xs text-slate-300 flex items-start gap-2.5">
-            <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] text-xs text-[#475569] flex items-start gap-2.5">
+            <Info className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <span className="font-bold text-white block">Initial Setup Credentials</span>
-              <p className="text-[11px] text-slate-300 leading-relaxed">
-                Administrator ID: <strong className="text-cyan-300 font-mono">admin@scimath.academy</strong><br />
-                Initial Setup Password: <strong className="text-cyan-300 font-mono">434241</strong>
+              <span className="font-bold text-[#111827] block">Initial Setup Credentials</span>
+              <p className="text-[11px] text-[#475569] leading-relaxed">
+                Administrator ID: <strong className="text-[#2563EB] font-mono">admin@scimath.academy</strong><br />
+                Initial Setup Password: <strong className="text-[#2563EB] font-mono">434241</strong>
               </p>
-              <p className="text-[10px] text-slate-400 italic">
+              <p className="text-[10px] text-[#64748B] italic">
                 * You will be prompted to update this password upon first successful login.
               </p>
             </div>
           </div>
 
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-rose-950/80 border border-rose-800/80 text-rose-200 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+            <div className="p-3 rounded-xl bg-[#FEE2E2] border border-[#FECACA] text-[#DC2626] text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-[#DC2626] shrink-0" />
               <span>{errorMessage}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block mb-1.5">
+              <label className="text-xs font-semibold text-[#475569] uppercase tracking-wider block mb-1.5">
                 Administrator Username or Email
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
                   <User className="w-4 h-4" />
                 </div>
                 <input
@@ -92,7 +92,7 @@ export function AdminLogin({ onLoginSuccess, onReturnToStudent }: AdminLoginProp
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all font-mono"
+                  className="w-full pl-10 pr-3.5 py-2.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl text-xs text-[#111827] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#93C5FD] focus:border-[#2563EB] transition-all font-mono"
                   placeholder="admin@scimath.academy"
                 />
               </div>
@@ -100,19 +100,19 @@ export function AdminLogin({ onLoginSuccess, onReturnToStudent }: AdminLoginProp
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
+                <label className="text-xs font-semibold text-[#475569] uppercase tracking-wider">
                   Password
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowForgotModal(true)}
-                  className="text-[11px] text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
+                  className="text-xs text-[#2563EB] hover:text-[#1D4ED8] transition-colors cursor-pointer"
                 >
-                  Forgot Password?
+                  Forgot password?
                 </button>
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -120,13 +120,13 @@ export function AdminLogin({ onLoginSuccess, onReturnToStudent }: AdminLoginProp
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all font-mono"
+                  className="w-full pl-10 pr-10 py-2.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl text-xs text-[#111827] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#93C5FD] focus:border-[#2563EB] transition-all font-mono"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#94A3B8] hover:text-[#475569] transition-colors cursor-pointer"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -136,10 +136,10 @@ export function AdminLogin({ onLoginSuccess, onReturnToStudent }: AdminLoginProp
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-900/40 transition-all flex items-center justify-center gap-2 cursor-pointer mt-2"
+              className="btn-primary w-full py-3 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {isLoading ? (
-                <span>Authenticating with Server...</span>
+                <span>Authenticating...</span>
               ) : (
                 <>
                   <span>Sign In as Administrator</span>
@@ -149,36 +149,41 @@ export function AdminLogin({ onLoginSuccess, onReturnToStudent }: AdminLoginProp
             </button>
           </form>
 
-          <div className="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-            <span>Student website mode:</span>
+          <div className="pt-4 border-t border-[#EDF2F7] text-center">
             <button
               onClick={onReturnToStudent}
-              className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors"
+              className="text-xs text-[#64748B] hover:text-[#2563EB] transition-colors flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
             >
-              Return to BrightMind Learning
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Return to Public Student Website</span>
             </button>
           </div>
+        </div>
+
+        {/* Security Assurance Notice */}
+        <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] text-center text-xs text-[#64748B] space-y-1 shadow-sm">
+          <div className="flex items-center justify-center gap-1.5 text-[#16A34A] font-semibold">
+            <ShieldCheck className="w-4 h-4" />
+            <span>Secure Role-Based Access Control</span>
+          </div>
+          <p className="text-[11px]">
+            Server-side authentication enforced. Failed attempts are rate-limited and logged.
+          </p>
         </div>
       </div>
 
       {/* Forgot Password Modal */}
       {showForgotModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 shadow-2xl space-y-4">
-            <div className="flex items-center gap-2.5 text-cyan-400 font-bold text-sm">
-              <ShieldCheck className="w-5 h-5" />
-              <span>Administrative Account Recovery</span>
-            </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              For security, the administrator password can only be reset through the server-side environment or with verified multi-factor access.
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111827]/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl w-full max-w-sm p-6 shadow-2xl relative space-y-4">
+            <h3 className="text-base font-bold text-[#111827]">Administrator Password Recovery</h3>
+            <p className="text-xs text-[#475569] leading-relaxed">
+              If you have lost access to the administrator account, you can reset the password via the server environment or use the initial setup password <strong className="text-[#111827] font-mono">434241</strong> with username <strong className="text-[#111827] font-mono">admin@scimath.academy</strong>.
             </p>
-            <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 text-xs text-slate-400">
-              If you are testing the platform, use the initial setup password <strong className="text-white font-mono">434241</strong> with username <strong className="text-white font-mono">admin@scimath.academy</strong>.
-            </div>
-            <div className="flex justify-end pt-2">
+            <div className="pt-2 flex justify-end">
               <button
                 onClick={() => setShowForgotModal(false)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg"
+                className="btn-primary px-4 py-2 text-xs font-semibold cursor-pointer"
               >
                 Close
               </button>

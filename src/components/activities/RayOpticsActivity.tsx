@@ -43,18 +43,18 @@ export function RayOpticsActivity({ onComplete, isAlreadyCompleted }: RayOpticsA
   const reflectedEndY = centerY - rayLength * Math.cos(incidentRad);
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+    <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 shadow-sm">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#EDF2F7]">
         <div>
-          <div className="flex items-center gap-2 text-cyan-400 text-xs font-semibold tracking-wide uppercase">
+          <div className="flex items-center gap-2 text-[#2563EB] text-xs font-semibold tracking-wide uppercase">
             <Sun className="w-4 h-4" />
             <span>Optics &amp; Wave Mechanics Sandbox</span>
           </div>
-          <h3 className="text-xl font-bold text-white mt-1">
+          <h3 className="text-xl font-bold text-[#111827] mt-1">
             Verification of the Laws of Reflection
           </h3>
-          <p className="text-sm text-slate-300 mt-1 max-w-2xl">
+          <p className="text-sm text-[#475569] mt-1 max-w-2xl">
             Slide the incident beam angle and prove that the Angle of Incidence (∠i) precisely matches the Angle of Reflection (∠r).
           </p>
         </div>
@@ -62,10 +62,10 @@ export function RayOpticsActivity({ onComplete, isAlreadyCompleted }: RayOpticsA
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowProtractor(!showProtractor)}
-            className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all cursor-pointer ${
               showProtractor
-                ? 'bg-blue-600/80 border-blue-500 text-white'
-                : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
+                ? 'bg-[#2563EB] border-[#2563EB] text-white shadow-sm'
+                : 'bg-[#FFFFFF] border-[#E2E8F0] text-[#475569] hover:bg-[#F1F5FF] hover:text-[#111827]'
             }`}
           >
             <Compass className="w-3.5 h-3.5 inline mr-1" />
@@ -73,7 +73,7 @@ export function RayOpticsActivity({ onComplete, isAlreadyCompleted }: RayOpticsA
           </button>
           <button
             onClick={() => setAngleIncident(45)}
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+            className="p-2 text-[#64748B] hover:text-[#111827] hover:bg-[#F1F5FF] rounded-lg transition-colors cursor-pointer"
             title="Reset to 45°"
           >
             <RotateCcw className="w-4 h-4" />
@@ -83,7 +83,7 @@ export function RayOpticsActivity({ onComplete, isAlreadyCompleted }: RayOpticsA
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
         {/* Ray Simulation SVG Canvas (8 cols) */}
-        <div className="lg:col-span-8 bg-slate-950/80 rounded-xl border border-slate-800 p-4 flex flex-col items-center justify-center relative min-h-[380px] overflow-hidden">
+        <div className="lg:col-span-8 bg-[#F8FAFF] rounded-xl border border-[#E2E8F0] p-4 flex flex-col items-center justify-center relative min-h-[380px] overflow-hidden">
           {/* SVG Optics Bench */}
           <svg
             viewBox="0 0 500 300"
@@ -254,17 +254,17 @@ export function RayOpticsActivity({ onComplete, isAlreadyCompleted }: RayOpticsA
 
         {/* Controls Deck (4 cols) */}
         <div className="lg:col-span-4 flex flex-col justify-between gap-4">
-          <div className="bg-slate-950/70 rounded-xl border border-slate-800 p-5">
-            <h4 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
+          <div className="bg-[#F8FAFF] rounded-xl border border-[#E2E8F0] p-5">
+            <h4 className="text-sm font-bold text-[#111827] mb-3 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#2563EB]" />
               <span>Laser Incident Angle Control</span>
             </h4>
 
             {/* Angle Slider */}
             <div className="space-y-2">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400">Angle of Incidence (∠i):</span>
-                <span className="font-mono font-bold text-cyan-300 text-sm">
+                <span className="text-[#475569]">Angle of Incidence (∠i):</span>
+                <span className="font-mono font-bold text-[#2563EB] text-sm">
                   {angleIncident}°
                 </span>
               </div>
@@ -274,9 +274,9 @@ export function RayOpticsActivity({ onComplete, isAlreadyCompleted }: RayOpticsA
                 max="80"
                 value={angleIncident}
                 onChange={(e) => setAngleIncident(Number(e.target.value))}
-                className="w-full accent-cyan-400 h-2 bg-slate-800 rounded-lg cursor-pointer"
+                className="w-full accent-[#2563EB] h-2 bg-[#E2E8F0] rounded-lg cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+              <div className="flex justify-between text-[10px] text-[#64748B] font-mono">
                 <span>5° (Near Normal)</span>
                 <span>45°</span>
                 <span>80° (Grazing)</span>
@@ -284,22 +284,22 @@ export function RayOpticsActivity({ onComplete, isAlreadyCompleted }: RayOpticsA
             </div>
 
             {/* Real-time Math Proof */}
-            <div className="mt-5 p-3.5 bg-slate-900/80 rounded-lg border border-slate-800 space-y-2 text-xs">
+            <div className="mt-5 p-3.5 bg-[#FFFFFF] rounded-lg border border-[#E2E8F0] space-y-2 text-xs">
               <div className="flex justify-between">
-                <span className="text-yellow-400 font-medium">Incident Angle (∠i):</span>
-                <span className="font-mono font-bold text-white">{angleIncident}°</span>
+                <span className="text-[#D97706] font-semibold">Incident Angle (∠i):</span>
+                <span className="font-mono font-bold text-[#111827]">{angleIncident}°</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-cyan-400 font-medium">Reflected Angle (∠r):</span>
-                <span className="font-mono font-bold text-white">{angleReflected}°</span>
+                <span className="text-[#2563EB] font-semibold">Reflected Angle (∠r):</span>
+                <span className="font-mono font-bold text-[#111827]">{angleReflected}°</span>
               </div>
-              <div className="flex justify-between pt-2 border-t border-slate-800">
-                <span className="text-slate-400">Glancing Angle (Mirror to ray):</span>
-                <span className="font-mono text-slate-300">{glancingAngle}°</span>
+              <div className="flex justify-between pt-2 border-t border-[#EDF2F7]">
+                <span className="text-[#64748B]">Glancing Angle (Mirror to ray):</span>
+                <span className="font-mono text-[#475569]">{glancingAngle}°</span>
               </div>
               <div className="flex justify-between pt-1">
-                <span className="text-slate-400">Total Angular Separation:</span>
-                <span className="font-mono font-bold text-emerald-400">
+                <span className="text-[#64748B]">Total Angular Separation:</span>
+                <span className="font-mono font-bold text-[#16A34A]">
                   {angleIncident + angleReflected}°
                 </span>
               </div>
@@ -307,7 +307,7 @@ export function RayOpticsActivity({ onComplete, isAlreadyCompleted }: RayOpticsA
 
             <button
               onClick={handleVerifyCurrentAngle}
-              className="w-full mt-4 py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow-md transition-all flex items-center justify-center gap-2"
+              className="btn-primary w-full mt-4 py-2.5 px-4 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-sm"
             >
               <CheckCircle2 className="w-4 h-4 text-white" />
               <span>Verify Law at {angleIncident}°</span>
@@ -315,10 +315,10 @@ export function RayOpticsActivity({ onComplete, isAlreadyCompleted }: RayOpticsA
           </div>
 
           {/* Verification Badge */}
-          <div className="bg-slate-950/70 rounded-xl border border-slate-800 p-4">
+          <div className="bg-[#F8FAFF] rounded-xl border border-[#E2E8F0] p-4">
             <div className="flex items-center justify-between text-xs mb-2">
-              <span className="text-slate-400">Tested Angles:</span>
-              <span className="font-mono text-cyan-400 font-semibold">
+              <span className="text-[#64748B]">Tested Angles:</span>
+              <span className="font-mono text-[#2563EB] font-semibold">
                 {verifiedPoints.length} verified
               </span>
             </div>
@@ -326,15 +326,15 @@ export function RayOpticsActivity({ onComplete, isAlreadyCompleted }: RayOpticsA
               {verifiedPoints.map((pt) => (
                 <span
                   key={pt}
-                  className="px-2 py-0.5 rounded bg-blue-950 border border-blue-700/60 text-blue-200 text-xs font-mono font-bold"
+                  className="px-2 py-0.5 rounded bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] text-xs font-mono font-bold"
                 >
                   {pt}°
                 </span>
               ))}
             </div>
             {hasCompleted && (
-              <div className="mt-3 flex items-center gap-2 text-emerald-400 text-xs font-semibold">
-                <CheckCircle2 className="w-4 h-4" />
+              <div className="mt-3 flex items-center gap-2 text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>First Law of Reflection Confirmed! (+20% Progress)</span>
               </div>
             )}

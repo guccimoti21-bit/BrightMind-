@@ -1,12 +1,10 @@
 import React from 'react';
-import { motion } from 'motion/react';
 import {
   ArrowLeft,
   CheckCircle2,
   Lock,
   Play,
   Clock,
-  Award,
   ChevronRight,
   Sparkles,
   BookOpen
@@ -37,25 +35,28 @@ export function ConceptDetailView({
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-16">
       {/* Back and Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs text-slate-400">
-        <button onClick={onBack} className="hover:text-white transition-colors flex items-center gap-1">
+      <div className="flex items-center gap-2 text-xs text-[#64748B]">
+        <button
+          onClick={onBack}
+          className="hover:text-[#2563EB] transition-colors flex items-center gap-1 cursor-pointer"
+        >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Syllabus</span>
         </button>
-        <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+        <ChevronRight className="w-3.5 h-3.5 text-[#CBD5E1]" />
         <span>Class {concept.classLevel}</span>
-        <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+        <ChevronRight className="w-3.5 h-3.5 text-[#CBD5E1]" />
         <span className="capitalize">{concept.subjectId}</span>
-        <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
-        <span className="text-cyan-300 font-medium">{concept.title}</span>
+        <ChevronRight className="w-3.5 h-3.5 text-[#CBD5E1]" />
+        <span className="text-[#2563EB] font-medium">{concept.title}</span>
       </div>
 
       {/* Concept Hero Header */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl backdrop-blur-md">
+      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 sm:p-8 shadow-[0_4px_20px_rgba(15,23,42,0.04)]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div>
-            <div className="flex items-center gap-2 text-xs text-slate-400 mb-2">
-              <span className="text-cyan-400 font-semibold uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-xs text-[#64748B] mb-2">
+              <span className="text-[#2563EB] font-semibold uppercase tracking-wider">
                 {concept.category}
               </span>
               <span>·</span>
@@ -63,23 +64,25 @@ export function ConceptDetailView({
               <span>·</span>
               <span>{concept.estimatedHours} Hours total</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
               {concept.title}
             </h1>
-            <p className="text-sm text-slate-300 mt-2 max-w-2xl leading-relaxed">
+            <p className="text-sm text-[#475569] mt-2 max-w-2xl leading-relaxed">
               {concept.description}
             </p>
           </div>
 
           {/* Progress Overview Card */}
-          <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 text-center sm:text-right shrink-0">
-            <div className="text-xs text-slate-400">Chapter Mastery</div>
-            <div className="text-3xl font-mono font-extrabold text-cyan-300 my-1">
+          <div className="bg-[#F8FAFF] border border-[#BFDBFE] rounded-2xl p-5 text-center sm:text-right shrink-0">
+            <div className="text-xs text-[#64748B] font-semibold uppercase tracking-wider">
+              Chapter Mastery
+            </div>
+            <div className="text-3xl font-mono font-black text-[#2563EB] my-1">
               {overallProgress}%
             </div>
-            <div className="w-36 h-2 bg-slate-800 rounded-full overflow-hidden mx-auto sm:ml-auto">
+            <div className="w-36 h-2 bg-[#E2E8F0] rounded-full overflow-hidden mx-auto sm:ml-auto">
               <div
-                className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-500"
+                className="h-full bg-[#2563EB] rounded-full transition-all duration-500"
                 style={{ width: `${overallProgress}%` }}
               />
             </div>
@@ -90,16 +93,16 @@ export function ConceptDetailView({
       {/* Vertical Learning Path */}
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-cyan-400" />
+          <h2 className="text-lg font-bold text-[#111827] flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-[#2563EB]" />
             <span>Structured Sub-Concepts Learning Path</span>
           </h2>
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-[#64748B]">
             {concept.subConcepts.length} progressive modules
           </span>
         </div>
 
-        <div className="relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-3 sm:before:left-4 before:top-4 before:bottom-4 before:w-0.5 before:bg-slate-800">
+        <div className="relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-3 sm:before:left-4 before:top-4 before:bottom-4 before:w-0.5 before:bg-[#E2E8F0]">
           {concept.subConcepts.map((sub, index) => {
             const unlocked = isSubConceptUnlocked(concept.id, sub.id);
             const subProgress = state.progressBySubConcept[sub.id];
@@ -113,12 +116,12 @@ export function ConceptDetailView({
                 <div
                   className={`absolute -left-6 sm:-left-8 top-6 -translate-x-1/2 w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-all ${
                     isCompleted
-                      ? 'bg-emerald-950 border-emerald-500 text-emerald-400 ring-4 ring-emerald-500/20'
+                      ? 'bg-[#DCFCE7] border-[#16A34A] text-[#16A34A] ring-4 ring-[#DCFCE7]'
                       : inProgress
-                      ? 'bg-blue-950 border-cyan-400 text-cyan-300 ring-4 ring-cyan-500/20'
+                      ? 'bg-[#EFF6FF] border-[#2563EB] text-[#2563EB] ring-4 ring-[#DBEAFE]'
                       : unlocked
-                      ? 'bg-slate-900 border-slate-600 text-slate-300'
-                      : 'bg-slate-950 border-slate-800 text-slate-600'
+                      ? 'bg-[#FFFFFF] border-[#2563EB] text-[#2563EB]'
+                      : 'bg-[#F1F5FF] border-[#CBD5E1] text-[#94A3B8]'
                   }`}
                 >
                   {isCompleted ? (
@@ -134,8 +137,8 @@ export function ConceptDetailView({
                 <div
                   className={`p-5 rounded-2xl border transition-all ${
                     unlocked
-                      ? 'bg-slate-900/80 border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 cursor-pointer shadow-lg'
-                      : 'bg-slate-950/40 border-slate-900 text-slate-500 opacity-60 cursor-not-allowed'
+                      ? 'bg-[#FFFFFF] border-[#E2E8F0] hover:border-[#BFDBFE] hover:shadow-[0_16px_40px_rgba(37,99,235,0.08)] cursor-pointer shadow-sm'
+                      : 'bg-[#F8FAFF] border-[#EDF2F7] text-[#94A3B8] opacity-75 cursor-not-allowed'
                   }`}
                   onClick={() => {
                     if (unlocked) onSelectSubConcept(sub.id);
@@ -144,24 +147,24 @@ export function ConceptDetailView({
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="space-y-1 max-w-xl">
                       <div className="flex items-center gap-2 text-xs">
-                        <span className="font-semibold text-cyan-400">
+                        <span className="font-semibold text-[#2563EB]">
                           Step {index + 1}
                         </span>
-                        <span className="text-slate-600">·</span>
-                        <span className="flex items-center gap-1 text-slate-400">
+                        <span className="text-[#CBD5E1]">·</span>
+                        <span className="flex items-center gap-1 text-[#64748B]">
                           <Clock className="w-3 h-3" />
                           {sub.estimatedMinutes} mins
                         </span>
-                        <span className="text-slate-600">·</span>
+                        <span className="text-[#CBD5E1]">·</span>
                         <span
                           className={`font-semibold ${
                             isCompleted
-                              ? 'text-emerald-400'
+                              ? 'text-[#16A34A]'
                               : inProgress
-                              ? 'text-cyan-400'
+                              ? 'text-[#2563EB]'
                               : unlocked
-                              ? 'text-slate-300'
-                              : 'text-slate-600'
+                              ? 'text-[#475569]'
+                              : 'text-[#94A3B8]'
                           }`}
                         >
                           {isCompleted
@@ -176,12 +179,12 @@ export function ConceptDetailView({
 
                       <h3
                         className={`text-base font-bold ${
-                          unlocked ? 'text-white' : 'text-slate-500'
+                          unlocked ? 'text-[#111827]' : 'text-[#64748B]'
                         }`}
                       >
                         {sub.title}
                       </h3>
-                      <p className="text-xs text-slate-400 leading-relaxed">
+                      <p className="text-xs text-[#475569] leading-relaxed">
                         {sub.shortDescription}
                       </p>
                     </div>
@@ -189,13 +192,13 @@ export function ConceptDetailView({
                     <div className="flex items-center gap-4 self-end sm:self-center shrink-0">
                       {unlocked && (
                         <div className="text-right">
-                          <span className="text-xs font-mono font-bold text-slate-300">
+                          <span className="text-xs font-mono font-bold text-[#111827]">
                             {completion}%
                           </span>
-                          <div className="w-20 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
+                          <div className="w-20 h-1.5 bg-[#F1F5FF] rounded-full overflow-hidden mt-1">
                             <div
                               className={`h-full rounded-full ${
-                                isCompleted ? 'bg-emerald-400' : 'bg-cyan-400'
+                                isCompleted ? 'bg-[#16A34A]' : 'bg-[#2563EB]'
                               }`}
                               style={{ width: `${completion}%` }}
                             />
@@ -209,17 +212,17 @@ export function ConceptDetailView({
                             e.stopPropagation();
                             onSelectSubConcept(sub.id);
                           }}
-                          className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                          className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                             isCompleted
-                              ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-                              : 'bg-blue-600 hover:bg-blue-500 text-white shadow-md'
+                              ? 'btn-secondary'
+                              : 'btn-primary'
                           }`}
                         >
                           <Play className="w-3.5 h-3.5 fill-current" />
                           <span>{isCompleted ? 'Review' : inProgress ? 'Continue' : 'Start'}</span>
                         </button>
                       ) : (
-                        <div className="flex items-center gap-1 text-xs text-slate-600 bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-800/60">
+                        <div className="flex items-center gap-1 text-xs text-[#64748B] bg-[#F1F5FF] px-3 py-1.5 rounded-lg border border-[#E2E8F0]">
                           <Lock className="w-3.5 h-3.5" />
                           <span>Locked</span>
                         </div>

@@ -83,64 +83,64 @@ CREATE POLICY "Students own stats" ON public.student_stats FOR ALL USING (auth.u
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative text-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative text-[#111827]">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-[#64748B] hover:text-[#111827] hover:bg-[#F1F5FF] transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
             <Database className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <h3 className="text-lg font-bold text-[#111827] flex items-center gap-2">
               <span>Supabase Integration &amp; Config</span>
               <span
-                className={`text-[10px] px-2 py-0.5 rounded-full border font-mono font-semibold ${
+                className={`text-[10px] px-2.5 py-0.5 rounded-full border font-mono font-semibold ${
                   configStatus.isConfigured
-                    ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/60'
-                    : 'bg-cyan-950/80 text-cyan-300 border-cyan-700/60'
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-blue-50 text-blue-700 border-blue-200'
                 }`}
               >
                 {configStatus.isConfigured ? 'Live Supabase Connected' : 'Simulated Backend Active'}
               </span>
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#475569]">
               Configure your Supabase project for persistent student auth and progress tracking
             </p>
           </div>
         </div>
 
         {/* Current Mode Description */}
-        <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs space-y-2 mb-6">
+        <div className="p-4 rounded-xl bg-[#F8FAFF] border border-[#E2E8F0] text-xs space-y-2 mb-6">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-white">Current Backend Engine:</span>
-            <span className="text-cyan-400 font-mono">
+            <span className="font-semibold text-[#111827]">Current Backend Engine:</span>
+            <span className="text-[#2563EB] font-mono font-semibold">
               {configStatus.isConfigured ? 'Remote Supabase Project' : 'In-Memory / Local Storage Simulator'}
             </span>
           </div>
-          <p className="text-slate-400 leading-relaxed">
+          <p className="text-[#475569] leading-relaxed">
             {configStatus.isConfigured
               ? 'Your application is connected to a live Supabase instance. Student registrations, passwords, and progress tables are synced via Supabase client.'
-              : 'BrightMind Learning includes an embedded Supabase-compatible client simulator so student accounts, sign-in, progress persistence, and 80% mastery unlocking work right away without setup.'}
+              : 'SciMathenova includes an embedded Supabase-compatible client simulator so student accounts, sign-in, progress persistence, and 80% mastery unlocking work right away without setup.'}
           </p>
         </div>
 
         {/* Custom Supabase Keys Form */}
         <form onSubmit={handleSave} className="space-y-4 mb-6">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-[#111827]">
             Live Supabase Credentials
           </h4>
-          <p className="text-xs text-slate-400">
-            You can define these in <code className="text-cyan-300 bg-slate-950 px-1 py-0.5 rounded">.env</code> or test directly below:
+          <p className="text-xs text-[#475569]">
+            You can define these in <code className="text-[#2563EB] bg-[#EFF6FF] px-1 py-0.5 rounded border border-[#BFDBFE]">.env</code> or test directly below:
           </p>
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
+            <label className="block text-xs font-medium text-[#475569] mb-1">
               Supabase Project URL (<code>VITE_SUPABASE_URL</code>)
             </label>
             <input
@@ -148,12 +148,12 @@ CREATE POLICY "Students own stats" ON public.student_stats FOR ALL USING (auth.u
               placeholder="https://xyzcompany.supabase.co"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-400 font-mono"
+              className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-3 py-2 text-xs text-[#111827] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#93C5FD] font-mono"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
+            <label className="block text-xs font-medium text-[#475569] mb-1">
               Supabase Anonymous Key (<code>VITE_SUPABASE_ANON_KEY</code>)
             </label>
             <input
@@ -161,16 +161,16 @@ CREATE POLICY "Students own stats" ON public.student_stats FOR ALL USING (auth.u
               placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
               value={anonKey}
               onChange={(e) => setAnonKey(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-400 font-mono"
+              className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-3 py-2 text-xs text-[#111827] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#93C5FD] font-mono"
             />
           </div>
 
           <div className="flex items-center gap-3 pt-1">
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold shadow-md transition-all flex items-center gap-1.5"
+              className="btn-primary px-4 py-2 text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm"
             >
-              {isSaved ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <RefreshCw className="w-3.5 h-3.5" />}
+              {isSaved ? <Check className="w-3.5 h-3.5 text-white" /> : <RefreshCw className="w-3.5 h-3.5" />}
               <span>{isSaved ? 'Saved & Reconnected' : 'Save & Connect'}</span>
             </button>
 
@@ -178,7 +178,7 @@ CREATE POLICY "Students own stats" ON public.student_stats FOR ALL USING (auth.u
               <button
                 type="button"
                 onClick={handleResetToSimulated}
-                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition-colors"
+                className="btn-secondary px-3 py-2 text-xs font-medium cursor-pointer"
               >
                 Switch Back to Simulated Mode
               </button>
@@ -187,21 +187,21 @@ CREATE POLICY "Students own stats" ON public.student_stats FOR ALL USING (auth.u
         </form>
 
         {/* SQL Schema Instructions */}
-        <div className="border-t border-slate-800 pt-5 space-y-3">
+        <div className="border-t border-[#E2E8F0] pt-5 space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#111827]">
               Supabase Database SQL Schema
             </h4>
             <button
               onClick={copySqlSnippet}
-              className="flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 font-semibold"
+              className="flex items-center gap-1.5 text-xs text-[#2563EB] hover:text-[#1D4ED8] font-semibold cursor-pointer"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'SQL Copied!' : 'Copy Schema Script'}</span>
             </button>
           </div>
-          <p className="text-xs text-slate-400">
-            A full migration file is saved at <code className="text-cyan-300 bg-slate-950 px-1 py-0.5 rounded">/supabase-schema.sql</code>. Paste it into your Supabase Dashboard &gt; SQL Editor to generate the <code className="text-slate-300">profiles</code>, <code className="text-slate-300">student_progress</code>, and <code className="text-slate-300">student_stats</code> tables with Row Level Security.
+          <p className="text-xs text-[#475569]">
+            A full migration file is saved at <code className="text-[#2563EB] bg-[#EFF6FF] px-1 py-0.5 rounded border border-[#BFDBFE]">/supabase-schema.sql</code>. Paste it into your Supabase Dashboard &gt; SQL Editor to generate the <code className="text-[#111827] font-semibold">profiles</code>, <code className="text-[#111827] font-semibold">student_progress</code>, and <code className="text-[#111827] font-semibold">student_stats</code> tables with Row Level Security.
           </p>
         </div>
       </div>

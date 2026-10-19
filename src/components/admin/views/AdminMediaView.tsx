@@ -108,16 +108,16 @@ export function AdminMediaView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EDF2F7]">
         <div>
-          <h2 className="text-xl font-bold text-white">Media &amp; Illustration Library</h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <h2 className="text-xl font-bold text-[#111827]">Media &amp; Illustration Library</h2>
+          <p className="text-xs text-[#475569] mt-0.5">
             Upload, preview, organize, and copy educational graphics and diagram assets.
           </p>
         </div>
 
         <div>
-          <label className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl shadow-md transition-colors flex items-center gap-2 cursor-pointer">
+          <label className="btn-primary px-4 py-2 text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-sm">
             <Upload className="w-4 h-4" />
             <span>{isUploading ? 'Uploading...' : 'Upload Image / Diagram'}</span>
             <input
@@ -131,20 +131,20 @@ export function AdminMediaView() {
       </div>
 
       {uploadError && (
-        <div className="p-3 bg-rose-950/80 border border-rose-800 text-rose-200 text-xs rounded-xl">
+        <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl">
           {uploadError}
         </div>
       )}
 
       {/* Search */}
       <div className="relative max-w-md">
-        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
         <input
           type="text"
           placeholder="Search media files by name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-9 pr-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+          className="w-full pl-9 pr-3 py-1.5 bg-[#FFFFFF] border border-[#E2E8F0] focus:border-[#2563EB] focus:ring-1 focus:ring-[#93C5FD] rounded-lg text-xs text-[#111827] placeholder-[#94A3B8] focus:outline-none"
         />
       </div>
 
@@ -153,9 +153,9 @@ export function AdminMediaView() {
         {filtered.map((item) => (
           <div
             key={item.id}
-            className="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group"
+            className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between group"
           >
-            <div className="h-40 bg-slate-950 relative overflow-hidden flex items-center justify-center p-2">
+            <div className="h-40 bg-[#F1F5FF] relative overflow-hidden flex items-center justify-center p-2 border-b border-[#EDF2F7]">
               {item.mimeType.startsWith('image/') ? (
                 <img
                   src={item.url}
@@ -164,28 +164,28 @@ export function AdminMediaView() {
                   referrerPolicy="no-referrer"
                 />
               ) : (
-                <ImageIcon className="w-12 h-12 text-slate-600" />
+                <ImageIcon className="w-12 h-12 text-[#94A3B8]" />
               )}
             </div>
 
             <div className="p-3.5 space-y-2">
-              <div className="font-bold text-white text-xs truncate" title={item.originalName}>
+              <div className="font-bold text-[#111827] text-xs truncate" title={item.originalName}>
                 {item.originalName}
               </div>
-              <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+              <div className="flex items-center justify-between text-[10px] text-[#64748B] font-mono">
                 <span>{Math.round(item.sizeBytes / 1024)} KB</span>
                 <span>{item.mimeType.split('/')[1]?.toUpperCase()}</span>
               </div>
 
-              <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
+              <div className="pt-2 border-t border-[#EDF2F7] flex items-center justify-between">
                 <button
                   onClick={() => handleCopy(item.id, item.url)}
-                  className="text-xs text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1"
+                  className="text-xs text-[#2563EB] hover:text-[#1D4ED8] font-semibold flex items-center gap-1 cursor-pointer"
                 >
                   {copiedId === item.id ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-emerald-400">Copied!</span>
+                      <Check className="w-3.5 h-3.5 text-[#16A34A]" />
+                      <span className="text-[#16A34A]">Copied!</span>
                     </>
                   ) : (
                     <>
@@ -197,7 +197,7 @@ export function AdminMediaView() {
 
                 <button
                   onClick={() => handleDelete(item.id, item.originalName)}
-                  className="text-slate-500 hover:text-rose-400 p-1"
+                  className="text-[#94A3B8] hover:text-red-500 p-1 cursor-pointer"
                   title="Delete Media"
                 >
                   <Trash2 className="w-3.5 h-3.5" />

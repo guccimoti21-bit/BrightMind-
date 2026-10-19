@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
 import {
-  Atom,
   LayoutDashboard,
   Layers,
   BookOpen,
   FileText,
   HelpCircle,
-  Scale,
+  ShieldCheck,
   Palette,
   Key,
   Clock,
-  Users,
-  Image as ImageIcon,
   LogOut,
+  Users,
+  ImageIcon,
   ChevronRight,
+  ExternalLink,
   Menu,
   X,
-  ExternalLink,
-  ShieldCheck,
-  Sparkles
+  Atom,
+  Scale
 } from 'lucide-react';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 import { AdminOverviewView } from './views/AdminOverviewView';
@@ -28,10 +27,10 @@ import { AdminLessonEditorView } from './views/AdminLessonEditorView';
 import { AdminQuestionsView } from './views/AdminQuestionsView';
 import { AdminRulesView } from './views/AdminRulesView';
 import { AdminMediaView } from './views/AdminMediaView';
+import { AdminStudentsView } from './views/AdminStudentsView';
 import { AdminAppearanceView } from './views/AdminAppearanceView';
 import { AdminSecurityView } from './views/AdminSecurityView';
 import { AdminAuditLogsView } from './views/AdminAuditLogsView';
-import { AdminStudentsView } from './views/AdminStudentsView';
 import { BalanceScaleActivity } from '../activities/BalanceScaleActivity';
 import { RayOpticsActivity } from '../activities/RayOpticsActivity';
 
@@ -77,7 +76,7 @@ export function AdminLayout({ onReturnToStudent }: AdminLayoutProps) {
     { id: 'media', label: 'Media Library', icon: ImageIcon, category: 'Content' },
     { id: 'rules', label: '80% Unlocking Rules', icon: ShieldCheck, category: 'Configuration' },
     { id: 'students', label: 'Student Management', icon: Users, category: 'Configuration' },
-    { id: 'appearance', label: 'Website Appearance', icon: Palette, category: 'Configuration' },
+    { id: 'appearance', label: 'Website Appearance & SEO', icon: Palette, category: 'Configuration' },
     { id: 'security', label: 'Admin Security', icon: Key, category: 'System' },
     { id: 'audit-logs', label: 'Security & Audit Logs', icon: Clock, category: 'System' },
     { id: 'logout', label: 'Sign Out', icon: LogOut, category: 'System' }
@@ -101,29 +100,29 @@ export function AdminLayout({ onReturnToStudent }: AdminLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#070d1e] text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F8FAFF] text-[#111827] flex flex-col font-sans">
       {/* Admin Top Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-slate-950/95 border-b border-slate-800 backdrop-blur-md">
+      <header className="sticky top-0 z-40 navbar-glass">
         <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800"
+              className="lg:hidden p-2 text-[#475569] hover:text-[#111827] rounded-lg hover:bg-[#F1F5FF]"
             >
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
 
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-0.5 flex items-center justify-center">
-                <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center text-cyan-400">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#2563EB] to-[#60A5FA] p-0.5 flex items-center justify-center shadow-sm">
+                <div className="w-full h-full bg-[#FFFFFF] rounded-[10px] flex items-center justify-center text-[#2563EB]">
                   <Atom className="w-4 h-4 animate-spin-slow" />
                 </div>
               </div>
               <div>
-                <span className="font-extrabold text-white text-base tracking-tight">
-                  BrightMind <span className="text-cyan-400 font-medium">Learning</span>
+                <span className="font-extrabold text-[#111827] text-base tracking-tight">
+                  SciMath<span className="text-[#2563EB]">enova</span>
                 </span>
-                <span className="ml-2 text-[10px] font-mono font-bold bg-blue-950 text-cyan-300 px-1.5 py-0.5 rounded border border-blue-800/60 uppercase">
+                <span className="ml-2 text-[10px] font-mono font-bold bg-[#EFF6FF] text-[#2563EB] px-1.5 py-0.5 rounded border border-[#BFDBFE] uppercase">
                   CMS Portal
                 </span>
               </div>
@@ -133,22 +132,22 @@ export function AdminLayout({ onReturnToStudent }: AdminLayoutProps) {
           <div className="flex items-center gap-3">
             <button
               onClick={onReturnToStudent}
-              className="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-xs text-slate-300 hover:text-white border border-slate-800 transition-colors flex items-center gap-1.5"
+              className="btn-secondary px-3.5 py-1.5 text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm"
             >
               <span>Student View</span>
-              <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
+              <ExternalLink className="w-3.5 h-3.5 text-[#2563EB]" />
             </button>
 
-            <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-slate-800 text-xs">
-              <span className="text-slate-400">Signed in as:</span>
-              <span className="text-cyan-300 font-mono font-semibold max-w-[150px] truncate">
+            <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-[#E2E8F0] text-xs">
+              <span className="text-[#64748B]">Admin:</span>
+              <span className="text-[#2563EB] font-mono font-semibold max-w-[150px] truncate">
                 {admin?.username}
               </span>
             </div>
 
             <button
               onClick={logout}
-              className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800/80 rounded-lg transition-colors"
+              className="p-2 text-[#64748B] hover:text-[#DC2626] hover:bg-[#FEE2E2] rounded-lg transition-colors cursor-pointer"
               title="Sign Out"
             >
               <LogOut className="w-4 h-4" />
@@ -161,9 +160,9 @@ export function AdminLayout({ onReturnToStudent }: AdminLayoutProps) {
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
         {/* Sidebar */}
         <aside
-          className={`fixed lg:sticky top-16 z-30 w-64 bg-slate-950/90 lg:bg-transparent border-r border-slate-800/80 p-4 shrink-0 transition-transform lg:translate-x-0 ${
+          className={`fixed lg:sticky top-16 z-30 w-64 bg-[#FFFFFF] lg:bg-transparent border-r border-[#E2E8F0] p-4 shrink-0 transition-transform lg:translate-x-0 ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } h-[calc(100vh-4rem)] overflow-y-auto space-y-6`}
+          } h-[calc(100vh-4rem)] overflow-y-auto space-y-6 shadow-sm lg:shadow-none`}
         >
           {['Curriculum', 'Content', 'Configuration', 'System'].map((cat) => {
             const items = menuItems.filter((m) =>
@@ -172,7 +171,7 @@ export function AdminLayout({ onReturnToStudent }: AdminLayoutProps) {
 
             return (
               <div key={cat} className="space-y-1">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pb-1">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-[#64748B] px-3 pb-1">
                   {cat}
                 </div>
                 {items.map((item) => {
@@ -184,12 +183,12 @@ export function AdminLayout({ onReturnToStudent }: AdminLayoutProps) {
                     <button
                       key={item.id}
                       onClick={() => handleMenuClick(item.id)}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                         isActive
-                          ? 'bg-blue-600 text-white shadow-md'
+                          ? 'btn-primary'
                           : isLogout
-                          ? 'text-rose-400 hover:bg-rose-950/40 hover:text-rose-300'
-                          : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                          ? 'text-[#DC2626] hover:bg-[#FEE2E2]'
+                          : 'text-[#475569] hover:text-[#111827] hover:bg-[#F1F5FF]'
                       }`}
                     >
                       <Icon className="w-4 h-4 shrink-0" />
@@ -234,23 +233,23 @@ export function AdminLayout({ onReturnToStudent }: AdminLayoutProps) {
 
           {currentSection === 'activities' && (
             <div className="space-y-6">
-              <div className="pb-4 border-b border-slate-800">
-                <h2 className="text-xl font-bold text-white">Interactive Simulations &amp; Activities</h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+              <div className="pb-4 border-b border-[#EDF2F7]">
+                <h2 className="text-xl font-bold text-[#111827]">Interactive Simulations &amp; Activities</h2>
+                <p className="text-xs text-[#64748B] mt-0.5">
                   Test and verify live educational manipulatives rendered in lessons.
                 </p>
               </div>
 
               <div className="space-y-8">
                 <div>
-                  <h3 className="text-sm font-bold text-cyan-300 uppercase tracking-wider mb-3">
+                  <h3 className="text-sm font-bold text-[#2563EB] uppercase tracking-wider mb-3">
                     Active Lab 1: Physical Dual-Pan Balance Scale (Class 8 Algebra)
                   </h3>
                   <BalanceScaleActivity />
                 </div>
 
-                <div className="pt-6 border-t border-slate-800">
-                  <h3 className="text-sm font-bold text-cyan-300 uppercase tracking-wider mb-3">
+                <div className="pt-6 border-t border-[#EDF2F7]">
+                  <h3 className="text-sm font-bold text-[#2563EB] uppercase tracking-wider mb-3">
                     Active Lab 2: Ray Optics Reflection Laboratory (Class 8 Physics)
                   </h3>
                   <RayOpticsActivity />

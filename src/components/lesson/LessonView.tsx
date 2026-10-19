@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -11,10 +10,7 @@ import {
   FileText,
   Trophy,
   ChevronRight,
-  AlertTriangle,
-  Lightbulb,
-  Scale,
-  RefreshCw
+  Lightbulb
 } from 'lucide-react';
 import { SubConcept, Concept } from '../../types/curriculum';
 import { useProgress } from '../../context/ProgressContext';
@@ -105,64 +101,64 @@ export function LessonView({
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-16">
       {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-slate-400 flex-wrap">
+      <div className="flex items-center gap-2 text-xs text-[#64748B] flex-wrap">
         <button
           onClick={onBackToConcepts}
-          className="hover:text-white transition-colors"
+          className="hover:text-[#2563EB] transition-colors cursor-pointer"
         >
           Home
         </button>
-        <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+        <ChevronRight className="w-3.5 h-3.5 text-[#CBD5E1]" />
         <span>Class {concept.classLevel}</span>
-        <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+        <ChevronRight className="w-3.5 h-3.5 text-[#CBD5E1]" />
         <span className="capitalize">{concept.subjectId}</span>
-        <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+        <ChevronRight className="w-3.5 h-3.5 text-[#CBD5E1]" />
         <button
           onClick={onBackToConcepts}
-          className="hover:text-white transition-colors truncate max-w-[180px]"
+          className="hover:text-[#2563EB] transition-colors truncate max-w-[180px] cursor-pointer"
         >
           {concept.title}
         </button>
-        <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
-        <span className="text-cyan-300 font-medium truncate max-w-[200px]">
+        <ChevronRight className="w-3.5 h-3.5 text-[#CBD5E1]" />
+        <span className="text-[#2563EB] font-medium truncate max-w-[200px]">
           {subConcept.title}
         </span>
       </div>
 
       {/* Top Header Card: Title, Estimated Time & Weighted Progress Ring */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 shadow-[0_4px_20px_rgba(15,23,42,0.04)]">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
-            <div className="flex items-center gap-3 text-xs text-slate-400 mb-1">
-              <span className="text-cyan-400 font-semibold uppercase tracking-wider">
+            <div className="flex items-center gap-3 text-xs text-[#64748B] mb-1">
+              <span className="text-[#2563EB] font-semibold uppercase tracking-wider">
                 Part {subConcept.order} of {concept.subConcepts.length}
               </span>
               <span>·</span>
               <span>{subConcept.estimatedMinutes} mins estimated</span>
               <span>·</span>
-              <span className="text-slate-300 font-medium">{concept.category}</span>
+              <span className="text-[#475569] font-medium">{concept.category}</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
               {subConcept.title}
             </h1>
-            <p className="text-sm text-slate-300 mt-1 max-w-3xl">
+            <p className="text-sm text-[#475569] mt-1 max-w-3xl">
               {subConcept.shortDescription}
             </p>
           </div>
 
           {/* Weighted Completion Gauge */}
-          <div className="bg-slate-950/70 border border-slate-800 rounded-xl p-4 flex items-center gap-5 shrink-0">
+          <div className="bg-[#F8FAFF] border border-[#BFDBFE] rounded-2xl p-4 flex items-center gap-5 shrink-0 shadow-sm">
             <div className="relative w-16 h-16 flex items-center justify-center">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                 <path
-                  className="text-slate-800"
+                  className="text-[#E2E8F0]"
                   strokeWidth="3.5"
                   stroke="currentColor"
                   fill="none"
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
                 <path
-                  className={overallPercentage >= 80 ? 'text-emerald-400' : 'text-cyan-400'}
+                  className={overallPercentage >= 80 ? 'text-[#16A34A]' : 'text-[#2563EB]'}
                   strokeDasharray={`${overallPercentage}, 100`}
                   strokeWidth="3.5"
                   strokeLinecap="round"
@@ -172,84 +168,84 @@ export function LessonView({
                 />
               </svg>
               <div className="absolute text-center">
-                <span className="text-sm font-bold font-mono text-white">
+                <span className="text-sm font-bold font-mono text-[#111827]">
                   {overallPercentage}%
                 </span>
               </div>
             </div>
 
             <div className="space-y-1 text-[11px]">
-              <div className="text-slate-400 font-medium">Weighted Milestone:</div>
+              <div className="text-[#64748B] font-medium">Weighted Milestone:</div>
               <div className="flex items-center gap-1.5">
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    progress?.lessonCompleted ? 'bg-emerald-400' : 'bg-slate-700'
+                    progress?.lessonCompleted ? 'bg-[#16A34A]' : 'bg-[#CBD5E1]'
                   }`}
                 />
-                <span className="text-slate-300">Lesson (30%)</span>
+                <span className="text-[#475569]">Lesson (30%)</span>
                 <span
                   className={`w-2 h-2 rounded-full ml-2 ${
-                    progress?.activityCompleted ? 'bg-emerald-400' : 'bg-slate-700'
+                    progress?.activityCompleted ? 'bg-[#16A34A]' : 'bg-[#CBD5E1]'
                   }`}
                 />
-                <span className="text-slate-300">Activity (20%)</span>
+                <span className="text-[#475569]">Activity (20%)</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    progress?.practiceCompleted ? 'bg-emerald-400' : 'bg-slate-700'
+                    progress?.practiceCompleted ? 'bg-[#16A34A]' : 'bg-[#CBD5E1]'
                   }`}
                 />
-                <span className="text-slate-300">Practice (20%)</span>
+                <span className="text-[#475569]">Practice (20%)</span>
                 <span
                   className={`w-2 h-2 rounded-full ml-2 ${
-                    progress?.assessmentPassed ? 'bg-emerald-400' : 'bg-slate-700'
+                    progress?.assessmentPassed ? 'bg-[#16A34A]' : 'bg-[#CBD5E1]'
                   }`}
                 />
-                <span className="text-slate-300">Quiz ≥80% (30%)</span>
+                <span className="text-[#475569]">Quiz ≥80% (30%)</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Tab Controls */}
-        <div className="flex items-center gap-2 mt-6 pt-6 border-t border-slate-800 overflow-x-auto pb-1">
+        <div className="flex items-center gap-1.5 mt-6 pt-6 border-t border-[#EDF2F7] overflow-x-auto pb-1">
           <button
             onClick={() => setActiveTab('explanation')}
-            className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+            className={`px-3.5 py-2 text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === 'explanation'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                ? 'btn-primary'
+                : 'bg-[#F8FAFF] text-[#475569] hover:bg-[#F1F5FF] border border-[#E2E8F0]'
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>1. Concept Explanation</span>
+            <span>1. Explanation</span>
             {progress?.lessonCompleted && (
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 ml-1" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#16A34A] ml-1" />
             )}
           </button>
 
           <button
             onClick={() => setActiveTab('activity')}
-            className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+            className={`px-3.5 py-2 text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === 'activity'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                ? 'btn-primary'
+                : 'bg-[#F8FAFF] text-[#475569] hover:bg-[#F1F5FF] border border-[#E2E8F0]'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-            <span>2. Interactive Activity</span>
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>2. Virtual Lab</span>
             {progress?.activityCompleted && (
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 ml-1" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#16A34A] ml-1" />
             )}
           </button>
 
           <button
             onClick={() => setActiveTab('examples')}
-            className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+            className={`px-3.5 py-2 text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === 'examples'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                ? 'btn-primary'
+                : 'bg-[#F8FAFF] text-[#475569] hover:bg-[#F1F5FF] border border-[#E2E8F0]'
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
@@ -258,25 +254,25 @@ export function LessonView({
 
           <button
             onClick={() => setActiveTab('practice')}
-            className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+            className={`px-3.5 py-2 text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === 'practice'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                ? 'btn-primary'
+                : 'bg-[#F8FAFF] text-[#475569] hover:bg-[#F1F5FF] border border-[#E2E8F0]'
             }`}
           >
             <HelpCircle className="w-3.5 h-3.5" />
             <span>4. Guided Practice</span>
             {progress?.practiceCompleted && (
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 ml-1" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#16A34A] ml-1" />
             )}
           </button>
 
           <button
             onClick={() => setActiveTab('revision')}
-            className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+            className={`px-3.5 py-2 text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === 'revision'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                ? 'btn-primary'
+                : 'bg-[#F8FAFF] text-[#475569] hover:bg-[#F1F5FF] border border-[#E2E8F0]'
             }`}
           >
             <Lightbulb className="w-3.5 h-3.5" />
@@ -285,16 +281,16 @@ export function LessonView({
 
           <button
             onClick={() => setActiveTab('assessment')}
-            className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+            className={`px-3.5 py-2 text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === 'assessment'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                ? 'btn-primary'
+                : 'bg-[#F8FAFF] text-[#475569] hover:bg-[#F1F5FF] border border-[#E2E8F0]'
             }`}
           >
-            <Trophy className="w-3.5 h-3.5 text-amber-400" />
-            <span>6. Mastery Assessment</span>
+            <Trophy className="w-3.5 h-3.5 text-[#D97706]" />
+            <span>6. Quiz (≥80%)</span>
             {progress?.assessmentPassed && (
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 ml-1" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#16A34A] ml-1" />
             )}
           </button>
         </div>
@@ -306,8 +302,8 @@ export function LessonView({
         {activeTab === 'explanation' && (
           <div className="space-y-6">
             {/* Learning Outcomes */}
-            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-3 flex items-center gap-2">
+            <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 shadow-sm">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#2563EB] mb-3 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Learning Objectives</span>
               </h3>
@@ -315,9 +311,9 @@ export function LessonView({
                 {subConcept.learningObjectives.map((obj, i) => (
                   <div
                     key={i}
-                    className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 leading-relaxed flex items-start gap-2.5"
+                    className="p-3.5 rounded-xl bg-[#F8FAFF] border border-[#E2E8F0] text-xs text-[#475569] leading-relaxed flex items-start gap-2.5"
                   >
-                    <span className="w-5 h-5 rounded-full bg-blue-900/80 text-cyan-300 font-bold flex items-center justify-center shrink-0">
+                    <span className="w-5 h-5 rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold flex items-center justify-center shrink-0 border border-[#BFDBFE]">
                       {i + 1}
                     </span>
                     <span>{obj}</span>
@@ -327,29 +323,29 @@ export function LessonView({
             </div>
 
             {/* Explanation Deep Dive */}
-            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-6">
+            <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 space-y-6 shadow-sm">
               <div>
-                <h3 className="text-lg font-bold text-white mb-2">Concept Introduction</h3>
-                <p className="text-slate-300 text-sm leading-relaxed">
+                <h3 className="text-lg font-bold text-[#111827] mb-2">Concept Introduction</h3>
+                <p className="text-[#475569] text-sm leading-relaxed">
                   {subConcept.explanation.introduction}
                 </p>
               </div>
 
               {/* Key Definitions */}
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#64748B] mb-3">
                   Essential Definitions
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {subConcept.explanation.keyDefinitions.map((def, i) => (
                     <div
                       key={i}
-                      className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2"
+                      className="p-4 rounded-xl bg-[#F8FAFF] border border-[#BFDBFE] space-y-2"
                     >
-                      <div className="text-sm font-bold text-cyan-300">{def.term}</div>
-                      <p className="text-xs text-slate-300 leading-relaxed">{def.definition}</p>
+                      <div className="text-sm font-bold text-[#2563EB]">{def.term}</div>
+                      <p className="text-xs text-[#475569] leading-relaxed">{def.definition}</p>
                       {def.formula && (
-                        <div className="font-mono text-xs font-bold text-emerald-400 bg-slate-900 p-2 rounded border border-slate-800">
+                        <div className="font-mono text-xs font-bold text-[#111827] bg-[#FFFFFF] p-2 rounded border border-[#E2E8F0]">
                           {def.formula}
                         </div>
                       )}
@@ -360,24 +356,24 @@ export function LessonView({
 
               {/* Step Breakdowns */}
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#64748B] mb-3">
                   Step-by-Step Breakdown
                 </h4>
                 <div className="space-y-3">
                   {subConcept.explanation.breakdownSteps.map((step, i) => (
                     <div
                       key={i}
-                      className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 space-y-2"
+                      className="p-4 rounded-xl bg-[#F8FAFF] border border-[#E2E8F0] text-xs text-[#475569] space-y-2"
                     >
-                      <div className="font-bold text-white text-sm">{step.title}</div>
+                      <div className="font-bold text-[#111827] text-sm">{step.title}</div>
                       <p className="leading-relaxed">{step.content}</p>
                       {step.callout && (
-                        <div className="p-2.5 rounded bg-blue-950/60 border border-blue-800/60 text-cyan-200">
+                        <div className="p-2.5 rounded bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] font-medium">
                           {step.callout}
                         </div>
                       )}
                       {step.formula && (
-                        <div className="font-mono text-cyan-300 font-bold bg-slate-900 px-3 py-1.5 rounded inline-block">
+                        <div className="font-mono text-[#2563EB] font-bold bg-[#FFFFFF] px-3 py-1.5 rounded inline-block border border-[#E2E8F0]">
                           {step.formula}
                         </div>
                       )}
@@ -388,28 +384,28 @@ export function LessonView({
 
               {/* Rules & Common Mistakes */}
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#64748B] mb-3">
                   Rules vs. Common Mistakes
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {subConcept.explanation.rulesAndMistakes.map((rm, i) => (
                     <div
                       key={i}
-                      className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3"
+                      className="p-4 rounded-xl bg-[#FFFFFF] border border-[#E2E8F0] space-y-3 shadow-2xs"
                     >
                       <div>
-                        <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">
+                        <span className="text-[10px] font-bold text-[#16A34A] uppercase tracking-wider block">
                           Golden Rule
                         </span>
-                        <p className="text-xs text-slate-200 font-medium mt-0.5">{rm.rule}</p>
+                        <p className="text-xs text-[#111827] font-medium mt-0.5">{rm.rule}</p>
                       </div>
-                      <div className="pt-2 border-t border-slate-800">
-                        <span className="text-[10px] font-bold text-rose-400 uppercase tracking-wider block">
+                      <div className="pt-2 border-t border-[#EDF2F7]">
+                        <span className="text-[10px] font-bold text-[#DC2626] uppercase tracking-wider block">
                           Common Mistake
                         </span>
-                        <p className="text-xs text-rose-200/80 mt-0.5">{rm.commonMistake}</p>
+                        <p className="text-xs text-[#DC2626] mt-0.5">{rm.commonMistake}</p>
                       </div>
-                      <div className="text-[11px] text-slate-400 italic">
+                      <div className="text-[11px] text-[#64748B] italic">
                         Why it matters: {rm.whyItMatters}
                       </div>
                     </div>
@@ -418,10 +414,10 @@ export function LessonView({
               </div>
 
               {/* Mark Lesson as Understood Action */}
-              <div className="pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-xs text-slate-400">
+              <div className="pt-6 border-t border-[#EDF2F7] flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-xs text-[#64748B]">
                   {progress?.lessonCompleted ? (
-                    <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
+                    <span className="text-[#16A34A] font-semibold flex items-center gap-1.5">
                       <CheckCircle2 className="w-4 h-4" /> Lesson understood (+30% awarded)
                     </span>
                   ) : (
@@ -433,7 +429,7 @@ export function LessonView({
                   {!progress?.lessonCompleted && (
                     <button
                       onClick={() => markLessonComplete(subConcept.id)}
-                      className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow-md transition-colors"
+                      className="btn-secondary px-5 py-2.5 text-xs font-semibold cursor-pointer"
                     >
                       Mark as Understood (+30%)
                     </button>
@@ -443,9 +439,9 @@ export function LessonView({
                       markLessonComplete(subConcept.id);
                       setActiveTab('activity');
                     }}
-                    className="px-5 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold rounded-lg shadow-md transition-colors flex items-center gap-2"
+                    className="btn-primary px-5 py-2.5 text-xs font-semibold flex items-center gap-2 cursor-pointer"
                   >
-                    <span>Continue to Activity</span>
+                    <span>Continue to Activity Lab</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -462,7 +458,7 @@ export function LessonView({
             <div className="flex justify-end gap-3 pt-4">
               <button
                 onClick={() => setActiveTab('examples')}
-                className="px-6 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold rounded-lg shadow-md transition-colors flex items-center gap-2"
+                className="btn-primary px-6 py-2.5 text-xs font-semibold flex items-center gap-2 cursor-pointer"
               >
                 <span>Continue to Worked Examples</span>
                 <ArrowRight className="w-4 h-4" />
@@ -477,46 +473,46 @@ export function LessonView({
             {subConcept.workedExamples.map((ex, exIdx) => (
               <div
                 key={ex.id}
-                className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4"
+                className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 space-y-4 shadow-sm"
               >
-                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                  <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">
+                <div className="flex items-center justify-between pb-3 border-b border-[#EDF2F7]">
+                  <span className="text-xs font-bold text-[#2563EB] uppercase tracking-wider">
                     Worked Example {exIdx + 1}
                   </span>
                   {ex.realWorldApplication && (
-                    <span className="text-xs text-slate-400 italic">
+                    <span className="text-xs text-[#64748B] italic">
                       Real-world application
                     </span>
                   )}
                 </div>
 
-                <h4 className="text-base font-bold text-white">{ex.problem}</h4>
+                <h4 className="text-base font-bold text-[#111827]">{ex.problem}</h4>
 
                 <div className="space-y-3 mt-4">
                   {ex.steps.map((step) => (
                     <div
                       key={step.stepNumber}
-                      className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-1.5"
+                      className="p-4 rounded-xl bg-[#F8FAFF] border border-[#E2E8F0] space-y-1.5"
                     >
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-                        <span className="w-5 h-5 rounded-full bg-blue-950 text-cyan-400 border border-blue-700/60 flex items-center justify-center text-[10px]">
+                      <div className="flex items-center gap-2 text-xs font-bold text-[#111827]">
+                        <span className="w-5 h-5 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] flex items-center justify-center text-[10px]">
                           {step.stepNumber}
                         </span>
                         <span>{step.title}</span>
                       </div>
-                      <div className="font-mono text-cyan-300 font-bold text-sm pl-7 py-1">
+                      <div className="font-mono text-[#2563EB] font-bold text-sm pl-7 py-1">
                         {step.math}
                       </div>
-                      <p className="text-xs text-slate-400 pl-7">{step.explanation}</p>
+                      <p className="text-xs text-[#475569] pl-7">{step.explanation}</p>
                     </div>
                   ))}
                 </div>
 
                 {ex.realWorldApplication && (
-                  <div className="p-3.5 rounded-xl bg-blue-950/40 border border-blue-900/60 text-xs text-slate-300 flex items-start gap-2.5">
-                    <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <div className="p-3.5 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] text-xs text-[#475569] flex items-start gap-2.5">
+                    <Lightbulb className="w-4 h-4 text-[#D97706] shrink-0 mt-0.5" />
                     <span>
-                      <strong className="text-white">Real-Life Context: </strong>
+                      <strong className="text-[#111827]">Real-Life Context: </strong>
                       {ex.realWorldApplication}
                     </span>
                   </div>
@@ -527,7 +523,7 @@ export function LessonView({
             <div className="flex justify-end gap-3 pt-4">
               <button
                 onClick={() => setActiveTab('practice')}
-                className="px-6 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold rounded-lg shadow-md transition-colors flex items-center gap-2"
+                className="btn-primary px-6 py-2.5 text-xs font-semibold flex items-center gap-2 cursor-pointer"
               >
                 <span>Continue to Guided Practice</span>
                 <ArrowRight className="w-4 h-4" />
@@ -539,11 +535,11 @@ export function LessonView({
         {/* TAB 4: GUIDED PRACTICE */}
         {activeTab === 'practice' && (
           <div className="space-y-6">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
-              <h3 className="text-lg font-bold text-white mb-1">
+            <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 shadow-sm">
+              <h3 className="text-lg font-bold text-[#111827] mb-1">
                 Guided Practice with Hints
               </h3>
-              <p className="text-xs text-slate-400 mb-6">
+              <p className="text-xs text-[#64748B] mb-6">
                 Attempt these warmup questions before taking the final assessment. Answer correctly to earn +20% completion!
               </p>
 
@@ -557,10 +553,10 @@ export function LessonView({
                   return (
                     <div
                       key={gp.id}
-                      className="p-5 rounded-xl bg-slate-950/70 border border-slate-800 space-y-4"
+                      className="p-5 rounded-xl bg-[#F8FAFF] border border-[#E2E8F0] space-y-4"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">
+                        <span className="text-xs font-bold text-[#2563EB] uppercase tracking-wider">
                           Practice Problem {i + 1}
                         </span>
                         <button
@@ -570,17 +566,17 @@ export function LessonView({
                               [gp.id]: !prev[gp.id]
                             }))
                           }
-                          className="text-xs text-amber-400 hover:text-amber-300 font-medium flex items-center gap-1"
+                          className="text-xs text-[#D97706] hover:text-[#B45309] font-medium flex items-center gap-1 cursor-pointer"
                         >
                           <Lightbulb className="w-3.5 h-3.5" />
                           <span>{showHint ? 'Hide Hint' : 'Need a Hint?'}</span>
                         </button>
                       </div>
 
-                      <h4 className="text-sm font-semibold text-white">{gp.question}</h4>
+                      <h4 className="text-sm font-semibold text-[#111827]">{gp.question}</h4>
 
                       {showHint && (
-                        <div className="p-3 rounded-lg bg-amber-950/50 border border-amber-800/60 text-xs text-amber-200">
+                        <div className="p-3 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] text-xs text-[#92400E]">
                           💡 Hint: {gp.hint}
                         </div>
                       )}
@@ -592,15 +588,15 @@ export function LessonView({
                             onClick={() =>
                               handlePracticeSelect(gp.id, optIdx, gp.correctIndex)
                             }
-                            className={`p-3 text-left rounded-lg text-xs font-medium border transition-all ${
+                            className={`p-3 text-left rounded-lg text-xs font-medium border transition-all cursor-pointer ${
                               selected === optIdx
                                 ? optIdx === gp.correctIndex
-                                  ? 'bg-emerald-950/80 border-emerald-500 text-emerald-200'
-                                  : 'bg-rose-950/80 border-rose-500 text-rose-200'
-                                : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
+                                  ? 'bg-[#DCFCE7] border-[#16A34A] text-[#16A34A] font-bold'
+                                  : 'bg-[#FEE2E2] border-[#DC2626] text-[#DC2626] font-bold'
+                                : 'bg-[#FFFFFF] border-[#E2E8F0] text-[#475569] hover:bg-[#F1F5FF]'
                             }`}
                           >
-                            <span className="font-mono text-slate-400 mr-2 font-bold">
+                            <span className="font-mono text-[#64748B] mr-2 font-bold">
                               {String.fromCharCode(65 + optIdx)}.
                             </span>
                             {opt}
@@ -612,8 +608,8 @@ export function LessonView({
                         <div
                           className={`p-3 rounded-lg text-xs leading-relaxed ${
                             isCorrect
-                              ? 'bg-emerald-950/50 text-emerald-300 border border-emerald-800/60'
-                              : 'bg-rose-950/50 text-rose-300 border border-rose-800/60'
+                              ? 'bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]'
+                              : 'bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA]'
                           }`}
                         >
                           <strong>{isCorrect ? 'Correct! ' : 'Incorrect: '}</strong>
@@ -625,10 +621,10 @@ export function LessonView({
                 })}
               </div>
 
-              <div className="flex justify-end gap-3 pt-6 border-t border-slate-800 mt-6">
+              <div className="flex justify-end gap-3 pt-6 border-t border-[#EDF2F7] mt-6">
                 <button
                   onClick={() => setActiveTab('revision')}
-                  className="px-6 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold rounded-lg shadow-md transition-colors flex items-center gap-2"
+                  className="btn-primary px-6 py-2.5 text-xs font-semibold flex items-center gap-2 cursor-pointer"
                 >
                   <span>Review Summary Sheet</span>
                   <ArrowRight className="w-4 h-4" />
@@ -640,8 +636,8 @@ export function LessonView({
 
         {/* TAB 5: QUICK REVISION */}
         {activeTab === 'revision' && (
-          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+          <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 space-y-6 shadow-sm">
+            <div className="flex items-center gap-2 text-[#D97706] text-xs font-bold uppercase tracking-wider">
               <Lightbulb className="w-4 h-4" />
               <span>{subConcept.revisionSummary.title}</span>
             </div>
@@ -650,37 +646,37 @@ export function LessonView({
               {subConcept.revisionSummary.points.map((point, i) => (
                 <div
                   key={i}
-                  className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-xs text-slate-300 flex items-start gap-2.5"
+                  className="p-3.5 rounded-xl bg-[#F8FAFF] border border-[#E2E8F0] text-xs text-[#475569] flex items-start gap-2.5"
                 >
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 mt-1.5 shrink-0" />
+                  <span className="w-2 h-2 rounded-full bg-[#2563EB] mt-1.5 shrink-0" />
                   <span>{point}</span>
                 </div>
               ))}
             </div>
 
             {subConcept.revisionSummary.formulas && subConcept.revisionSummary.formulas.length > 0 && (
-              <div className="pt-4 border-t border-slate-800">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+              <div className="pt-4 border-t border-[#EDF2F7]">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#64748B] mb-3">
                   Formula &amp; Law Reference
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {subConcept.revisionSummary.formulas.map((f, i) => (
                     <div
                       key={i}
-                      className="p-3 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between"
+                      className="p-3 rounded-lg bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-between"
                     >
-                      <span className="text-xs text-slate-400">{f.name}:</span>
-                      <span className="font-mono text-cyan-300 font-bold text-xs">{f.expression}</span>
+                      <span className="text-xs text-[#64748B]">{f.name}:</span>
+                      <span className="font-mono text-[#2563EB] font-bold text-xs">{f.expression}</span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            <div className="pt-6 border-t border-slate-800 flex justify-end">
+            <div className="pt-6 border-t border-[#EDF2F7] flex justify-end">
               <button
                 onClick={() => setActiveTab('assessment')}
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow-md transition-colors flex items-center gap-2"
+                className="btn-primary px-6 py-2.5 text-xs font-semibold flex items-center gap-2 cursor-pointer"
               >
                 <span>Take Mastery Assessment (80% Required)</span>
                 <ArrowRight className="w-4 h-4" />
@@ -694,21 +690,19 @@ export function LessonView({
           <AssessmentComponent
             subConceptId={subConcept.id}
             questions={subConcept.assessmentQuestions}
-            onPass={() => {
-              // celebration & refresh
-            }}
+            onPass={() => {}}
             onReviewRequested={() => setActiveTab('explanation')}
           />
         )}
       </div>
 
-      {/* Bottom Sticky-Free Navigation Bar */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* Bottom Navigation Bar */}
+      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
         {/* Previous Button */}
         {prevSubConcept ? (
           <button
             onClick={() => onNavigateSubConcept(prevSubConcept.id)}
-            className="w-full sm:w-auto px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2"
+            className="w-full sm:w-auto btn-secondary px-4 py-2 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="truncate max-w-[180px]">Prev: {prevSubConcept.title}</span>
@@ -718,9 +712,9 @@ export function LessonView({
         )}
 
         {/* Status Text */}
-        <div className="text-xs text-slate-400 text-center">
+        <div className="text-xs text-[#64748B] text-center">
           {progress?.isCompleted ? (
-            <span className="text-emerald-400 font-semibold flex items-center gap-1 justify-center">
+            <span className="text-[#16A34A] font-semibold flex items-center gap-1 justify-center">
               <CheckCircle2 className="w-4 h-4" /> Sub-concept Completed (≥80%)
             </span>
           ) : (
@@ -735,10 +729,10 @@ export function LessonView({
           <button
             disabled={!isNextUnlocked}
             onClick={() => onNavigateSubConcept(nextSubConcept.id)}
-            className={`w-full sm:w-auto px-5 py-2 text-xs font-semibold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 ${
+            className={`w-full sm:w-auto px-5 py-2 text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
               isNextUnlocked
-                ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                : 'bg-slate-800/60 text-slate-500 border border-slate-800 cursor-not-allowed'
+                ? 'btn-primary'
+                : 'bg-[#F1F5FF] text-[#94A3B8] border border-[#E2E8F0] cursor-not-allowed'
             }`}
             title={
               isNextUnlocked
@@ -756,7 +750,7 @@ export function LessonView({
         ) : (
           <button
             onClick={onBackToConcepts}
-            className="w-full sm:w-auto px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow-md transition-colors flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-5 py-2 bg-[#16A34A] hover:bg-[#15803D] text-white text-xs font-semibold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>Finish Chapter</span>
             <CheckCircle2 className="w-4 h-4" />

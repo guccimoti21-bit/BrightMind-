@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StudentAuthProvider, useStudentAuth } from './context/StudentAuthContext';
 import { ProgressProvider, useProgress } from './context/ProgressContext';
 import { AdminAuthProvider, useAdminAuth } from './context/AdminAuthContext';
@@ -25,7 +25,7 @@ import { AdminLayout } from './components/admin/AdminLayout';
 import { AdminPasswordModal } from './components/admin/AdminPasswordModal';
 import { CURRICULUM_DATA } from './data/curriculumData';
 import { ClassLevel, SubjectId, Concept } from './types/curriculum';
-import { ShieldAlert, LogIn, UserPlus, X, Lock } from 'lucide-react';
+import { ShieldAlert, LogIn, UserPlus, X, Lock, Atom } from 'lucide-react';
 
 type AppRoute =
   | 'home'
@@ -79,28 +79,29 @@ function AppContent() {
   const [redirectTarget, setRedirectTarget] = useState<string | null>(null);
   const [loginRedirectNotice, setLoginRedirectNotice] = useState<string | null>(null);
 
-  // Live published curriculum from server
+  // Live published curriculum from server (synced with Admin portal)
   const [liveCurriculum, setLiveCurriculum] = useState<Concept[]>(CURRICULUM_DATA);
 
   // Fetch live published curriculum from server
-  useEffect(() => {
-    async function fetchLiveContent() {
-      try {
-        const res = await fetch('/api/content/curriculum');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.concepts && data.concepts.length > 0) {
-            setLiveCurriculum(data.concepts);
-          }
+  const fetchLiveContent = useCallback(async () => {
+    try {
+      const res = await fetch('/api/content/curriculum');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.concepts && data.concepts.length > 0) {
+          setLiveCurriculum(data.concepts);
         }
-      } catch (e) {
-        console.log('Using default local curriculum data');
       }
+    } catch (e) {
+      console.log('Using local curriculum baseline');
     }
-    fetchLiveContent();
-  }, [appRoute]);
+  }, []);
 
-  // Handle URL history syncing
+  useEffect(() => {
+    fetchLiveContent();
+  }, [fetchLiveContent]);
+
+  // Synchronize browser history / path
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname;
@@ -120,11 +121,20 @@ function AppContent() {
         setAppRoute('home');
       }
     };
+
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Admin mandatory password change prompt
+  // Update URL pathname cleanly
+  const updateUrl = (path: string, route: AppRoute) => {
+    setAppRoute(route);
+    if (typeof window !== 'undefined' && window.location.pathname !== path) {
+      window.history.pushState({}, '', path);
+    }
+  };
+
+  // Enforce mandatory password change on initial admin login
   useEffect(() => {
     if (isAdminAuthenticated && mustChangePassword) {
       setShowPasswordChangeModal(true);
@@ -133,93 +143,79 @@ function AppContent() {
     }
   }, [isAdminAuthenticated, mustChangePassword]);
 
-  // Navigate to Admin View
-  const handleOpenAdmin = () => {
-    if (isAdminAuthenticated) {
-      setAppRoute('admin-dashboard');
-      window.history.pushState({}, '', '/admin/dashboard');
-    } else {
-      setAppRoute('admin-login');
-      window.history.pushState({}, '', '/admin/login');
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  // Check active concept from live curriculum
+  const activeConcept = liveCurriculum.find((c) => c.id === selectedConceptId);
+  const activeSubConcept = activeConcept?.subConcepts.find(
+    (sc) => sc.id === selectedSubConceptId
+  );
 
-  const handleReturnToAcademy = () => {
-    setAppRoute('home');
-    setCurrentView('home');
-    window.history.pushState({}, '', '/');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const navigateToStudentLogin = (notice?: string, target?: string) => {
-    if (notice) setLoginRedirectNotice(notice);
-    if (target) setRedirectTarget(target);
-    setAppRoute('student-login');
-    window.history.pushState({}, '', '/student/login');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const navigateToStudentRegister = () => {
-    setAppRoute('student-register');
-    window.history.pushState({}, '', '/student/register');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleLoginSuccess = () => {
-    setLoginRedirectNotice(null);
-    setAppRoute('home');
-
-    // If student had a stored redirect target, restore it
-    if (redirectTarget === 'lesson') {
-      setCurrentView('lesson');
-      setSelectedConceptId('c8-math-linear-eq');
-      setSelectedSubConceptId('c8-math-linear-sub2');
-    } else if (redirectTarget === 'science') {
-      setActiveSubject('science');
-      setCurrentView('science');
-    } else if (redirectTarget === 'mathematics') {
-      setActiveSubject('mathematics');
-      setCurrentView('mathematics');
-    } else if (redirectTarget === 'classes') {
-      setCurrentView('classes');
-    } else {
-      setCurrentView('dashboard');
+  // Navigation handlers
+  const handleNavViewChange = (view: NavView) => {
+    // PROTECTED STUDENT ROUTES: Redirect to login if user is not authenticated
+    if (
+      !isStudentAuthenticated &&
+      (view === 'dashboard' || view === 'science' || view === 'mathematics' || view === 'classes')
+    ) {
+      navigateToStudentLogin(
+        `Please sign in as a student to access the ${view} portal and record your learning progress.`,
+        view
+      );
+      return;
     }
 
-    setRedirectTarget(null);
-    window.history.pushState({}, '', '/');
+    setCurrentView(view);
+    setSelectedConceptId(null);
+    setSelectedSubConceptId(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Helper to open a specific concept
+  const handleStartLearning = () => {
+    if (!isStudentAuthenticated) {
+      navigateToStudentLogin(
+        'Please log in with your student account to access interactive lessons and track your mastery.',
+        'classes'
+      );
+      return;
+    }
+
+    if (state.lastActiveSubConceptId) {
+      // Find parent concept
+      for (const c of liveCurriculum) {
+        const sc = c.subConcepts.find((s) => s.id === state.lastActiveSubConceptId);
+        if (sc) {
+          setSelectedConceptId(c.id);
+          setSelectedSubConceptId(sc.id);
+          setCurrentView('lesson');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+      }
+    }
+    setCurrentView('classes');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleOpenConcept = (conceptId: string) => {
     if (!isStudentAuthenticated) {
       navigateToStudentLogin(
-        'Please sign in with your student account to access this chapter and its learning path.',
+        'Please log in with your student account to launch interactive labs and track learning progress.',
         'classes'
       );
       return;
     }
     setSelectedConceptId(conceptId);
+    setSelectedSubConceptId(null);
     setCurrentView('concept');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Helper to open a specific sub-concept lesson
   const handleOpenSubConcept = (subConceptId: string) => {
     if (!isStudentAuthenticated) {
       navigateToStudentLogin(
-        'Please sign in with your student account to open interactive lessons.',
-        'lesson'
+        'Please log in with your student account to enter the lesson and virtual laboratory.',
+        'classes'
       );
       return;
-    }
-    if (!selectedConceptId) {
-      const found = liveCurriculum.find((c) =>
-        c.subConcepts.some((sc) => sc.id === subConceptId)
-      );
-      if (found) setSelectedConceptId(found.id);
     }
     setSelectedSubConceptId(subConceptId);
     setLastActiveSubConcept(subConceptId);
@@ -227,96 +223,153 @@ function AppContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Navigation from Topbar
-  const handleNavViewChange = (view: NavView) => {
-    // If user is not authenticated and tries to visit protected views
-    const protectedViews: NavView[] = ['dashboard', 'classes', 'science', 'mathematics'];
-    if (!isStudentAuthenticated && protectedViews.includes(view)) {
-      // If clicking Explore Classes, Science, or Math while logged out, prompt them
-      navigateToStudentLogin(
-        `Please sign in as a student to access ${
-          view === 'dashboard' ? 'your personalized student dashboard' : `the ${view} curriculum`
-        }.`,
-        view
-      );
-      return;
-    }
-
-    if (view === 'classes') {
-      setCurrentView('classes');
-    } else if (view === 'science') {
-      setActiveSubject('science');
-      setCurrentView('science');
-    } else if (view === 'mathematics') {
-      setActiveSubject('mathematics');
-      setCurrentView('mathematics');
+  const handleOpenAdmin = () => {
+    if (isAdminAuthenticated) {
+      updateUrl('/admin/dashboard', 'admin-dashboard');
     } else {
-      setCurrentView(view);
+      updateUrl('/admin/login', 'admin-login');
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Start Learning from Hero CTA opens the featured Class 8 Linear Equations Balance Method Demo!
-  const handleStartLearning = () => {
-    if (!isStudentAuthenticated) {
-      navigateToStudentLogin(
-        'Please sign in or create a student account to access the interactive Balance Scale simulation.',
-        'lesson'
+  // Student Authentication Flow Navigators
+  const navigateToStudentLogin = (notice?: string, target?: string) => {
+    if (notice) setLoginRedirectNotice(notice);
+    if (target) setRedirectTarget(target);
+    updateUrl('/student/login', 'student-login');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToStudentRegister = () => {
+    updateUrl('/student/register', 'student-register');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToForgotPassword = () => {
+    updateUrl('/student/forgot-password', 'student-forgot-password');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToResetPassword = () => {
+    updateUrl('/student/reset-password', 'student-reset-password');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleReturnToHome = () => {
+    updateUrl('/', 'home');
+    setCurrentView('home');
+    setLoginRedirectNotice(null);
+    setRedirectTarget(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleStudentLoginSuccess = () => {
+    // If a redirect target was stored, navigate to it
+    if (redirectTarget) {
+      if (redirectTarget === 'classes') {
+        setCurrentView('classes');
+      } else if (redirectTarget === 'science') {
+        setCurrentView('science');
+      } else if (redirectTarget === 'mathematics') {
+        setCurrentView('mathematics');
+      } else {
+        setCurrentView('dashboard');
+      }
+      setRedirectTarget(null);
+    } else {
+      setCurrentView('dashboard');
+    }
+    setLoginRedirectNotice(null);
+    updateUrl('/', 'home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // ==========================================
+  // RENDER DEDICATED ADMIN DASHBOARD
+  // ==========================================
+  if (appRoute === 'admin-dashboard') {
+    if (!isAdminAuthenticated) {
+      return (
+        <div className="min-h-screen bg-[#F8FAFF] text-[#111827] flex flex-col items-center justify-center p-4">
+          <div className="bg-[#FFFFFF] border border-[#E2E8F0] p-8 rounded-3xl max-w-md w-full text-center space-y-4 shadow-[0_16px_40px_rgba(37,99,235,0.08)]">
+            <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center text-[#2563EB] mx-auto">
+              <ShieldAlert className="w-6 h-6" />
+            </div>
+            <h2 className="text-xl font-bold text-[#111827]">Administrator Session Required</h2>
+            <p className="text-xs text-[#64748B]">
+              You must authenticate with administrator credentials to access the CMS Dashboard.
+            </p>
+            <button
+              onClick={() => updateUrl('/admin/login', 'admin-login')}
+              className="btn-primary w-full py-2.5 text-xs font-semibold cursor-pointer"
+            >
+              Go to Administrator Login
+            </button>
+            <button
+              onClick={handleReturnToHome}
+              className="text-xs text-[#64748B] hover:text-[#111827] block mx-auto cursor-pointer"
+            >
+              Return to Public Website
+            </button>
+          </div>
+        </div>
       );
-      return;
     }
-    setActiveClass(8);
-    setActiveSubject('mathematics');
-    setSelectedConceptId('c8-math-linear-eq');
-    setSelectedSubConceptId('c8-math-linear-sub2');
-    setLastActiveSubConcept('c8-math-linear-sub2');
-    setCurrentView('lesson');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
-  // Selected concept entity
-  const activeConcept = liveCurriculum.find((c) => c.id === selectedConceptId);
-  const activeSubConcept = activeConcept?.subConcepts.find(
-    (sc) => sc.id === selectedSubConceptId
-  );
-
-  // ==========================================
-  // RENDER ADMIN DASHBOARD (IF LOGGED IN)
-  // ==========================================
-  if (appRoute === 'admin-dashboard' && isAdminAuthenticated) {
     return (
       <>
-        <AdminLayout onReturnToStudent={handleReturnToAcademy} />
-        <AdminPasswordModal
-          isOpen={showPasswordChangeModal}
-          onSuccess={() => setShowPasswordChangeModal(false)}
+        <AdminLayout
+          onReturnToStudent={() => {
+            fetchLiveContent();
+            updateUrl('/', 'home');
+          }}
         />
+        {showPasswordChangeModal && (
+          <AdminPasswordModal
+            isOpen={showPasswordChangeModal}
+            onSuccess={() => setShowPasswordChangeModal(false)}
+            canDismiss={false}
+          />
+        )}
       </>
     );
   }
 
   // ==========================================
-  // RENDER ADMIN LOGIN
+  // RENDER DEDICATED ADMIN LOGIN
   // ==========================================
-  if (appRoute === 'admin-login' || (appRoute === 'admin-dashboard' && !isAdminAuthenticated)) {
+  if (appRoute === 'admin-login') {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] text-[#333333] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white">
-        <header className="h-16 border-b border-gray-200 flex items-center justify-between px-6 bg-white/80 backdrop-blur-sm">
+      <div className="min-h-screen bg-[#F8FAFF] text-[#111827] flex flex-col">
+        <header className="navbar-glass px-6 h-16 flex items-center justify-between">
           <button
-            onClick={handleReturnToAcademy}
-            className="text-xs font-semibold text-[#2563EB] hover:text-blue-700 cursor-pointer"
+            onClick={handleReturnToHome}
+            className="flex items-center gap-2 text-left whitespace-nowrap cursor-pointer group"
           >
-            ← Return to BrightMind Learning
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#2563EB] to-[#60A5FA] p-0.5 flex items-center justify-center shadow-sm">
+              <div className="w-full h-full bg-[#FFFFFF] rounded-[10px] flex items-center justify-center text-[#2563EB]">
+                <Atom className="w-4 h-4 animate-spin-slow" />
+              </div>
+            </div>
+            <span className="font-extrabold text-[#111827] text-lg tracking-tight">
+              SciMath<span className="text-[#2563EB]">enova</span>
+            </span>
           </button>
-          <span className="text-xs text-gray-500 font-mono">Secure Administrator Gateway</span>
+
+          <button
+            onClick={handleReturnToHome}
+            className="btn-secondary px-3.5 py-1.5 text-xs font-semibold cursor-pointer shadow-sm"
+          >
+            Return to Public Website
+          </button>
         </header>
+
         <main className="flex-1 flex items-center justify-center p-4">
           <AdminLogin
             onLoginSuccess={() => {
-              setAppRoute('admin-dashboard');
-              window.history.pushState({}, '', '/admin/dashboard');
+              updateUrl('/admin/dashboard', 'admin-dashboard');
             }}
-            onReturnToStudent={handleReturnToAcademy}
+            onReturnToStudent={handleReturnToHome}
           />
         </main>
       </div>
@@ -324,61 +377,84 @@ function AppContent() {
   }
 
   // ==========================================
-  // RENDER STUDENT AUTH PAGES
+  // RENDER STUDENT AUTHENTICATION ROUTES
   // ==========================================
   if (appRoute === 'student-login') {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] text-[#333333] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white relative">
-        <div
-          className="fixed inset-0 pointer-events-none opacity-40 z-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0)`,
-            backgroundSize: '32px 32px'
-          }}
-        />
-        <main className="flex-1 flex items-center justify-center p-4 relative z-10">
+      <div className="min-h-screen bg-[#F8FAFF] text-[#111827] flex flex-col">
+        <header className="navbar-glass px-6 h-16 flex items-center justify-between">
+          <button
+            onClick={handleReturnToHome}
+            className="flex items-center gap-2 text-left whitespace-nowrap cursor-pointer group"
+          >
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#2563EB] to-[#60A5FA] p-0.5 flex items-center justify-center shadow-sm">
+              <div className="w-full h-full bg-[#FFFFFF] rounded-[10px] flex items-center justify-center text-[#2563EB]">
+                <Atom className="w-4 h-4 animate-spin-slow" />
+              </div>
+            </div>
+            <span className="font-extrabold text-[#111827] text-lg tracking-tight">
+              SciMath<span className="text-[#2563EB]">enova</span>
+            </span>
+          </button>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={navigateToStudentRegister}
+              className="btn-primary px-3.5 py-1.5 text-xs font-bold cursor-pointer"
+            >
+              Create Free Account
+            </button>
+          </div>
+        </header>
+
+        <main className="flex-1 flex items-center justify-center p-4">
           <StudentLogin
-            onLoginSuccess={handleLoginSuccess}
-            onNavigateRegister={() => {
-              setAppRoute('student-register');
-              window.history.pushState({}, '', '/student/register');
-            }}
-            onNavigateForgotPassword={() => {
-              setAppRoute('student-forgot-password');
-              window.history.pushState({}, '', '/student/forgot-password');
-            }}
-            onReturnToHome={handleReturnToAcademy}
+            onLoginSuccess={handleStudentLoginSuccess}
+            onNavigateRegister={navigateToStudentRegister}
+            onNavigateForgotPassword={navigateToForgotPassword}
+            onReturnToHome={handleReturnToHome}
             onOpenAdminLogin={handleOpenAdmin}
             onOpenSupabaseSetup={() => setIsSupabaseSetupOpen(true)}
             redirectNotice={loginRedirectNotice}
           />
         </main>
-        <SupabaseSetupModal
-          isOpen={isSupabaseSetupOpen}
-          onClose={() => setIsSupabaseSetupOpen(false)}
-        />
       </div>
     );
   }
 
   if (appRoute === 'student-register') {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] text-[#333333] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white relative">
-        <div
-          className="fixed inset-0 pointer-events-none opacity-40 z-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0)`,
-            backgroundSize: '32px 32px'
-          }}
-        />
-        <main className="flex-1 flex items-center justify-center p-4 relative z-10">
+      <div className="min-h-screen bg-[#F8FAFF] text-[#111827] flex flex-col">
+        <header className="navbar-glass px-6 h-16 flex items-center justify-between">
+          <button
+            onClick={handleReturnToHome}
+            className="flex items-center gap-2 text-left whitespace-nowrap cursor-pointer group"
+          >
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#2563EB] to-[#60A5FA] p-0.5 flex items-center justify-center shadow-sm">
+              <div className="w-full h-full bg-[#FFFFFF] rounded-[10px] flex items-center justify-center text-[#2563EB]">
+                <Atom className="w-4 h-4 animate-spin-slow" />
+              </div>
+            </div>
+            <span className="font-extrabold text-[#111827] text-lg tracking-tight">
+              SciMath<span className="text-[#2563EB]">enova</span>
+            </span>
+          </button>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigateToStudentLogin()}
+              className="btn-secondary px-3.5 py-1.5 text-xs font-semibold cursor-pointer shadow-sm"
+            >
+              Sign In
+            </button>
+          </div>
+        </header>
+
+        <main className="flex-1 flex items-center justify-center p-4">
           <StudentRegister
-            onRegisterSuccess={handleLoginSuccess}
-            onNavigateLogin={() => {
-              setAppRoute('student-login');
-              window.history.pushState({}, '', '/student/login');
-            }}
-            onReturnToHome={handleReturnToAcademy}
+            onRegisterSuccess={handleStudentLoginSuccess}
+            onNavigateLogin={() => navigateToStudentLogin()}
+            onReturnToHome={handleReturnToHome}
           />
         </main>
       </div>
@@ -387,21 +463,34 @@ function AppContent() {
 
   if (appRoute === 'student-forgot-password') {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] text-[#333333] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white relative">
-        <div
-          className="fixed inset-0 pointer-events-none opacity-40 z-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0)`,
-            backgroundSize: '32px 32px'
-          }}
-        />
-        <main className="flex-1 flex items-center justify-center p-4 relative z-10">
+      <div className="min-h-screen bg-[#F8FAFF] text-[#111827] flex flex-col">
+        <header className="navbar-glass px-6 h-16 flex items-center justify-between">
+          <button
+            onClick={handleReturnToHome}
+            className="flex items-center gap-2 text-left whitespace-nowrap cursor-pointer group"
+          >
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#2563EB] to-[#60A5FA] p-0.5 flex items-center justify-center shadow-sm">
+              <div className="w-full h-full bg-[#FFFFFF] rounded-[10px] flex items-center justify-center text-[#2563EB]">
+                <Atom className="w-4 h-4 animate-spin-slow" />
+              </div>
+            </div>
+            <span className="font-extrabold text-[#111827] text-lg tracking-tight">
+              SciMath<span className="text-[#2563EB]">enova</span>
+            </span>
+          </button>
+
+          <button
+            onClick={() => navigateToStudentLogin()}
+            className="btn-secondary px-3.5 py-1.5 text-xs font-semibold cursor-pointer shadow-sm"
+          >
+            Back to Login
+          </button>
+        </header>
+
+        <main className="flex-1 flex items-center justify-center p-4">
           <ForgotPassword
-            onNavigateLogin={() => {
-              setAppRoute('student-login');
-              window.history.pushState({}, '', '/student/login');
-            }}
-            onReturnToHome={handleReturnToAcademy}
+            onNavigateLogin={() => navigateToStudentLogin()}
+            onReturnToHome={handleReturnToHome}
           />
         </main>
       </div>
@@ -410,25 +499,30 @@ function AppContent() {
 
   if (appRoute === 'student-reset-password') {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] text-[#333333] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white relative">
-        <div
-          className="fixed inset-0 pointer-events-none opacity-40 z-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0)`,
-            backgroundSize: '32px 32px'
-          }}
-        />
-        <main className="flex-1 flex items-center justify-center p-4 relative z-10">
+      <div className="min-h-screen bg-[#F8FAFF] text-[#111827] flex flex-col">
+        <header className="navbar-glass px-6 h-16 flex items-center justify-between">
+          <button
+            onClick={handleReturnToHome}
+            className="flex items-center gap-2 text-left whitespace-nowrap cursor-pointer group"
+          >
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#2563EB] to-[#60A5FA] p-0.5 flex items-center justify-center shadow-sm">
+              <div className="w-full h-full bg-[#FFFFFF] rounded-[10px] flex items-center justify-center text-[#2563EB]">
+                <Atom className="w-4 h-4 animate-spin-slow" />
+              </div>
+            </div>
+            <span className="font-extrabold text-[#111827] text-lg tracking-tight">
+              SciMath<span className="text-[#2563EB]">enova</span>
+            </span>
+          </button>
+        </header>
+
+        <main className="flex-1 flex items-center justify-center p-4">
           <ResetPassword
             onSuccess={() => {
-              setAppRoute('home');
-              setCurrentView('dashboard');
-              window.history.pushState({}, '', '/');
+              setLoginRedirectNotice('Password updated successfully! Please sign in with your new password.');
+              updateUrl('/student/login', 'student-login');
             }}
-            onNavigateLogin={() => {
-              setAppRoute('student-login');
-              window.history.pushState({}, '', '/student/login');
-            }}
+            onNavigateLogin={() => navigateToStudentLogin()}
           />
         </main>
       </div>
@@ -436,20 +530,20 @@ function AppContent() {
   }
 
   // ==========================================
-  // RENDER MAIN SCIMATH ACADEMY APP
+  // RENDER MAIN SCIMATHENOVA APP
   // ==========================================
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-[#333333] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white relative">
-      {/* Background Texture */}
+    <div className="min-h-screen bg-[#F8FAFF] text-[#111827] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white relative">
+      {/* Subtle Background Pattern */}
       <div
-        className="fixed inset-0 pointer-events-none opacity-40 z-0"
+        className="fixed inset-0 pointer-events-none opacity-[0.03] z-0"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0)`,
-          backgroundSize: '32px 32px'
+          backgroundImage: `radial-gradient(circle at 1px 1px, #2563EB 1px, transparent 0)`,
+          backgroundSize: '24px 24px'
         }}
       />
 
-      {/* Top Navbar */}
+      {/* Top White-Glass Navbar */}
       <Navbar
         currentView={currentView as NavView}
         onNavigate={handleNavViewChange}
@@ -461,47 +555,40 @@ function AppContent() {
 
       {/* Main View Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 relative z-10">
-        {/* PUBLIC HOMEPAGE */}
+        {/* PUBLIC HOMEPAGE (WITH OPEN-ACCESS CHAPTER INDEX FOR CLASSES 6-10) */}
         {currentView === 'home' && (
           <LandingPage
+            concepts={liveCurriculum}
             isAuthenticated={isStudentAuthenticated}
             onStartLearning={handleStartLearning}
             onExploreCourses={() => {
-              if (isStudentAuthenticated) {
-                setCurrentView('classes');
-              } else {
-                navigateToStudentLogin(
-                  'Please sign in as a student to explore all curriculum chapters.',
-                  'classes'
-                );
-              }
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              const el = document.getElementById('chapter-index');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
             onSelectClass={(c) => {
               setActiveClass(c);
-              if (isStudentAuthenticated) {
-                setCurrentView('classes');
-              } else {
-                navigateToStudentLogin(
-                  `Please sign in as a student to access Class ${c} lessons.`,
-                  'classes'
-                );
-              }
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              const el = document.getElementById('chapter-index');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
             onSelectSubject={(s) => {
               setActiveSubject(s);
+              const el = document.getElementById('chapter-index');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            onSelectConcept={(conceptId, subId) => {
               if (isStudentAuthenticated) {
-                setCurrentView(s);
+                handleOpenConcept(conceptId);
+                if (subId) {
+                  handleOpenSubConcept(subId);
+                }
               } else {
                 navigateToStudentLogin(
-                  `Please sign in as a student to access the ${s} curriculum.`,
-                  s
+                  'Please log in with your student account to record progress, launch interactive lab simulations, and unlock subsequent topics with the 80% mastery rule.',
+                  'classes'
                 );
               }
-              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            onNavigateStudentLogin={() => navigateToStudentLogin()}
+            onNavigateStudentLogin={navigateToStudentLogin}
             onNavigateStudentRegister={navigateToStudentRegister}
             onRequireAuthPrompt={(msg, target) => {
               setAuthPrompt({
@@ -510,6 +597,7 @@ function AppContent() {
                 targetView: target as any
               });
             }}
+            onRefreshCurriculum={fetchLiveContent}
           />
         )}
 
@@ -540,6 +628,7 @@ function AppContent() {
             <SyllabusView
               currentClass={state.currentClass}
               currentSubject={state.currentSubject}
+              concepts={liveCurriculum}
               onSelectClass={(c) => setActiveClass(c)}
               onSelectSubject={(s) => setActiveSubject(s)}
               onSelectConcept={handleOpenConcept}
@@ -595,23 +684,23 @@ function AppContent() {
 
       {/* Auth Gate Required Prompt Modal */}
       {authPrompt.isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/20 backdrop-blur-md animate-fade-in">
-          <div className="bg-white border border-gray-200 rounded-3xl w-full max-w-md p-6 shadow-2xl relative text-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111827]/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-3xl w-full max-w-md p-6 shadow-2xl relative text-center">
             <button
               onClick={() => setAuthPrompt({ isOpen: false, message: '' })}
-              className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-[#64748B] hover:text-[#111827] hover:bg-[#F1F5FF] transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB] mx-auto mb-4">
+            <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center text-[#2563EB] mx-auto mb-4 shadow-sm">
               <Lock className="w-6 h-6" />
             </div>
 
-            <h3 className="text-xl font-extrabold text-gray-900 mb-2">
+            <h3 className="text-xl font-extrabold text-[#111827] mb-2">
               Student Account Required
             </h3>
-            <p className="text-xs text-gray-600 leading-relaxed mb-6">
+            <p className="text-xs text-[#475569] leading-relaxed mb-6">
               {authPrompt.message ||
                 'Please sign in with your student account or create a new one to access interactive lessons, physics manipulatives, and progress tracking.'}
             </p>
@@ -623,7 +712,7 @@ function AppContent() {
                   setAuthPrompt({ isOpen: false, message: '' });
                   navigateToStudentLogin(authPrompt.message, target);
                 }}
-                className="w-full py-3 bg-[#2563EB] hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-900/10 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="btn-primary w-full py-3 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer"
               >
                 <LogIn className="w-4 h-4" />
                 <span>Student Login</span>
@@ -634,7 +723,7 @@ function AppContent() {
                   setAuthPrompt({ isOpen: false, message: '' });
                   navigateToStudentRegister();
                 }}
-                className="w-full py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 text-[#2563EB] hover:text-blue-700 font-semibold text-xs rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                className="btn-secondary w-full py-2.5 font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-sm"
               >
                 <UserPlus className="w-4 h-4" />
                 <span>Create Student Account</span>

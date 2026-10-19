@@ -8,7 +8,6 @@ import {
   Sparkles,
   Trophy,
   ArrowRight,
-  HelpCircle,
   BookOpen
 } from 'lucide-react';
 import { AssessmentQuestion, PASSING_ASSESSMENT_SCORE } from '../../types/curriculum';
@@ -80,53 +79,51 @@ export function AssessmentComponent({
     setFinalScore(null);
   };
 
-  const existingProgress = state.progressBySubConcept[subConceptId];
-
   if (isFinished && finalScore !== null) {
     const passed = finalScore >= PASSING_ASSESSMENT_SCORE;
 
     return (
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-8 shadow-xl backdrop-blur-md">
+      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-8 shadow-[0_4px_20px_rgba(15,23,42,0.04)]">
         <div className="max-w-xl mx-auto text-center">
           {passed ? (
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               className="space-y-4"
             >
-              <div className="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-500 mx-auto flex items-center justify-center text-emerald-400">
+              <div className="w-20 h-20 rounded-full bg-[#DCFCE7] border-2 border-[#16A34A] mx-auto flex items-center justify-center text-[#16A34A] shadow-sm">
                 <Trophy className="w-10 h-10" />
               </div>
-              <h3 className="text-2xl font-bold text-white">
+              <h3 className="text-2xl font-bold text-[#111827]">
                 Assessment Passed with Mastery!
               </h3>
-              <p className="text-slate-300 text-sm">
-                You scored <span className="text-emerald-400 font-bold font-mono text-lg">{finalScore}%</span> (Passing requirement: {PASSING_ASSESSMENT_SCORE}%). The 30% assessment weight has been awarded and the next sub-concept is now unlocked!
+              <p className="text-[#475569] text-sm">
+                You scored <span className="text-[#16A34A] font-bold font-mono text-lg">{finalScore}%</span> (Passing requirement: {PASSING_ASSESSMENT_SCORE}%). The 30% assessment weight has been awarded and the next sub-concept is now unlocked!
               </p>
 
-              <div className="bg-emerald-950/60 border border-emerald-700/60 rounded-xl p-4 flex items-center justify-around text-center my-6">
+              <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-2xl p-4 flex items-center justify-around text-center my-6">
                 <div>
-                  <div className="text-xs text-emerald-300">Final Score</div>
-                  <div className="text-2xl font-bold font-mono text-emerald-400">{finalScore}%</div>
+                  <div className="text-xs text-[#166534]">Final Score</div>
+                  <div className="text-2xl font-bold font-mono text-[#16A34A]">{finalScore}%</div>
                 </div>
-                <div className="h-8 w-px bg-emerald-800" />
+                <div className="h-8 w-px bg-[#BBF7D0]" />
                 <div>
-                  <div className="text-xs text-emerald-300">Status</div>
-                  <div className="text-sm font-bold text-emerald-300 flex items-center gap-1">
+                  <div className="text-xs text-[#166534]">Status</div>
+                  <div className="text-sm font-bold text-[#16A34A] flex items-center gap-1">
                     <CheckCircle2 className="w-4 h-4 inline" /> PASSED
                   </div>
                 </div>
-                <div className="h-8 w-px bg-emerald-800" />
+                <div className="h-8 w-px bg-[#BBF7D0]" />
                 <div>
-                  <div className="text-xs text-emerald-300">Next Concept</div>
-                  <div className="text-sm font-bold text-cyan-300">UNLOCKED</div>
+                  <div className="text-xs text-[#166534]">Next Concept</div>
+                  <div className="text-sm font-bold text-[#2563EB]">UNLOCKED</div>
                 </div>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
                 <button
                   onClick={handleRetake}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2"
+                  className="btn-secondary px-5 py-2.5 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <RotateCcw className="w-4 h-4" />
                   <span>Practice Again</span>
@@ -135,27 +132,27 @@ export function AssessmentComponent({
             </motion.div>
           ) : (
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               className="space-y-4"
             >
-              <div className="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-500 mx-auto flex items-center justify-center text-amber-400">
+              <div className="w-20 h-20 rounded-full bg-[#FEF3C7] border-2 border-[#D97706] mx-auto flex items-center justify-center text-[#D97706] shadow-sm">
                 <AlertCircle className="w-10 h-10" />
               </div>
-              <h3 className="text-2xl font-bold text-white">
+              <h3 className="text-2xl font-bold text-[#111827]">
                 Keep Going! 80% Required to Unlock
               </h3>
-              <p className="text-slate-300 text-sm">
-                You scored <span className="text-amber-400 font-bold font-mono text-lg">{finalScore}%</span>. To unlock the subsequent lesson, BrightMind Learning requires a passing score of at least <span className="font-bold text-white">{PASSING_ASSESSMENT_SCORE}%</span>.
+              <p className="text-[#475569] text-sm">
+                You scored <span className="text-[#D97706] font-bold font-mono text-lg">{finalScore}%</span>. To unlock the subsequent lesson, SciMathenova requires a passing score of at least <span className="font-bold text-[#111827]">{PASSING_ASSESSMENT_SCORE}%</span>.
               </p>
 
               {/* Revision Recommendations */}
-              <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-5 text-left my-6 space-y-3">
-                <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase tracking-wider">
+              <div className="bg-[#F8FAFF] border border-[#E2E8F0] rounded-2xl p-5 text-left my-6 space-y-3">
+                <div className="flex items-center gap-2 text-[#2563EB] text-xs font-bold uppercase tracking-wider">
                   <BookOpen className="w-4 h-4" />
                   <span>Recommended Revision Points</span>
                 </div>
-                <ul className="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                <ul className="text-xs text-[#475569] space-y-2 list-disc list-inside">
                   <li>Review the balance rule: any operation applied to the left side must be applied identically to the right side.</li>
                   <li>Check negative signs carefully when transposing additive terms across the equals boundary.</li>
                   <li>Verify whether terms with variables cancel correctly before solving constants.</li>
@@ -166,7 +163,7 @@ export function AssessmentComponent({
                 {onReviewRequested && (
                   <button
                     onClick={onReviewRequested}
-                    className="w-full sm:w-auto px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2"
+                    className="btn-secondary px-5 py-2.5 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <BookOpen className="w-4 h-4" />
                     <span>Review Lesson Content</span>
@@ -174,7 +171,7 @@ export function AssessmentComponent({
                 )}
                 <button
                   onClick={handleRetake}
-                  className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow-md transition-colors flex items-center justify-center gap-2"
+                  className="btn-primary px-6 py-2.5 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <RotateCcw className="w-4 h-4" />
                   <span>Retake Assessment</span>
@@ -188,15 +185,15 @@ export function AssessmentComponent({
   }
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+    <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 shadow-[0_4px_20px_rgba(15,23,42,0.04)]">
       {/* Header and Progress Indicator */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#EDF2F7]">
         <div>
-          <div className="flex items-center gap-2 text-cyan-400 text-xs font-semibold tracking-wide uppercase">
+          <div className="flex items-center gap-2 text-[#2563EB] text-xs font-semibold tracking-wide uppercase">
             <Sparkles className="w-4 h-4" />
             <span>Mastery Evaluation (80% Required to Pass)</span>
           </div>
-          <h3 className="text-xl font-bold text-white mt-1">
+          <h3 className="text-xl font-bold text-[#111827] mt-1">
             Question {currentIndex + 1} of {questions.length}
           </h3>
         </div>
@@ -212,14 +209,14 @@ export function AssessmentComponent({
                 key={i}
                 className={`w-7 h-7 rounded-lg text-xs font-mono font-bold flex items-center justify-center border transition-all ${
                   i === currentIndex
-                    ? 'ring-2 ring-cyan-400 bg-blue-600 text-white border-blue-400'
+                    ? 'ring-2 ring-[#93C5FD] bg-[#2563EB] text-white border-[#2563EB]'
                     : isSub
                     ? isCorrect
-                      ? 'bg-emerald-950 border-emerald-600 text-emerald-300'
-                      : 'bg-rose-950 border-rose-600 text-rose-300'
+                      ? 'bg-[#DCFCE7] border-[#16A34A] text-[#16A34A]'
+                      : 'bg-[#FEE2E2] border-[#DC2626] text-[#DC2626]'
                     : isAns
-                    ? 'bg-slate-800 border-slate-600 text-slate-300'
-                    : 'bg-slate-950 border-slate-800 text-slate-500'
+                    ? 'bg-[#F1F5FF] border-[#BFDBFE] text-[#2563EB]'
+                    : 'bg-[#F8FAFF] border-[#E2E8F0] text-[#94A3B8]'
                 }`}
               >
                 {i + 1}
@@ -231,15 +228,15 @@ export function AssessmentComponent({
 
       {/* Question Body */}
       <div className="mt-6 max-w-3xl">
-        <div className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">
+        <div className="text-xs text-[#64748B] uppercase tracking-wider font-semibold mb-2">
           Category: {currentQ.category.toUpperCase()}
         </div>
-        <h4 className="text-lg font-semibold text-white leading-relaxed">
+        <h4 className="text-lg font-semibold text-[#111827] leading-relaxed">
           {currentQ.question}
         </h4>
 
         {currentQ.expression && (
-          <div className="my-3 p-3 bg-slate-950/80 rounded-lg border border-slate-800 font-mono text-cyan-300 font-bold text-base inline-block">
+          <div className="my-3 p-3 bg-[#EFF6FF] rounded-lg border border-[#BFDBFE] font-mono text-[#2563EB] font-bold text-base inline-block">
             {currentQ.expression}
           </div>
         )}
@@ -251,21 +248,21 @@ export function AssessmentComponent({
             const isCorrect = optIdx === currentQ.correctIndex;
 
             let optionStyle =
-              'border-slate-800 bg-slate-950/60 hover:bg-slate-800/80 text-slate-300';
+              'border-[#E2E8F0] bg-[#FFFFFF] hover:bg-[#F8FAFF] text-[#475569]';
 
             if (isCurrentSubmitted) {
               if (isCorrect) {
                 optionStyle =
-                  'border-emerald-500 bg-emerald-950/80 text-emerald-200 ring-1 ring-emerald-500';
+                  'border-[#16A34A] bg-[#DCFCE7] text-[#166534] ring-1 ring-[#16A34A]';
               } else if (isSelected && !isCorrect) {
                 optionStyle =
-                  'border-rose-500 bg-rose-950/80 text-rose-200 ring-1 ring-rose-500';
+                  'border-[#DC2626] bg-[#FEE2E2] text-[#991B1B] ring-1 ring-[#DC2626]';
               } else {
-                optionStyle = 'border-slate-800 bg-slate-950/40 text-slate-500 opacity-60';
+                optionStyle = 'border-[#E2E8F0] bg-[#F8FAFF] text-[#94A3B8] opacity-60';
               }
             } else if (isSelected) {
               optionStyle =
-                'border-cyan-500 bg-blue-950/80 text-white ring-1 ring-cyan-500';
+                'border-[#2563EB] bg-[#EFF6FF] text-[#111827] ring-1 ring-[#2563EB]';
             }
 
             return (
@@ -273,10 +270,10 @@ export function AssessmentComponent({
                 key={optIdx}
                 disabled={isCurrentSubmitted}
                 onClick={() => handleSelectOption(optIdx)}
-                className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between ${optionStyle}`}
+                className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between cursor-pointer ${optionStyle}`}
               >
                 <div className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-md bg-slate-800 text-slate-300 text-xs font-mono font-bold flex items-center justify-center shrink-0">
+                  <span className="w-6 h-6 rounded-md bg-[#F1F5FF] text-[#2563EB] text-xs font-mono font-bold flex items-center justify-center shrink-0 border border-[#BFDBFE]">
                     {String.fromCharCode(65 + optIdx)}
                   </span>
                   <span className="text-sm font-medium">{opt}</span>
@@ -284,8 +281,8 @@ export function AssessmentComponent({
 
                 {isCurrentSubmitted && (
                   <div>
-                    {isCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-400" />}
-                    {isSelected && !isCorrect && <XCircle className="w-5 h-5 text-rose-400" />}
+                    {isCorrect && <CheckCircle2 className="w-5 h-5 text-[#16A34A]" />}
+                    {isSelected && !isCorrect && <XCircle className="w-5 h-5 text-[#DC2626]" />}
                   </div>
                 )}
               </button>
@@ -301,19 +298,19 @@ export function AssessmentComponent({
               animate={{ opacity: 1, y: 0 }}
               className={`mt-6 p-4 rounded-xl border text-xs leading-relaxed ${
                 currentSelectedOption === currentQ.correctIndex
-                  ? 'bg-emerald-950/60 border-emerald-700/60 text-emerald-200'
-                  : 'bg-rose-950/60 border-rose-700/60 text-rose-200'
+                  ? 'bg-[#F0FDF4] border-[#BBF7D0] text-[#166534]'
+                  : 'bg-[#FEF2F2] border-[#FECACA] text-[#991B1B]'
               }`}
             >
               <div className="font-bold flex items-center gap-2 mb-1">
                 {currentSelectedOption === currentQ.correctIndex ? (
                   <>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle2 className="w-4 h-4 text-[#16A34A]" />
                     <span>Correct Answer!</span>
                   </>
                 ) : (
                   <>
-                    <XCircle className="w-4 h-4 text-rose-400" />
+                    <XCircle className="w-4 h-4 text-[#DC2626]" />
                     <span>Incorrect Choice</span>
                   </>
                 )}
@@ -324,8 +321,8 @@ export function AssessmentComponent({
         </AnimatePresence>
 
         {/* Control Footer */}
-        <div className="mt-8 flex items-center justify-between pt-6 border-t border-slate-800">
-          <div className="text-xs text-slate-400">
+        <div className="mt-8 flex items-center justify-between pt-6 border-t border-[#EDF2F7]">
+          <div className="text-xs text-[#64748B]">
             {isCurrentSubmitted ? 'Answer submitted' : 'Select an option and submit'}
           </div>
 
@@ -334,14 +331,14 @@ export function AssessmentComponent({
               <button
                 disabled={currentSelectedOption === undefined}
                 onClick={handleConfirmAnswer}
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-lg shadow-md transition-colors"
+                className="btn-primary px-6 py-2.5 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-semibold cursor-pointer"
               >
                 Submit Answer
               </button>
             ) : (
               <button
                 onClick={handleNextQuestion}
-                className="px-6 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold rounded-lg shadow-md transition-colors flex items-center gap-2"
+                className="btn-primary px-6 py-2.5 text-xs font-semibold flex items-center gap-2 cursor-pointer"
               >
                 <span>{currentIndex < questions.length - 1 ? 'Next Question' : 'View Final Results'}</span>
                 <ArrowRight className="w-4 h-4" />

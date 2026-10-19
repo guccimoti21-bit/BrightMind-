@@ -77,7 +77,6 @@ export function StudentRegister({
           'Account created successfully! A verification email has been sent. Please confirm your email address to log in.'
         );
       } else {
-        // Instant login
         onRegisterSuccess();
       }
     } else {
@@ -87,224 +86,206 @@ export function StudentRegister({
 
   return (
     <div className="w-full max-w-lg mx-auto p-4 sm:p-6 animate-fade-in">
-      <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-3xl p-6 sm:p-8 shadow-[0_16px_40px_rgba(37,99,235,0.08)] relative overflow-hidden">
         {/* Top glowing ambient accent */}
-        <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-80" />
+        <div className="absolute top-0 left-1/4 right-1/4 h-[2px] bg-gradient-to-r from-transparent via-[#2563EB] to-transparent opacity-80" />
 
         {/* Back Link */}
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={onReturnToHome}
-            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs text-[#64748B] hover:text-[#2563EB] transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to BrightMind Learning</span>
+            <span>Back to SciMathenova</span>
           </button>
-
-          <span className="text-[10px] uppercase font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-2 py-0.5 rounded-full">
-            Student Enrollment
-          </span>
         </div>
 
-        {/* Header */}
-        <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-400 p-0.5 mx-auto mb-3 shadow-lg shadow-cyan-500/20 flex items-center justify-center">
-            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-cyan-400">
-              <GraduationCap className="w-6 h-6" />
+        {/* Logo and Header */}
+        <div className="text-center space-y-2 mb-6">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#2563EB] to-[#60A5FA] p-0.5 mx-auto flex items-center justify-center shadow-md">
+            <div className="w-full h-full bg-[#FFFFFF] rounded-[14px] flex items-center justify-center text-[#2563EB]">
+              <Atom className="w-6 h-6 animate-spin-slow" />
             </div>
           </div>
-          <h2 className="text-2xl font-extrabold text-white tracking-tight">
+
+          <h2 className="text-2xl font-bold text-[#111827] tracking-tight">
             Create Student Account
           </h2>
-          <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-            Join BrightMind Learning to unlock structured Science &amp; Mathematics learning paths for Classes 6–10.
+          <p className="text-xs text-[#64748B]">
+            Join SciMathenova to track your chapter mastery and explore virtual science &amp; math labs.
           </p>
         </div>
 
         {/* Success Notice */}
         {successNotice && (
-          <div className="mb-5 p-4 rounded-xl bg-emerald-950/80 border border-emerald-700/60 text-emerald-200 text-xs space-y-2">
-            <div className="flex items-center gap-2 font-bold text-emerald-300">
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
-              <span>Registration Successful</span>
+          <div className="mb-5 p-3.5 rounded-xl bg-[#DCFCE7] border border-[#BBF7D0] text-xs text-[#166534] flex items-start gap-2.5">
+            <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold">{successNotice}</p>
+              <button
+                type="button"
+                onClick={onNavigateLogin}
+                className="mt-2 text-xs font-bold text-[#16A34A] underline block cursor-pointer"
+              >
+                Proceed to Student Login →
+              </button>
             </div>
-            <p className="text-[11px] leading-relaxed">{successNotice}</p>
-            <button
-              onClick={onNavigateLogin}
-              className="mt-2 py-1.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer"
-            >
-              Go to Student Login
-            </button>
           </div>
         )}
 
-        {/* Error Message */}
+        {/* Error notification */}
         {errorMsg && (
-          <div className="mb-5 p-3 rounded-xl bg-rose-950/70 border border-rose-800/60 text-rose-300 text-xs flex items-center gap-2">
-            <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
-            <span>{errorMsg}</span>
+          <div className="mb-5 p-3.5 rounded-xl bg-[#FEE2E2] border border-[#FECACA] text-xs text-[#DC2626] flex items-start gap-2.5">
+            <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
+            <p>{errorMsg}</p>
           </div>
         )}
 
-        {/* Form */}
-        {!successNotice && (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                Full Name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                  <User className="w-4 h-4" />
-                </div>
-                <input
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="e.g. Aarav Sharma"
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-400 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none transition-colors"
-                />
-              </div>
+        {/* Registration Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-[#475569] mb-1.5">
+              Full Name
+            </label>
+            <div className="relative">
+              <User className="w-4 h-4 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Aarav Sharma"
+                required
+                className="w-full pl-9 pr-4 py-2.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl text-xs text-[#111827] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#93C5FD] focus:border-[#2563EB] transition-all"
+              />
             </div>
+          </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                Student Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                  <Mail className="w-4 h-4" />
-                </div>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="student@example.com"
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-400 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none transition-colors"
-                />
-              </div>
+          <div>
+            <label className="block text-xs font-semibold text-[#475569] mb-1.5">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail className="w-4 h-4 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="student@school.edu"
+                required
+                className="w-full pl-9 pr-4 py-2.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl text-xs text-[#111827] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#93C5FD] focus:border-[#2563EB] transition-all"
+              />
             </div>
+          </div>
 
-            {/* Class Level Selector */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                Select Your School Grade / Class
-              </label>
-              <div className="grid grid-cols-5 gap-2">
-                {([6, 7, 8, 9, 10] as ClassLevel[]).map((level) => {
-                  const isSelected = classLevel === level;
-                  return (
-                    <button
-                      key={level}
-                      type="button"
-                      onClick={() => setClassLevel(level)}
-                      className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-blue-600 text-white border-blue-400 shadow-md shadow-blue-900/30'
-                          : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700'
-                      }`}
-                    >
-                      Class {level}
-                    </button>
-                  );
-                })}
-              </div>
+          {/* Class Level Selector */}
+          <div>
+            <label className="block text-xs font-semibold text-[#475569] mb-1.5">
+              Select Your School Class (6 to 10)
+            </label>
+            <div className="grid grid-cols-5 gap-2">
+              {([6, 7, 8, 9, 10] as ClassLevel[]).map((lvl) => (
+                <button
+                  key={lvl}
+                  type="button"
+                  onClick={() => setClassLevel(lvl)}
+                  className={`py-2 px-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                    classLevel === lvl
+                      ? 'bg-[#2563EB] border-[#2563EB] text-white shadow-sm'
+                      : 'bg-[#F8FAFF] border-[#E2E8F0] text-[#475569] hover:bg-[#F1F5FF]'
+                  }`}
+                >
+                  Class {lvl}
+                </button>
+              ))}
             </div>
+            <p className="text-[11px] text-[#64748B] mt-1">
+              You can change your class anytime from your student profile.
+            </p>
+          </div>
 
-            {/* Password */}
+          {/* Passwords */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                Create Password
-              </label>
+              <label className="block text-xs font-semibold text-[#475569] mb-1.5">Password</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                  <Lock className="w-4 h-4" />
-                </div>
+                <Lock className="w-4 h-4 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 6 characters"
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-400 rounded-xl pl-10 pr-10 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none transition-colors"
+                  placeholder="Min 6 chars"
+                  required
+                  className="w-full pl-9 pr-3 py-2.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl text-xs text-[#111827] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#93C5FD] focus:border-[#2563EB] transition-all"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#475569] mb-1.5">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm password"
+                  required
+                  className="w-full pl-9 pr-8 py-2.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl text-xs text-[#111827] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#93C5FD] focus:border-[#2563EB] transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white"
-                  aria-label="Toggle password visibility"
+                  className="p-1 text-[#94A3B8] hover:text-[#475569] absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>
+          </div>
 
-            {/* Confirm Password */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                  <Lock className="w-4 h-4" />
-                </div>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Repeat your password"
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-400 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none transition-colors"
-                />
-              </div>
-            </div>
+          {/* Terms Agreement */}
+          <div className="pt-1">
+            <label className="flex items-start gap-2.5 cursor-pointer text-xs text-[#475569]">
+              <input
+                type="checkbox"
+                checked={agreedTerms}
+                onChange={(e) => setAgreedTerms(e.target.checked)}
+                className="rounded border-[#CBD5E1] text-[#2563EB] focus:ring-[#93C5FD] mt-0.5"
+              />
+              <span>
+                I agree to the Terms of Service and Privacy Policy. I understand newly created accounts are registered as <strong className="text-[#111827]">Student</strong>.
+              </span>
+            </label>
+          </div>
 
-            {/* Agreement Checkbox */}
-            <div className="pt-1">
-              <label className="flex items-start gap-2.5 text-xs text-slate-400 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  required
-                  checked={agreedTerms}
-                  onChange={(e) => setAgreedTerms(e.target.checked)}
-                  className="mt-0.5 rounded border-slate-800 bg-slate-950 text-cyan-500 focus:ring-0 shrink-0"
-                />
-                <span>
-                  I agree to the{' '}
-                  <span className="text-cyan-400 hover:underline">BrightMind Learning Terms of Service</span> and{' '}
-                  <span className="text-cyan-400 hover:underline">Privacy Policy</span>.
-                </span>
-              </label>
-            </div>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn-primary w-full py-3 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+          >
+            {isSubmitting ? (
+              <span>Enrolling Student...</span>
+            ) : (
+              <>
+                <span>Create Student Account</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        </form>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-900/30 transition-all flex items-center justify-center gap-2 cursor-pointer mt-2"
-            >
-              {isSubmitting ? (
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <>
-                  <span>Create Student Account</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
-        )}
-
-        {/* Link to Login */}
-        <div className="mt-6 text-center text-xs text-slate-400 border-t border-slate-800/80 pt-5">
-          <span>Already have a student account? </span>
+        {/* Footer Link to Login */}
+        <div className="mt-6 pt-5 border-t border-[#EDF2F7] text-center text-xs text-[#64748B]">
+          Already have an account?{' '}
           <button
             onClick={onNavigateLogin}
-            className="text-cyan-400 hover:text-cyan-300 font-bold underline transition-colors cursor-pointer"
+            className="text-[#2563EB] hover:text-[#1D4ED8] font-semibold cursor-pointer underline underline-offset-2 ml-1"
           >
-            Sign In Here
+            Sign in to existing account
           </button>
         </div>
       </div>

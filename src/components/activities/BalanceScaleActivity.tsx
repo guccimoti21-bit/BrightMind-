@@ -131,32 +131,32 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+    <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 shadow-sm">
       {/* Header and Preset Selector */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#EDF2F7]">
         <div>
-          <div className="flex items-center gap-2 text-cyan-400 text-xs font-semibold tracking-wide uppercase">
+          <div className="flex items-center gap-2 text-[#2563EB] text-xs font-semibold tracking-wide uppercase">
             <Scale className="w-4 h-4" />
             <span>Virtual Physics &amp; Algebra Laboratory</span>
           </div>
-          <h3 className="text-xl font-bold text-white mt-1">
+          <h3 className="text-xl font-bold text-[#111827] mt-1">
             The Balance Scale Method: Solving Linear Equations
           </h3>
-          <p className="text-sm text-slate-300 mt-1 max-w-2xl">
-            Equality is an unbroken balance. Apply inverse operations to <strong>both sides</strong> to isolate the unknown block <span className="font-mono text-cyan-300 font-bold">x</span>.
+          <p className="text-sm text-[#475569] mt-1 max-w-2xl">
+            Equality is an unbroken balance. Apply inverse operations to <strong>both sides</strong> to isolate the unknown block <span className="font-mono text-[#2563EB] font-bold bg-[#EFF6FF] px-1.5 py-0.5 rounded border border-[#BFDBFE]">x</span>.
           </p>
         </div>
 
         {/* Preset Selector */}
-        <div className="flex items-center gap-2 bg-slate-950/70 p-1.5 rounded-xl border border-slate-800">
+        <div className="flex items-center gap-2 bg-[#F1F5FF] p-1.5 rounded-xl border border-[#BFDBFE]">
           {PRESETS.map((p) => (
             <button
               key={p.id}
               onClick={() => handleResetPreset(p)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all whitespace-nowrap shrink-0 ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all whitespace-nowrap shrink-0 cursor-pointer ${
                 selectedPreset.id === p.id
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                  ? 'bg-[#2563EB] text-white shadow-sm font-bold'
+                  : 'text-[#475569] hover:text-[#111827] hover:bg-[#FFFFFF]'
               }`}
             >
               {p.latex}
@@ -168,7 +168,7 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
       {/* Main Interactive Sandbox Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
         {/* Interactive Scale Canvas (8 cols) */}
-        <div className="lg:col-span-8 bg-slate-950/60 rounded-xl border border-slate-800 p-6 flex flex-col justify-between relative overflow-hidden min-h-[420px]">
+        <div className="lg:col-span-8 bg-[#F8FAFF] rounded-xl border border-[#E2E8F0] p-6 flex flex-col justify-between relative overflow-hidden min-h-[420px]">
           {/* Subtle Grid Canvas Background */}
           <div
             className="absolute inset-0 opacity-10 pointer-events-none"
@@ -181,9 +181,9 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
 
           {/* Top Status & Equation Representation */}
           <div className="flex items-center justify-between z-10">
-            <div className="bg-slate-900/90 border border-slate-700/80 px-4 py-2 rounded-xl flex items-center gap-3">
-              <span className="text-xs text-slate-400 font-medium">Current Equation:</span>
-              <span className="text-lg font-mono font-bold text-cyan-300">
+            <div className="bg-[#FFFFFF] border border-[#E2E8F0] px-4 py-2 rounded-xl flex items-center gap-3 shadow-sm">
+              <span className="text-xs text-[#64748B] font-medium">Current Equation:</span>
+              <span className="text-lg font-mono font-bold text-[#2563EB]">
                 {leftXCount > 0 ? (leftXCount === 1 ? 'x' : `${leftXCount}x`) : '0'}
                 {leftConstants > 0 ? ` + ${leftConstants}` : ''}
                 {' = '}
@@ -195,13 +195,13 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
               <div
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border ${
                   isBalanced
-                    ? 'bg-emerald-950/80 border-emerald-600/60 text-emerald-300'
-                    : 'bg-amber-950/80 border-amber-600/60 text-amber-300'
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                    : 'bg-amber-50 border-amber-200 text-amber-800'
                 }`}
               >
                 <div
                   className={`w-2 h-2 rounded-full ${
-                    isBalanced ? 'bg-emerald-400' : 'bg-amber-400'
+                    isBalanced ? 'bg-emerald-500' : 'bg-amber-500'
                   }`}
                 />
                 <span>{isBalanced ? 'IN EQUILIBRIUM (BALANCED)' : 'UNBALANCED TILT'}</span>
@@ -209,7 +209,7 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
 
               <button
                 onClick={() => handleResetPreset(selectedPreset)}
-                className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors"
+                className="p-2 text-[#64748B] hover:text-[#111827] hover:bg-[#FFFFFF] rounded-lg transition-colors border border-[#E2E8F0] bg-[#FFFFFF] shadow-2xs cursor-pointer"
                 title="Reset Equation"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -229,16 +229,16 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
               {/* Horizontal Beam Bar */}
               <div className="w-full h-3 bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 rounded-full shadow-lg relative border border-amber-300/40">
                 {/* Center Pivot Jewel */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-900 border-2 border-amber-400 flex items-center justify-center shadow-md">
-                  <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#FFFFFF] border-2 border-amber-500 flex items-center justify-center shadow-md">
+                  <div className="w-2 h-2 rounded-full bg-[#2563EB]" />
                 </div>
 
                 {/* Left Pan Suspension Cord */}
-                <div className="absolute left-6 top-3 w-0.5 h-20 bg-slate-400/80 origin-top flex flex-col items-center">
+                <div className="absolute left-6 top-3 w-0.5 h-20 bg-slate-400 origin-top flex flex-col items-center">
                   <div className="w-40 -ml-20 mt-20 relative">
                     {/* Left Pan Dish */}
-                    <div className="w-40 h-8 rounded-b-full bg-gradient-to-b from-slate-700 to-slate-900 border-2 border-slate-500 shadow-xl flex items-center justify-center relative">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold">
+                    <div className="w-40 h-8 rounded-b-full bg-gradient-to-b from-slate-100 to-slate-200 border-2 border-slate-300 shadow-md flex items-center justify-center relative">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-slate-700 font-bold">
                         Left Pan (LHS)
                       </span>
                     </div>
@@ -251,7 +251,7 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
                           key={`left-x-${i}`}
                           initial={{ scale: 0.5, y: -10 }}
                           animate={{ scale: 1, y: 0 }}
-                          className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-700 border border-cyan-300 shadow-md flex items-center justify-center text-white font-mono font-bold text-sm"
+                          className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 border border-blue-300 shadow-md flex items-center justify-center text-white font-mono font-bold text-sm"
                         >
                           x
                         </motion.div>
@@ -263,7 +263,7 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
                           key={`left-c-${i}`}
                           initial={{ scale: 0.5, y: -10 }}
                           animate={{ scale: 1, y: 0 }}
-                          className="w-5 h-5 rounded-md bg-gradient-to-br from-violet-500 to-purple-700 border border-purple-300 shadow-sm flex items-center justify-center text-white font-mono text-[10px] font-bold"
+                          className="w-5 h-5 rounded-md bg-gradient-to-br from-indigo-500 to-indigo-700 border border-indigo-300 shadow-sm flex items-center justify-center text-white font-mono text-[10px] font-bold"
                         >
                           1
                         </motion.div>
@@ -273,11 +273,11 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
                 </div>
 
                 {/* Right Pan Suspension Cord */}
-                <div className="absolute right-6 top-3 w-0.5 h-20 bg-slate-400/80 origin-top flex flex-col items-center">
+                <div className="absolute right-6 top-3 w-0.5 h-20 bg-slate-400 origin-top flex flex-col items-center">
                   <div className="w-40 -mr-20 mt-20 relative">
                     {/* Right Pan Dish */}
-                    <div className="w-40 h-8 rounded-b-full bg-gradient-to-b from-slate-700 to-slate-900 border-2 border-slate-500 shadow-xl flex items-center justify-center relative">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-slate-300 font-bold">
+                    <div className="w-40 h-8 rounded-b-full bg-gradient-to-b from-slate-100 to-slate-200 border-2 border-slate-300 shadow-md flex items-center justify-center relative">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-slate-700 font-bold">
                         Right Pan (RHS)
                       </span>
                     </div>
@@ -290,7 +290,7 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
                           key={`right-c-${i}`}
                           initial={{ scale: 0.5, y: -10 }}
                           animate={{ scale: 1, y: 0 }}
-                          className="w-5 h-5 rounded-md bg-gradient-to-br from-violet-500 to-purple-700 border border-purple-300 shadow-sm flex items-center justify-center text-white font-mono text-[10px] font-bold"
+                          className="w-5 h-5 rounded-md bg-gradient-to-br from-indigo-500 to-indigo-700 border border-indigo-300 shadow-sm flex items-center justify-center text-white font-mono text-[10px] font-bold"
                         >
                           1
                         </motion.div>
@@ -302,18 +302,18 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
             </motion.div>
 
             {/* Fulcrum Stand Pillar */}
-            <div className="w-8 h-28 bg-gradient-to-b from-slate-600 via-slate-700 to-slate-800 rounded-t-md border-x border-slate-500 mt-2 relative z-0 flex flex-col items-center">
+            <div className="w-8 h-28 bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 rounded-t-md border-x border-slate-300 mt-2 relative z-0 flex flex-col items-center">
               {/* Level Needle Indicator */}
               <motion.div
                 animate={{ rotate: tiltAngle }}
                 className="w-1 h-12 bg-red-500 origin-top rounded-full shadow-sm -mt-2"
               />
-              <div className="mt-auto mb-2 w-4 h-4 rounded-full bg-slate-900 border border-slate-600" />
+              <div className="mt-auto mb-2 w-4 h-4 rounded-full bg-slate-400 border border-slate-500" />
             </div>
 
             {/* Heavy Base Plate */}
-            <div className="w-52 h-5 rounded-md bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 border-t border-slate-500 shadow-2xl relative z-0 flex items-center justify-center">
-              <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400">
+            <div className="w-52 h-5 rounded-md bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 border-t border-slate-300 shadow-sm relative z-0 flex items-center justify-center">
+              <span className="text-[9px] font-mono uppercase tracking-widest text-slate-600 font-semibold">
                 Fulcrum Support
               </span>
             </div>
@@ -352,16 +352,16 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
           </AnimatePresence>
 
           {/* Bottom Pan Content Tally */}
-          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-800 text-xs">
-            <div className="flex items-center justify-between bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-800">
-              <span className="text-slate-400">Left Pan Contents:</span>
-              <span className="text-cyan-300 font-mono font-semibold">
+          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#EDF2F7] text-xs">
+            <div className="flex items-center justify-between bg-[#F8FAFF] px-3 py-2 rounded-lg border border-[#E2E8F0]">
+              <span className="text-[#64748B]">Left Pan Contents:</span>
+              <span className="text-[#2563EB] font-mono font-semibold">
                 {leftXCount}x block{leftXCount !== 1 ? 's' : ''} + {leftConstants} unit{leftConstants !== 1 ? 's' : ''}
               </span>
             </div>
-            <div className="flex items-center justify-between bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-800">
-              <span className="text-slate-400">Right Pan Contents:</span>
-              <span className="text-purple-300 font-mono font-semibold">
+            <div className="flex items-center justify-between bg-[#F8FAFF] px-3 py-2 rounded-lg border border-[#E2E8F0]">
+              <span className="text-[#64748B]">Right Pan Contents:</span>
+              <span className="text-purple-700 font-mono font-semibold">
                 {rightConstants} unit weights
               </span>
             </div>
@@ -371,36 +371,36 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
         {/* Control Deck & Step Log (4 cols) */}
         <div className="lg:col-span-4 flex flex-col gap-5">
           {/* Action Operations Deck */}
-          <div className="bg-slate-950/70 rounded-xl border border-slate-800 p-5">
-            <div className="flex items-center gap-2 text-white font-semibold text-sm mb-3">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
+          <div className="bg-[#F8FAFF] rounded-xl border border-[#E2E8F0] p-5">
+            <div className="flex items-center gap-2 text-[#111827] font-bold text-sm mb-3">
+              <Sparkles className="w-4 h-4 text-[#2563EB]" />
               <span>Apply Balanced Operations</span>
             </div>
-            <p className="text-xs text-slate-300 mb-4 leading-relaxed">
+            <p className="text-xs text-[#475569] mb-4 leading-relaxed">
               Every action is applied simultaneously to <strong>both pans</strong> to preserve algebraic equality.
             </p>
 
             <div className="space-y-3">
               {/* Subtract Operation */}
               <div>
-                <label className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider block mb-1.5">
+                <label className="text-[11px] font-semibold text-[#475569] uppercase tracking-wider block mb-1.5">
                   1. Undo Addition (Subtract from Both Sides)
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     disabled={leftConstants < 1 || rightConstants < 1}
                     onClick={() => applyOperationBothSides('subtract-constant', 1)}
-                    className="px-2.5 py-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-white disabled:opacity-40 disabled:cursor-not-allowed border border-slate-700 transition-colors flex items-center justify-center gap-1"
+                    className="px-2.5 py-2 text-xs font-semibold rounded-lg bg-[#FFFFFF] hover:bg-[#F1F5FF] text-[#111827] disabled:opacity-40 disabled:cursor-not-allowed border border-[#E2E8F0] shadow-2xs transition-colors flex items-center justify-center gap-1 cursor-pointer"
                   >
-                    <Minus className="w-3.5 h-3.5 text-cyan-400" />
+                    <Minus className="w-3.5 h-3.5 text-[#2563EB]" />
                     <span>-1</span>
                   </button>
                   <button
                     disabled={leftConstants < selectedPreset.initialLeftConstants || rightConstants < selectedPreset.initialLeftConstants}
                     onClick={() => applyOperationBothSides('subtract-constant', selectedPreset.initialLeftConstants)}
-                    className="px-2.5 py-2 text-xs font-semibold rounded-lg bg-blue-700/80 hover:bg-blue-600 text-white disabled:opacity-40 disabled:cursor-not-allowed border border-blue-500/60 transition-colors flex items-center justify-center gap-1 col-span-2"
+                    className="btn-primary px-2.5 py-2 text-xs font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed shadow-2xs transition-colors flex items-center justify-center gap-1 col-span-2 cursor-pointer"
                   >
-                    <Minus className="w-3.5 h-3.5 text-cyan-300" />
+                    <Minus className="w-3.5 h-3.5 text-white" />
                     <span>-{selectedPreset.initialLeftConstants} (All Constants)</span>
                   </button>
                 </div>
@@ -408,24 +408,24 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
 
               {/* Divide Operation */}
               <div className="pt-2">
-                <label className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider block mb-1.5">
+                <label className="text-[11px] font-semibold text-[#475569] uppercase tracking-wider block mb-1.5">
                   2. Undo Multiplication (Divide Both Sides)
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     disabled={leftXCount % 2 !== 0 || rightConstants % 2 !== 0}
                     onClick={() => applyOperationBothSides('divide', 2)}
-                    className="px-3 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-white disabled:opacity-40 disabled:cursor-not-allowed border border-slate-700 transition-colors flex items-center justify-center gap-1.5"
+                    className="px-3 py-2 text-xs font-semibold rounded-lg bg-[#FFFFFF] hover:bg-[#F1F5FF] text-[#111827] disabled:opacity-40 disabled:cursor-not-allowed border border-[#E2E8F0] shadow-2xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    <Divide className="w-3.5 h-3.5 text-purple-400" />
+                    <Divide className="w-3.5 h-3.5 text-[#2563EB]" />
                     <span>Divide by 2</span>
                   </button>
                   <button
                     disabled={leftXCount % 3 !== 0 || rightConstants % 3 !== 0}
                     onClick={() => applyOperationBothSides('divide', 3)}
-                    className="px-3 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-white disabled:opacity-40 disabled:cursor-not-allowed border border-slate-700 transition-colors flex items-center justify-center gap-1.5"
+                    className="px-3 py-2 text-xs font-semibold rounded-lg bg-[#FFFFFF] hover:bg-[#F1F5FF] text-[#111827] disabled:opacity-40 disabled:cursor-not-allowed border border-[#E2E8F0] shadow-2xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    <Divide className="w-3.5 h-3.5 text-purple-400" />
+                    <Divide className="w-3.5 h-3.5 text-[#2563EB]" />
                     <span>Divide by 3</span>
                   </button>
                 </div>
@@ -433,14 +433,14 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
 
               {/* Add constant (for exploring undoing subtraction) */}
               <div className="pt-2">
-                <label className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider block mb-1.5">
+                <label className="text-[11px] font-semibold text-[#475569] uppercase tracking-wider block mb-1.5">
                   Optional: Add to Both Sides
                 </label>
                 <button
                   onClick={() => applyOperationBothSides('add-constant', 1)}
-                  className="w-full px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors flex items-center justify-center gap-1"
+                  className="w-full px-3 py-1.5 text-xs font-medium rounded-lg bg-[#FFFFFF] hover:bg-[#F1F5FF] text-[#475569] hover:text-[#111827] border border-[#E2E8F0] shadow-2xs transition-colors flex items-center justify-center gap-1 cursor-pointer"
                 >
-                  <Plus className="w-3.5 h-3.5 text-emerald-400" />
+                  <Plus className="w-3.5 h-3.5 text-[#16A34A]" />
                   <span>Add +1 to Both Sides (Preserves Balance)</span>
                 </button>
               </div>
@@ -448,12 +448,12 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
           </div>
 
           {/* Real-Time Mathematical Step Log */}
-          <div className="bg-slate-950/70 rounded-xl border border-slate-800 p-4 flex-1 flex flex-col">
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+          <div className="bg-[#F8FAFF] rounded-xl border border-[#E2E8F0] p-4 flex-1 flex flex-col">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#EDF2F7]">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#111827]">
                 Mathematical Step Log
               </span>
-              <span className="text-[11px] font-mono text-cyan-400">
+              <span className="text-[11px] font-mono text-[#2563EB] font-bold">
                 {stepsLog.length} recorded
               </span>
             </div>
@@ -462,9 +462,9 @@ export function BalanceScaleActivity({ onComplete, isAlreadyCompleted }: Balance
               {stepsLog.map((log, index) => (
                 <div
                   key={index}
-                  className="p-2 rounded bg-slate-900/80 border border-slate-800/80 text-slate-300 leading-relaxed"
+                  className="p-2.5 rounded-lg bg-[#FFFFFF] border border-[#E2E8F0] text-[#111827] leading-relaxed shadow-2xs"
                 >
-                  <span className="text-cyan-400 font-bold mr-1.5">{index + 1}.</span>
+                  <span className="text-[#2563EB] font-bold mr-1.5">{index + 1}.</span>
                   {log}
                 </div>
               ))}

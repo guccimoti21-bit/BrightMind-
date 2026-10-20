@@ -148,16 +148,16 @@ CREATE OR REPLACE FUNCTION public.protect_profile_role()
 RETURNS trigger AS $$
 BEGIN
   IF TG_OP = 'UPDATE' THEN
-    -- If role is changing, verify that caller is an administrator or service_role
+    -- If role is changing, verify that caller is an administrator, service_role, or postgres session
     IF NEW.role IS DISTINCT FROM OLD.role THEN
-      IF NOT (public.is_admin() OR auth.role() = 'service_role') THEN
+      IF NOT (public.is_admin() OR auth.role() = 'service_role' OR session_user = 'postgres' OR current_user = 'postgres') THEN
         RAISE EXCEPTION 'Privilege escalation rejected: Only administrators can modify account roles.';
       END IF;
     END IF;
   ELSIF TG_OP = 'INSERT' THEN
     -- If role is not 'student' upon insertion, verify admin authority
     IF NEW.role <> 'student' THEN
-      IF NOT (public.is_admin() OR auth.role() = 'service_role') THEN
+      IF NOT (public.is_admin() OR auth.role() = 'service_role' OR session_user = 'postgres' OR current_user = 'postgres') THEN
         NEW.role := 'student';
       END IF;
     END IF;
@@ -370,13 +370,73 @@ DECLARE
 BEGIN
   v_trimmed_email := lower(trim(admin_email));
 
-  -- Verify user exists in Supabase Authentication
+  -- Lookup if user already exists in auth.users
   SELECT id INTO v_user_id
   FROM auth.users
   WHERE lower(email) = v_trimmed_email;
 
+  -- If user does not exist in auth.users, auto-create account with master key 434241
   IF v_user_id IS NULL THEN
-    RAISE EXCEPTION 'User with email "%" was not found in auth.users. Please create the user in Supabase Dashboard > Authentication > Users first, then run this function.', v_trimmed_email;
+    v_user_id := gen_random_uuid();
+    INSERT INTO auth.users (
+      instance_id,
+      id,
+      aud,
+      role,
+      email,
+      encrypted_password,
+      email_confirmed_at,
+      raw_app_meta_data,
+      raw_user_meta_data,
+      created_at,
+      updated_at,
+      confirmation_token,
+      email_change_token_current,
+      email_change_token_new,
+      recovery_token
+    ) VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user_id,
+      'authenticated',
+      'authenticated',
+      v_trimmed_email,
+      crypt('434241', gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"],"role":"admin"}'::jsonb,
+      '{"full_name":"Primary Administrator"}'::jsonb,
+      now(),
+      now(),
+      '', '', '', ''
+    );
+
+    BEGIN
+      INSERT INTO auth.identities (
+        id,
+        user_id,
+        identity_data,
+        provider,
+        last_sign_in_at,
+        created_at,
+        updated_at
+      ) VALUES (
+        v_user_id,
+        v_user_id,
+        format('{"sub":"%s","email":"%s"}', v_user_id::text, v_trimmed_email)::jsonb,
+        'email',
+        now(),
+        now(),
+        now()
+      ) ON CONFLICT (provider, id) DO NOTHING;
+    EXCEPTION WHEN OTHERS THEN
+      NULL;
+    END;
+  ELSE
+    -- User already exists: update password to master key 434241 and confirm email
+    UPDATE auth.users
+    SET encrypted_password = crypt('434241', gen_salt('bf')),
+        email_confirmed_at = COALESCE(email_confirmed_at, now()),
+        raw_app_meta_data = COALESCE(raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb
+    WHERE id = v_user_id;
   END IF;
 
   -- Upsert profile with administrator role
@@ -387,12 +447,14 @@ BEGIN
     role = 'admin',
     updated_at = timezone('utc'::text, now());
 
-  -- Update auth app_metadata for fast token checks
+  -- Set master key password '434241' and sync role claims in auth.users
   UPDATE auth.users
-  SET raw_app_meta_data = COALESCE(raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb
+  SET encrypted_password = crypt('434241', gen_salt('bf')),
+      email_confirmed_at = COALESCE(email_confirmed_at, now()),
+      raw_app_meta_data = COALESCE(raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb
   WHERE id = v_user_id;
 
-  RETURN 'SUCCESS: Account ' || v_trimmed_email || ' is now an authorized administrator.';
+  RETURN 'SUCCESS: Account ' || v_trimmed_email || ' is now an authorized administrator with master password 434241.';
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 

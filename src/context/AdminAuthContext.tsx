@@ -197,6 +197,8 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: 'Please enter both administrator ID/email and password.' };
     }
 
+    let supabaseAuthError: string | null = null;
+
     // PATH 1: Supabase Cloud Auth (Primary for GitHub Pages & Cloud deployments)
     if (isSupabaseLiveConfigured()) {
       try {
@@ -206,53 +208,45 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
           password
         });
 
+        if (!error && data?.user && data?.session) {
+          // CRITICAL SECURITY ENFORCEMENT:
+          // Do not bypass authentication or treat a successful frontend response as proof
+          // that an administrator is authenticated. Check profile role!
+          const roleCheck = await verifySupabaseAdminRole(data.user);
+          if (!roleCheck.isAdmin) {
+            // Reject and immediately sign out non-admin users
+            await supabase.auth.signOut();
+            return {
+              success: false,
+              error:
+                roleCheck.error ||
+                '[HTTP 403 Forbidden] Access denied. This account does not possess administrator privileges in Supabase. Please sign in with an authorized administrator account or assign role="admin" in public.profiles.'
+            };
+          }
+
+          const newAdmin: AdminUser = {
+            id: data.user.id,
+            username: roleCheck.profile?.full_name || data.user.email?.split('@')[0] || 'Administrator',
+            email: data.user.email || trimmedUser,
+            role: 'admin',
+            mustChangePassword: false,
+            authProvider: 'supabase'
+          };
+
+          setToken(data.session.access_token);
+          setAdmin(newAdmin);
+          setAuthMode('supabase');
+          localStorage.setItem(TOKEN_KEY, data.session.access_token);
+          localStorage.setItem(AUTH_PROVIDER_KEY, 'supabase');
+
+          return { success: true };
+        }
+
         if (error) {
-          return {
-            success: false,
-            error: `[Supabase Auth] ${error.message || 'Invalid administrator login credentials.'}`
-          };
+          supabaseAuthError = `[Supabase Auth] ${error.message || 'Invalid administrator login credentials.'}`;
         }
-
-        if (!data?.user || !data?.session) {
-          return { success: false, error: 'Authentication failed. No active session returned.' };
-        }
-
-        // CRITICAL SECURITY ENFORCEMENT:
-        // Do not bypass authentication or treat a successful frontend response as proof
-        // that an administrator is authenticated. Check profile role!
-        const roleCheck = await verifySupabaseAdminRole(data.user);
-        if (!roleCheck.isAdmin) {
-          // Reject and immediately sign out non-admin users
-          await supabase.auth.signOut();
-          return {
-            success: false,
-            error:
-              roleCheck.error ||
-              '[HTTP 403 Forbidden] Access denied. This account does not possess administrator privileges in Supabase. Please sign in with an authorized administrator account or assign role="admin" in public.profiles.'
-          };
-        }
-
-        const newAdmin: AdminUser = {
-          id: data.user.id,
-          username: roleCheck.profile?.full_name || data.user.email?.split('@')[0] || 'Administrator',
-          email: data.user.email || trimmedUser,
-          role: 'admin',
-          mustChangePassword: false,
-          authProvider: 'supabase'
-        };
-
-        setToken(data.session.access_token);
-        setAdmin(newAdmin);
-        setAuthMode('supabase');
-        localStorage.setItem(TOKEN_KEY, data.session.access_token);
-        localStorage.setItem(AUTH_PROVIDER_KEY, 'supabase');
-
-        return { success: true };
       } catch (supErr: any) {
-        return {
-          success: false,
-          error: `[Supabase Auth Error] ${supErr.message || 'Failed connecting to Supabase Auth.'}`
-        };
+        supabaseAuthError = `[Supabase Auth Error] ${supErr.message || 'Failed connecting to Supabase Auth.'}`;
       }
     }
 
@@ -273,13 +267,15 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         if (result.status === 404) {
           return {
             success: false,
-            error: '[HTTP 404 Not Found] The backend endpoint /api/admin/login is not available on this static host (GitHub Pages). Please connect Supabase Auth to enable cloud-based administrator authentication for your published website.'
+            error:
+              supabaseAuthError ||
+              '[HTTP 404 Not Found] The backend endpoint /api/admin/login is not available on this static host (GitHub Pages). Please connect Supabase Auth to enable cloud-based administrator authentication for your published website.'
           };
         }
 
         return {
           success: false,
-          error: result.error || `[HTTP ${result.status}] Administrator login failed.`
+          error: result.error || supabaseAuthError || `[HTTP ${result.status}] Administrator login failed.`
         };
       }
 
@@ -298,7 +294,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     } catch (e: any) {
       return {
         success: false,
-        error: `[Connection Error] ${e.message || 'Network error during administrator login.'}`
+        error:
+          supabaseAuthError ||
+          `[Connection Error] ${e.message || 'Network error during administrator login.'}`
       };
     }
   };

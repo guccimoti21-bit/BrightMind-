@@ -42,16 +42,17 @@ function AppContent() {
   const { isAuthenticated: isAdminAuthenticated, mustChangePassword } = useAdminAuth();
   const { student, isAuthenticated: isStudentAuthenticated, logout: studentLogout } = useStudentAuth();
 
-  // Primary route mode based on URL or state
+  // Primary route mode based on URL or state (supports both pathname and hash for GitHub Pages)
   const [appRoute, setAppRoute] = useState<AppRoute>(() => {
     if (typeof window !== 'undefined') {
       const path = window.location.pathname;
-      if (path.startsWith('/admin/dashboard')) return 'admin-dashboard';
-      if (path.startsWith('/admin')) return 'admin-login';
-      if (path.startsWith('/student/login')) return 'student-login';
-      if (path.startsWith('/student/register')) return 'student-register';
-      if (path.startsWith('/student/forgot-password')) return 'student-forgot-password';
-      if (path.startsWith('/student/reset-password')) return 'student-reset-password';
+      const hash = window.location.hash;
+      if (path.startsWith('/admin/dashboard') || hash.includes('/admin/dashboard') || hash === '#admin-dashboard') return 'admin-dashboard';
+      if (path.startsWith('/admin') || hash.includes('/admin') || hash === '#admin') return 'admin-login';
+      if (path.startsWith('/student/login') || hash.includes('/student/login') || hash === '#student-login') return 'student-login';
+      if (path.startsWith('/student/register') || hash.includes('/student/register') || hash === '#student-register') return 'student-register';
+      if (path.startsWith('/student/forgot-password') || hash.includes('/student/forgot-password')) return 'student-forgot-password';
+      if (path.startsWith('/student/reset-password') || hash.includes('/student/reset-password')) return 'student-reset-password';
     }
     return 'home';
   });
@@ -112,17 +113,18 @@ function AppContent() {
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname;
-      if (path.startsWith('/admin/dashboard')) {
+      const hash = window.location.hash;
+      if (path.startsWith('/admin/dashboard') || hash.includes('/admin/dashboard') || hash === '#admin-dashboard') {
         setAppRoute('admin-dashboard');
-      } else if (path.startsWith('/admin')) {
+      } else if (path.startsWith('/admin') || hash.includes('/admin') || hash === '#admin') {
         setAppRoute('admin-login');
-      } else if (path.startsWith('/student/login')) {
+      } else if (path.startsWith('/student/login') || hash.includes('/student/login') || hash === '#student-login') {
         setAppRoute('student-login');
-      } else if (path.startsWith('/student/register')) {
+      } else if (path.startsWith('/student/register') || hash.includes('/student/register') || hash === '#student-register') {
         setAppRoute('student-register');
-      } else if (path.startsWith('/student/forgot-password')) {
+      } else if (path.startsWith('/student/forgot-password') || hash.includes('/student/forgot-password') || hash === '#student-forgot-password') {
         setAppRoute('student-forgot-password');
-      } else if (path.startsWith('/student/reset-password')) {
+      } else if (path.startsWith('/student/reset-password') || hash.includes('/student/reset-password') || hash === '#student-reset-password') {
         setAppRoute('student-reset-password');
       } else {
         setAppRoute('home');
@@ -130,7 +132,11 @@ function AppContent() {
     };
 
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handlePopState);
+    };
   }, []);
 
   // Update URL pathname cleanly

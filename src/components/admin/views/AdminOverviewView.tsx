@@ -244,10 +244,10 @@ export function AdminOverviewView({ onNavigateSection }: AdminOverviewViewProps)
           <div className="flex items-center justify-between mt-1">
             <div className="flex items-baseline gap-2">
               <span className="text-2xl font-mono font-bold text-[#111827] group-hover:text-[#2563EB]">
-                {stats.totalChapterQuizzes ?? 5}
+                {stats.totalChapterQuizzes ?? 0}
               </span>
               <span className="text-xs text-[#16A34A] font-semibold">
-                ({stats.activeChapterQuizzes ?? 5} active)
+                ({stats.activeChapterQuizzes ?? 0} active)
               </span>
             </div>
             <span className="text-xs text-[#2563EB] font-semibold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">

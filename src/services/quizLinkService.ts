@@ -1,90 +1,10 @@
 import { ChapterQuizLink, ClassLevel, SubjectId } from '../types/curriculum';
 
-const LOCAL_STORAGE_KEY = 'scimath_chapter_quizzes_cache';
+const LOCAL_STORAGE_KEY = 'scimath_chapter_quizzes_v3';
 export const QUIZ_LINKS_UPDATED_EVENT = 'scimath-chapter-quizzes-updated';
 
-export const DEFAULT_CHAPTER_QUIZZES: ChapterQuizLink[] = [
-  {
-    id: 'quiz-c8-math-linear-eq',
-    classLevel: 8,
-    subjectId: 'mathematics',
-    conceptId: 'c8-math-linear-eq',
-    chapterTitle: 'Linear Equations in One Variable',
-    title: 'Class 8 Linear Equations Interactive Quizizz Challenge',
-    quizUrl: 'https://quizizz.com/join?gc=842910',
-    platformName: 'Quizizz',
-    description: '15 rapid-fire questions testing equation balancing, variable transposition, and real-life algebraic problem modeling.',
-    timeLimitMinutes: 20,
-    questionCount: 15,
-    isActive: true,
-    createdAt: Date.now() - 86400000,
-    updatedAt: Date.now() - 86400000
-  },
-  {
-    id: 'quiz-c8-sci-light',
-    classLevel: 8,
-    subjectId: 'science',
-    conceptId: 'c8-sci-light',
-    chapterTitle: 'Light and Reflection',
-    title: 'Laws of Reflection & Plane Mirrors Kahoot Challenge',
-    quizUrl: 'https://kahoot.it/?pin=592814',
-    platformName: 'Kahoot',
-    description: 'Test your understanding of incident and reflected rays, angle of incidence equality, and lateral inversion in plane mirrors.',
-    timeLimitMinutes: 15,
-    questionCount: 12,
-    isActive: true,
-    createdAt: Date.now() - 86400000,
-    updatedAt: Date.now() - 86400000
-  },
-  {
-    id: 'quiz-c10-math-quadratic',
-    classLevel: 10,
-    subjectId: 'mathematics',
-    conceptId: 'c10-math-quadratic',
-    chapterTitle: 'Quadratic Equations',
-    title: 'Class 10 Quadratic Equations Board Practice Assessment',
-    quizUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSc-Sample-Quadratic/viewform',
-    platformName: 'Google Forms',
-    description: 'Board-pattern multiple choice questions on finding roots, discriminant nature (real, equal, distinct), and formula derivation.',
-    timeLimitMinutes: 30,
-    questionCount: 20,
-    isActive: true,
-    createdAt: Date.now() - 86400000,
-    updatedAt: Date.now() - 86400000
-  },
-  {
-    id: 'quiz-c10-sci-electricity',
-    classLevel: 10,
-    subjectId: 'science',
-    conceptId: 'c10-sci-electricity',
-    chapterTitle: 'Electricity and Circuits',
-    title: 'Electric Current, Ohm’s Law & Resistance Quizizz',
-    quizUrl: 'https://quizizz.com/join?gc=194820',
-    platformName: 'Quizizz',
-    description: 'Numerical calculations on series/parallel resistance combinations, potential difference, and electrical power consumption.',
-    timeLimitMinutes: 25,
-    questionCount: 15,
-    isActive: true,
-    createdAt: Date.now() - 86400000,
-    updatedAt: Date.now() - 86400000
-  },
-  {
-    id: 'quiz-c6-math-fractions',
-    classLevel: 6,
-    subjectId: 'mathematics',
-    conceptId: 'c6-math-fractions',
-    chapterTitle: 'Fractions and Decimals',
-    title: 'Class 6 Fractions & Decimals Visual Matching Quiz',
-    quizUrl: 'https://wordwall.net/resource/sample-fractions-math',
-    platformName: 'Wordwall',
-    description: 'Engaging visual matching game to compare like and unlike fractions, decimal conversions, and number line placements.',
-    timeLimitMinutes: 12,
-    questionCount: 10,
-    isActive: true,
-    createdAt: Date.now() - 86400000,
-    updatedAt: Date.now() - 86400000
-  }
-];
+// Starts empty: Quizzes are added exclusively via the admin portal
+export const DEFAULT_CHAPTER_QUIZZES: ChapterQuizLink[] = [];
 
 export function validateQuizUrl(url: string): { valid: boolean; error?: string } {
   if (!url || typeof url !== 'string') {
@@ -120,19 +40,23 @@ export function detectQuizPlatform(url: string): string {
 }
 
 export function getCachedQuizLinks(): ChapterQuizLink[] {
-  if (typeof window === 'undefined') return DEFAULT_CHAPTER_QUIZZES;
+  if (typeof window === 'undefined') return [];
   try {
+    // Clear legacy mock caches if present
+    localStorage.removeItem('scimath_chapter_quizzes_cache');
+    localStorage.removeItem('scimath_chapter_quizzes_v2');
+
     const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (cached) {
       const parsed = JSON.parse(cached);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed;
       }
     }
   } catch (e) {
     console.warn('Failed reading quiz cache from localStorage:', e);
   }
-  return DEFAULT_CHAPTER_QUIZZES;
+  return [];
 }
 
 export function setCachedQuizLinks(quizzes: ChapterQuizLink[]): void {

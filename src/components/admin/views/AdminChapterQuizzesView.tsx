@@ -760,21 +760,29 @@ export function AdminChapterQuizzesView() {
         {filteredQuizzes.length === 0 ? (
           <div className="py-16 text-center space-y-3">
             <Globe className="w-10 h-10 text-[#94A3B8] mx-auto opacity-50" />
-            <h4 className="text-sm font-bold text-[#111827]">No quiz links match your search or filter</h4>
-            <p className="text-xs text-[#64748B] max-w-sm mx-auto">
-              Use the form above to add a quiz link for any chapter, or reset your filters to view all entries.
+            <h4 className="text-sm font-bold text-[#111827]">
+              {quizzes.length === 0
+                ? 'No quiz links added yet'
+                : 'No quiz links match your search or filter'}
+            </h4>
+            <p className="text-xs text-[#64748B] max-w-md mx-auto">
+              {quizzes.length === 0
+                ? 'All quizzes have been removed from the public website. Use the form above to add an external quiz link (e.g. Quizizz, Kahoot, Google Forms) for any chapter. Once added, it will immediately appear on the website.'
+                : 'Use the form above to add a quiz link for any chapter, or reset your filters to view all entries.'}
             </p>
-            <button
-              onClick={() => {
-                setFilterClass('all');
-                setFilterSubject('all');
-                setFilterStatus('all');
-                setSearchQuery('');
-              }}
-              className="btn-secondary px-3 py-1.5 text-xs font-semibold cursor-pointer"
-            >
-              Reset Filters
-            </button>
+            {quizzes.length > 0 && (
+              <button
+                onClick={() => {
+                  setFilterClass('all');
+                  setFilterSubject('all');
+                  setFilterStatus('all');
+                  setSearchQuery('');
+                }}
+                className="btn-secondary px-3 py-1.5 text-xs font-semibold cursor-pointer"
+              >
+                Reset Filters
+              </button>
+            )}
           </div>
         ) : (
           <div className="divide-y divide-[#EDF2F7]">

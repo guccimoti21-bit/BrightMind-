@@ -8,7 +8,7 @@
     "mustChangePassword": false,
     "role": "super_admin",
     "createdAt": 1792235558702,
-    "lastLoginAt": 1792479848891
+    "lastLoginAt": 1792480666693
   },
   "rules": {
     "lessonWeight": 30,
@@ -4560,6 +4560,49 @@
   ],
   "auditLogs": [
     {
+      "id": "log-1792480666726-c045b",
+      "timestamp": 1792480666726,
+      "adminUsername": "admin@scimath.academy",
+      "category": "quizzes",
+      "action": "Chapter Quiz Deleted",
+      "details": "Deleted external quiz link: Class 8 Linear Equations Mastery Challenge (Chapter: Linear Equations in One Variable)"
+    },
+    {
+      "id": "log-1792480666712-ou06p",
+      "timestamp": 1792480666712,
+      "adminUsername": "admin@scimath.academy",
+      "category": "quizzes",
+      "action": "Chapter Quiz Added",
+      "details": "Added external quiz link for Class 8 mathematics chapter \"Linear Equations in One Variable\": Class 8 Linear Equations Mastery Challenge (https://quizizz.com/join?gc=998877)"
+    },
+    {
+      "id": "log-1792480666695-qb76t",
+      "timestamp": 1792480666695,
+      "adminUsername": "admin@scimath.academy",
+      "category": "auth",
+      "action": "Administrator Login",
+      "details": "Successful authentication",
+      "ip": "127.0.0.1"
+    },
+    {
+      "id": "log-1792480655672-pktc6",
+      "timestamp": 1792480655672,
+      "adminUsername": "admin@scimath.academy",
+      "category": "auth",
+      "action": "Failed Login Attempt",
+      "details": "Incorrect password entered",
+      "ip": "127.0.0.1"
+    },
+    {
+      "id": "log-1792480655596-e3ksk",
+      "timestamp": 1792480655596,
+      "adminUsername": "admin@scimath.academy",
+      "category": "auth",
+      "action": "Failed Login Attempt",
+      "details": "Incorrect password entered",
+      "ip": "127.0.0.1"
+    },
+    {
       "id": "log-1792479848925-w044v",
       "timestamp": 1792479848925,
       "adminUsername": "admin@scimath.academy",
@@ -4692,102 +4735,5 @@
       "details": "Initial administrator account and curriculum database seeded securely."
     }
   ],
-  "chapterQuizzes": [
-    {
-      "id": "quiz-1792479848925-angd",
-      "classLevel": 9,
-      "subjectId": "mathematics",
-      "conceptId": "c9-math-polynomials",
-      "chapterTitle": "Polynomials and Factorization",
-      "title": "Class 9 Polynomials Factor Theorem Challenge",
-      "quizUrl": "https://quizizz.com/join?gc=381902",
-      "platformName": "Quizizz",
-      "description": "Practice zero of polynomials, remainder theorem, and quadratic algebraic identities.",
-      "timeLimitMinutes": 20,
-      "questionCount": 15,
-      "isActive": true,
-      "createdAt": 1792479848925,
-      "updatedAt": 1792479848925
-    },
-    {
-      "id": "quiz-c8-math-linear-eq",
-      "classLevel": 8,
-      "subjectId": "mathematics",
-      "conceptId": "c8-math-linear-eq",
-      "chapterTitle": "Linear Equations in One Variable",
-      "title": "Class 8 Linear Equations Interactive Quizizz Challenge",
-      "quizUrl": "https://quizizz.com/join?gc=842910",
-      "platformName": "Quizizz",
-      "description": "15 rapid-fire questions testing equation balancing, variable transposition, and real-life algebraic problem modeling.",
-      "timeLimitMinutes": 20,
-      "questionCount": 15,
-      "isActive": true,
-      "createdAt": 1792393208088,
-      "updatedAt": 1792393208088
-    },
-    {
-      "id": "quiz-c8-sci-light",
-      "classLevel": 8,
-      "subjectId": "science",
-      "conceptId": "c8-sci-light",
-      "chapterTitle": "Light and Reflection",
-      "title": "Laws of Reflection & Plane Mirrors Kahoot Challenge",
-      "quizUrl": "https://kahoot.it/?pin=592814",
-      "platformName": "Kahoot",
-      "description": "Test your understanding of incident and reflected rays, angle of incidence equality, and lateral inversion in plane mirrors.",
-      "timeLimitMinutes": 15,
-      "questionCount": 12,
-      "isActive": true,
-      "createdAt": 1792393208088,
-      "updatedAt": 1792393208088
-    },
-    {
-      "id": "quiz-c10-math-quadratic",
-      "classLevel": 10,
-      "subjectId": "mathematics",
-      "conceptId": "c10-math-quadratic",
-      "chapterTitle": "Quadratic Equations",
-      "title": "Class 10 Quadratic Equations Board Practice Assessment",
-      "quizUrl": "https://docs.google.com/forms/d/e/1FAIpQLSc-Sample-Quadratic/viewform",
-      "platformName": "Google Forms",
-      "description": "Board-pattern multiple choice questions on finding roots, discriminant nature (real, equal, distinct), and formula derivation.",
-      "timeLimitMinutes": 30,
-      "questionCount": 20,
-      "isActive": true,
-      "createdAt": 1792393208088,
-      "updatedAt": 1792393208088
-    },
-    {
-      "id": "quiz-c10-sci-electricity",
-      "classLevel": 10,
-      "subjectId": "science",
-      "conceptId": "c10-sci-electricity",
-      "chapterTitle": "Electricity and Circuits",
-      "title": "Electric Current, Ohm’s Law & Resistance Quizizz",
-      "quizUrl": "https://quizizz.com/join?gc=194820",
-      "platformName": "Quizizz",
-      "description": "Numerical calculations on series/parallel resistance combinations, potential difference, and electrical power consumption.",
-      "timeLimitMinutes": 25,
-      "questionCount": 15,
-      "isActive": true,
-      "createdAt": 1792393208088,
-      "updatedAt": 1792393208088
-    },
-    {
-      "id": "quiz-c6-math-fractions",
-      "classLevel": 6,
-      "subjectId": "mathematics",
-      "conceptId": "c6-math-fractions",
-      "chapterTitle": "Fractions and Decimals",
-      "title": "Class 6 Fractions & Decimals Visual Matching Quiz",
-      "quizUrl": "https://wordwall.net/resource/sample-fractions-math",
-      "platformName": "Wordwall",
-      "description": "Engaging visual matching game to compare like and unlike fractions, decimal conversions, and number line placements.",
-      "timeLimitMinutes": 12,
-      "questionCount": 10,
-      "isActive": true,
-      "createdAt": 1792393208088,
-      "updatedAt": 1792393208088
-    }
-  ]
+  "chapterQuizzes": []
 }

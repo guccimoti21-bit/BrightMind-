@@ -8,7 +8,7 @@
     "mustChangePassword": false,
     "role": "super_admin",
     "createdAt": 1792235558702,
-    "lastLoginAt": 1792509100186
+    "lastLoginAt": 1792509750908
   },
   "rules": {
     "lessonWeight": 30,
@@ -4559,6 +4559,15 @@
     }
   ],
   "auditLogs": [
+    {
+      "id": "log-1792509750909-2ctdh",
+      "timestamp": 1792509750909,
+      "adminUsername": "admin@scimath.academy",
+      "category": "auth",
+      "action": "Administrator Login",
+      "details": "Successful authentication",
+      "ip": "127.0.0.1"
+    },
     {
       "id": "log-1792509100188-evd0x",
       "timestamp": 1792509100188,

@@ -19,6 +19,9 @@ import {
 import { CLASS_METADATA } from '../../data/curriculumData';
 import { ClassLevel, SubjectId, Concept } from '../../types/curriculum';
 import { FrontPageChapterIndex } from './FrontPageChapterIndex';
+import heroArtworkImg from '../../assets/images/hero_scimath_academy_1792233656985.jpg';
+import scienceBannerImg from '../../assets/images/science_discipline_banner_1792233656005.jpg';
+import mathBannerImg from '../../assets/images/math_discipline_banner_1792233657743.jpg';
 
 interface LandingPageProps {
   concepts: Concept[];
@@ -139,12 +142,17 @@ export function LandingPage({
 
           {/* Right Column: Hero Artwork */}
           <div className="lg:col-span-5 relative">
-            <div className="relative rounded-3xl overflow-hidden border border-[#E2E8F0] shadow-[0_16px_40px_rgba(37,99,235,0.12)] bg-[#FFFFFF] group">
+            <div className="relative rounded-3xl overflow-hidden border border-[#E2E8F0] shadow-[0_16px_40px_rgba(37,99,235,0.12)] bg-[#FFFFFF] group min-h-[340px] aspect-[16/11] flex items-center justify-center">
               <img
-                src="/src/assets/images/hero_scimath_academy_1792233656985.jpg"
+                src={heroArtworkImg}
                 alt="SciMathenova Hero Artwork showing atom model, celestial orbits, and geometric mathematics"
-                className="w-full h-auto object-cover group-hover:scale-102 transition-transform duration-700"
-                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes('hero_scimath_academy.jpg')) {
+                    target.src = '/images/hero_scimath_academy.jpg';
+                  }
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/60 via-transparent to-transparent pointer-events-none" />
 
@@ -260,10 +268,15 @@ export function LandingPage({
           >
             <div className="h-56 relative overflow-hidden bg-[#F1F5FF]">
               <img
-                src="/src/assets/images/science_discipline_banner_1792233656005.jpg"
+                src={scienceBannerImg}
                 alt="Science Exploration banner with microscope, chemical flask, and DNA double helix"
                 className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700"
-                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes('science_discipline_banner.jpg')) {
+                    target.src = '/images/science_discipline_banner.jpg';
+                  }
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/70 via-transparent to-transparent" />
               <div className="absolute top-4 left-4 bg-white/95 border border-[#BFDBFE] px-3 py-1 rounded-lg text-[#0284C7] text-xs font-bold flex items-center gap-1.5 shadow-sm">
@@ -309,10 +322,15 @@ export function LandingPage({
           >
             <div className="h-56 relative overflow-hidden bg-[#F1F5FF]">
               <img
-                src="/src/assets/images/math_discipline_banner_1792233657743.jpg"
+                src={mathBannerImg}
                 alt="Mathematics Concept banner with polyhedra, golden ratio spiral, and balance scale"
                 className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700"
-                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes('math_discipline_banner.jpg')) {
+                    target.src = '/images/math_discipline_banner.jpg';
+                  }
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/70 via-transparent to-transparent" />
               <div className="absolute top-4 left-4 bg-white/95 border border-[#BFDBFE] px-3 py-1 rounded-lg text-[#2563EB] text-xs font-bold flex items-center gap-1.5 shadow-sm">

@@ -1,4 +1,5 @@
 import { ChapterQuizLink, ClassLevel, SubjectId } from '../types/curriculum';
+import { getSupabase, isSupabaseLiveConfigured } from '../lib/supabase';
 
 const LOCAL_STORAGE_KEY = 'scimath_chapter_quizzes_v3';
 export const QUIZ_LINKS_UPDATED_EVENT = 'scimath-chapter-quizzes-updated';
@@ -42,7 +43,6 @@ export function detectQuizPlatform(url: string): string {
 export function getCachedQuizLinks(): ChapterQuizLink[] {
   if (typeof window === 'undefined') return [];
   try {
-    // Clear legacy mock caches if present
     localStorage.removeItem('scimath_chapter_quizzes_cache');
     localStorage.removeItem('scimath_chapter_quizzes_v2');
 
@@ -69,7 +69,51 @@ export function setCachedQuizLinks(quizzes: ChapterQuizLink[]): void {
   }
 }
 
+// Convert a database snake_case row to frontend camelCase ChapterQuizLink
+function mapRowToQuizLink(row: any): ChapterQuizLink {
+  return {
+    id: row.id,
+    classLevel: Number(row.class_level) as ClassLevel,
+    subjectId: row.subject_id as SubjectId,
+    conceptId: row.concept_id,
+    chapterTitle: row.chapter_title,
+    title: row.title,
+    quizUrl: row.quiz_url,
+    platformName: row.platform_name || detectQuizPlatform(row.quiz_url),
+    description: row.description || undefined,
+    timeLimitMinutes: row.time_limit_minutes ? Number(row.time_limit_minutes) : undefined,
+    questionCount: row.question_count ? Number(row.question_count) : undefined,
+    isActive: Boolean(row.is_active),
+    createdAt: row.created_at ? new Date(row.created_at).getTime() : Date.now(),
+    updatedAt: row.updated_at ? new Date(row.updated_at).getTime() : Date.now()
+  };
+}
+
 export async function fetchChapterQuizzes(token?: string, includeInactive = false): Promise<ChapterQuizLink[]> {
+  // 1. Try Supabase if live connection is configured (GitHub Pages & Cloud path)
+  if (isSupabaseLiveConfigured()) {
+    try {
+      const supabase = getSupabase();
+      let query = supabase.from('chapter_quizzes').select('*');
+      if (!includeInactive) {
+        query = query.eq('is_active', true);
+      }
+      query = query.order('created_at', { ascending: false });
+
+      const { data, error } = await query;
+      if (!error && Array.isArray(data)) {
+        const mapped = data.map(mapRowToQuizLink);
+        setCachedQuizLinks(mapped);
+        return mapped;
+      } else if (error) {
+        console.warn('Supabase chapter_quizzes query note:', error.message);
+      }
+    } catch (supErr) {
+      console.warn('Supabase chapter_quizzes fetch exception:', supErr);
+    }
+  }
+
+  // 2. Try Local Express Server backend (Local Dev / AI Studio preview path)
   try {
     const endpoint = token && includeInactive ? '/api/admin/chapter-quizzes' : '/api/content/chapter-quizzes';
     const headers: Record<string, string> = {};
@@ -84,10 +128,10 @@ export async function fetchChapterQuizzes(token?: string, includeInactive = fals
       }
     }
   } catch (err) {
-    console.log('Using local quiz links fallback:', err);
+    // Expected on static hosts
   }
 
-  // Fallback to cached or defaults
+  // 3. Fallback to cached or defaults
   const cached = getCachedQuizLinks();
   return includeInactive ? cached : cached.filter((q) => q.isActive);
 }
@@ -106,6 +150,55 @@ export async function saveChapterQuiz(
     throw new Error(urlValidation.error || 'Invalid URL');
   }
 
+  const generatedId = payload.id || `quiz-${Date.now()}`;
+  const nowIso = new Date().toISOString();
+
+  // 1. If Supabase is live, persist to Supabase chapter_quizzes table
+  if (isSupabaseLiveConfigured()) {
+    try {
+      const supabase = getSupabase();
+      const dbRow = {
+        id: generatedId,
+        class_level: payload.classLevel,
+        subject_id: payload.subjectId,
+        concept_id: payload.conceptId,
+        chapter_title: payload.chapterTitle || 'Selected Chapter',
+        title: payload.title || `${payload.chapterTitle || 'Chapter'} Online Quiz`,
+        quiz_url: payload.quizUrl.trim(),
+        platform_name: payload.platformName || detectQuizPlatform(payload.quizUrl),
+        description: payload.description || null,
+        time_limit_minutes: payload.timeLimitMinutes || null,
+        question_count: payload.questionCount || null,
+        is_active: payload.isActive !== undefined ? payload.isActive : true,
+        updated_at: nowIso
+      };
+
+      const { data, error } = await supabase
+        .from('chapter_quizzes')
+        .upsert(dbRow)
+        .select()
+        .single();
+
+      if (!error && data) {
+        const saved = mapRowToQuizLink(data);
+        const current = getCachedQuizLinks();
+        const existingIdx = current.findIndex((q) => q.conceptId === saved.conceptId || q.id === saved.id);
+        if (existingIdx !== -1) {
+          current[existingIdx] = saved;
+        } else {
+          current.unshift(saved);
+        }
+        setCachedQuizLinks([...current]);
+        return saved;
+      } else if (error) {
+        console.warn('Supabase quiz upsert note:', error.message);
+      }
+    } catch (supErr: any) {
+      console.warn('Supabase quiz save failed, attempting server or local persistence:', supErr);
+    }
+  }
+
+  // 2. Try Node/Express server API
   if (token) {
     try {
       const isUpdate = Boolean(payload.id);
@@ -123,7 +216,6 @@ export async function saveChapterQuiz(
 
       if (res.ok) {
         const saved = await res.json();
-        // Update local cache
         const current = getCachedQuizLinks();
         const existingIdx = current.findIndex((q) => q.conceptId === saved.conceptId || q.id === saved.id);
         if (existingIdx !== -1) {
@@ -133,21 +225,18 @@ export async function saveChapterQuiz(
         }
         setCachedQuizLinks([...current]);
         return saved;
-      } else {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || 'Failed to save quiz link on server.');
       }
     } catch (networkErr: any) {
       console.warn('Server save failed, falling back to local persistence:', networkErr);
     }
   }
 
-  // Client-side fallback save
+  // 3. Client-side fallback save
   const current = getCachedQuizLinks();
   const existingIdx = current.findIndex((q) => q.conceptId === payload.conceptId || (payload.id && q.id === payload.id));
 
   const resolvedQuiz: ChapterQuizLink = {
-    id: payload.id || (existingIdx !== -1 ? current[existingIdx].id : `quiz-${Date.now()}`),
+    id: generatedId,
     classLevel: payload.classLevel,
     subjectId: payload.subjectId,
     conceptId: payload.conceptId,
@@ -174,6 +263,22 @@ export async function saveChapterQuiz(
 }
 
 export async function deleteChapterQuiz(id: string, token?: string): Promise<boolean> {
+  // 1. Supabase delete
+  if (isSupabaseLiveConfigured()) {
+    try {
+      const supabase = getSupabase();
+      const { error } = await supabase.from('chapter_quizzes').delete().eq('id', id);
+      if (!error) {
+        const current = getCachedQuizLinks().filter((q) => q.id !== id);
+        setCachedQuizLinks(current);
+        return true;
+      }
+    } catch (supErr) {
+      console.warn('Supabase delete exception:', supErr);
+    }
+  }
+
+  // 2. Server API delete
   if (token) {
     try {
       const res = await fetch(`/api/admin/chapter-quizzes/${id}`, {
@@ -190,12 +295,40 @@ export async function deleteChapterQuiz(id: string, token?: string): Promise<boo
     }
   }
 
+  // 3. Local fallback delete
   const current = getCachedQuizLinks().filter((q) => q.id !== id);
   setCachedQuizLinks(current);
   return true;
 }
 
 export async function toggleChapterQuizActive(id: string, token?: string): Promise<ChapterQuizLink | null> {
+  const current = getCachedQuizLinks();
+  const target = current.find((q) => q.id === id);
+  const nextActive = target ? !target.isActive : true;
+
+  // 1. Supabase toggle
+  if (isSupabaseLiveConfigured()) {
+    try {
+      const supabase = getSupabase();
+      const { data, error } = await supabase
+        .from('chapter_quizzes')
+        .update({ is_active: nextActive, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (!error && data) {
+        const updated = mapRowToQuizLink(data);
+        const nextList = current.map((q) => (q.id === id ? updated : q));
+        setCachedQuizLinks(nextList);
+        return updated;
+      }
+    } catch (supErr) {
+      console.warn('Supabase toggle exception:', supErr);
+    }
+  }
+
+  // 2. Server API toggle
   if (token) {
     try {
       const res = await fetch(`/api/admin/chapter-quizzes/${id}/toggle`, {
@@ -204,8 +337,8 @@ export async function toggleChapterQuizActive(id: string, token?: string): Promi
       });
       if (res.ok) {
         const updated = await res.json();
-        const current = getCachedQuizLinks().map((q) => (q.id === id ? updated : q));
-        setCachedQuizLinks(current);
+        const nextList = current.map((q) => (q.id === id ? updated : q));
+        setCachedQuizLinks(nextList);
         return updated;
       }
     } catch (e) {
@@ -213,10 +346,9 @@ export async function toggleChapterQuizActive(id: string, token?: string): Promi
     }
   }
 
-  const current = getCachedQuizLinks();
-  const target = current.find((q) => q.id === id);
+  // 3. Local fallback toggle
   if (target) {
-    target.isActive = !target.isActive;
+    target.isActive = nextActive;
     target.updatedAt = Date.now();
     setCachedQuizLinks([...current]);
     return target;

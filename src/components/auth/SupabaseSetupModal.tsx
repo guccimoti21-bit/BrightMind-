@@ -37,28 +37,74 @@ export function SupabaseSetupModal({ isOpen, onClose }: SupabaseSetupModalProps)
   };
 
   const copySqlSnippet = () => {
-    const sql = `-- Run this in your Supabase SQL Editor:
+    const sql = `-- SciMathenova Database Schema & Administrator Bootstrap
+-- See /supabase-schema.sql for the complete migration.
+-- Run in Supabase SQL Editor: https://supabase.com/dashboard/project/sjlmhdckpshyqeqihjgr/sql
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+DO $$ BEGIN CREATE TYPE user_role AS ENUM ('student', 'teacher', 'admin', 'super_admin'); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  email TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
   full_name TEXT NOT NULL,
-  class_level SMALLINT NOT NULL DEFAULT 8,
-  role TEXT NOT NULL DEFAULT 'student',
-  created_at TIMESTAMPTZ DEFAULT now()
+  class_level SMALLINT NOT NULL DEFAULT 8 CHECK (class_level BETWEEN 6 AND 10),
+  role user_role NOT NULL DEFAULT 'student',
+  avatar_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()),
+  updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now())
+);
+
+CREATE TABLE IF NOT EXISTS public.chapters (
+  id TEXT PRIMARY KEY,
+  class_level SMALLINT NOT NULL CHECK (class_level BETWEEN 6 AND 10),
+  subject_id TEXT NOT NULL CHECK (subject_id IN ('science', 'mathematics')),
+  title TEXT NOT NULL,
+  description TEXT,
+  category TEXT,
+  estimated_hours NUMERIC(4, 1) DEFAULT 6.0,
+  icon_name TEXT DEFAULT 'BookOpen',
+  display_order INT DEFAULT 1,
+  is_published BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()),
+  updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now())
+);
+
+CREATE TABLE IF NOT EXISTS public.chapter_quizzes (
+  id TEXT PRIMARY KEY DEFAULT ('quiz-' || floor(random() * 899999 + 100000)::text),
+  class_level SMALLINT NOT NULL CHECK (class_level BETWEEN 6 AND 10),
+  subject_id TEXT NOT NULL CHECK (subject_id IN ('science', 'mathematics')),
+  concept_id TEXT NOT NULL REFERENCES public.chapters(id) ON DELETE CASCADE,
+  chapter_title TEXT NOT NULL,
+  title TEXT NOT NULL,
+  quiz_url TEXT NOT NULL,
+  platform_name TEXT NOT NULL DEFAULT 'External Quiz',
+  description TEXT,
+  time_limit_minutes INT,
+  question_count INT,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()),
+  updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now())
 );
 
 CREATE TABLE IF NOT EXISTS public.student_progress (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   sub_concept_id TEXT NOT NULL,
+  concept_id TEXT,
   lesson_completed BOOLEAN DEFAULT false,
   activity_completed BOOLEAN DEFAULT false,
   practice_completed BOOLEAN DEFAULT false,
   assessment_passed BOOLEAN DEFAULT false,
-  assessment_best_score SMALLINT DEFAULT 0,
-  overall_completion SMALLINT DEFAULT 0,
+  assessment_best_score SMALLINT DEFAULT 0 CHECK (assessment_best_score BETWEEN 0 AND 100),
+  assessment_attempts JSONB DEFAULT '[]'::jsonb,
+  overall_completion SMALLINT DEFAULT 0 CHECK (overall_completion BETWEEN 0 AND 100),
   is_unlocked BOOLEAN DEFAULT false,
-  last_visited_at TIMESTAMPTZ DEFAULT now(),
+  is_completed BOOLEAN DEFAULT false,
+  last_visited_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()),
+  created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()),
+  updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()),
   CONSTRAINT unique_user_subconcept UNIQUE (user_id, sub_concept_id)
 );
 
@@ -66,16 +112,47 @@ CREATE TABLE IF NOT EXISTS public.student_stats (
   user_id UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
   streak_days INT DEFAULT 1,
   study_minutes INT DEFAULT 0,
-  last_active_sub_concept_id TEXT DEFAULT 'c8-math-linear-sub2'
+  last_active_date DATE DEFAULT CURRENT_DATE,
+  last_active_sub_concept_id TEXT DEFAULT 'c8-math-linear-sub2',
+  updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now())
 );
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.chapters ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.chapter_quizzes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.student_progress ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.student_stats ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Students own profile" ON public.profiles FOR ALL USING (auth.uid() = id);
-CREATE POLICY "Students own progress" ON public.student_progress FOR ALL USING (auth.uid() = user_id);
-CREATE POLICY "Students own stats" ON public.student_stats FOR ALL USING (auth.uid() = user_id);`;
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean AS $$
+BEGIN
+  IF (auth.jwt() -> 'app_metadata' ->> 'role') IN ('admin', 'super_admin') THEN RETURN true; END IF;
+  RETURN EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('admin', 'super_admin'));
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+CREATE POLICY "profiles_select_policy" ON public.profiles FOR SELECT USING (auth.uid() = id OR public.is_admin());
+CREATE POLICY "profiles_update_policy" ON public.profiles FOR UPDATE USING (auth.uid() = id OR public.is_admin());
+CREATE POLICY "profiles_insert_policy" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id OR public.is_admin());
+
+CREATE POLICY "chapters_select_policy" ON public.chapters FOR SELECT USING (true);
+CREATE POLICY "chapters_admin_all" ON public.chapters FOR ALL USING (public.is_admin());
+
+CREATE POLICY "quizzes_select_policy" ON public.chapter_quizzes FOR SELECT USING (is_active = true OR public.is_admin());
+CREATE POLICY "quizzes_admin_all" ON public.chapter_quizzes FOR ALL USING (public.is_admin());
+
+CREATE POLICY "progress_select_policy" ON public.student_progress FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
+CREATE POLICY "progress_insert_policy" ON public.student_progress FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "progress_update_policy" ON public.student_progress FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "progress_delete_policy" ON public.student_progress FOR DELETE USING (auth.uid() = user_id OR public.is_admin());
+
+CREATE POLICY "stats_select_policy" ON public.student_stats FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
+CREATE POLICY "stats_insert_policy" ON public.student_stats FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "stats_update_policy" ON public.student_stats FOR UPDATE USING (auth.uid() = user_id);
+
+-- To promote an administrator:
+-- SELECT public.bootstrap_admin_account('your-email@example.com');
+-- Or: UPDATE public.profiles SET role = 'admin' WHERE email = 'your-email@example.com';`;
 
     navigator.clipboard.writeText(sql);
     setCopied(true);

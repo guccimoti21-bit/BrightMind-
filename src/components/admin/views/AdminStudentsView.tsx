@@ -1,11 +1,71 @@
-import React, { useState } from 'react';
-import { Users, RotateCcw, CheckCircle2, Trophy, Clock, Search, BookOpen } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+  Users,
+  RotateCcw,
+  CheckCircle2,
+  Trophy,
+  Clock,
+  Search,
+  BookOpen,
+  GraduationCap,
+  Mail,
+  Calendar,
+  Shield,
+  RefreshCw,
+  AlertCircle
+} from 'lucide-react';
 import { useProgress } from '../../../context/ProgressContext';
 import { CURRICULUM_DATA } from '../../../data/curriculumData';
+import { getSupabase, isSupabaseLiveConfigured } from '../../../lib/supabase';
+
+interface RegisteredProfile {
+  id: string;
+  email: string;
+  full_name: string;
+  class_level: number;
+  role: string;
+  created_at: string;
+}
 
 export function AdminStudentsView() {
   const { state, resetAllProgress, calculateSubConceptCompletion } = useProgress();
   const [resetStatus, setResetStatus] = useState('');
+
+  // Supabase profiles state
+  const [registeredStudents, setRegisteredStudents] = useState<RegisteredProfile[]>([]);
+  const [loadingProfiles, setLoadingProfiles] = useState(false);
+  const [profilesError, setProfilesError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedClassFilter, setSelectedClassFilter] = useState<'all' | number>('all');
+
+  const isLiveSupabase = isSupabaseLiveConfigured();
+
+  const loadRegisteredProfiles = async () => {
+    if (!isLiveSupabase) return;
+    try {
+      setLoadingProfiles(true);
+      setProfilesError(null);
+      const supabase = getSupabase();
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, email, full_name, class_level, role, created_at')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        setProfilesError(error.message);
+      } else if (data) {
+        setRegisteredStudents(data);
+      }
+    } catch (err: any) {
+      setProfilesError(err.message || 'Failed to query student profiles.');
+    } finally {
+      setLoadingProfiles(false);
+    }
+  };
+
+  useEffect(() => {
+    loadRegisteredProfiles();
+  }, [isLiveSupabase]);
 
   const completedCount = Object.values(state.progressBySubConcept).filter(
     (p) => p.isCompleted
@@ -19,23 +79,45 @@ export function AdminStudentsView() {
     }
   };
 
+  const filteredStudents = registeredStudents.filter((student) => {
+    const matchesSearch =
+      student.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesClass =
+      selectedClassFilter === 'all' || student.class_level === selectedClassFilter;
+    return matchesSearch && matchesClass;
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EDF2F7]">
         <div>
           <h2 className="text-xl font-bold text-[#111827]">Student Progress &amp; Accounts</h2>
           <p className="text-xs text-[#475569] mt-0.5">
-            Monitor registered learner progress, assessment attempts, and completion records.
+            Monitor registered learner profiles, class selections (Classes 6–10), and curriculum progress.
           </p>
         </div>
 
-        <button
-          onClick={handleReset}
-          className="px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold rounded-xl border border-red-200 flex items-center gap-1.5 self-start sm:self-auto transition-colors cursor-pointer"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>Reset Demo Student Session</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {isLiveSupabase && (
+            <button
+              onClick={loadRegisteredProfiles}
+              disabled={loadingProfiles}
+              className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loadingProfiles ? 'animate-spin' : ''}`} />
+              <span>Refresh Profiles</span>
+            </button>
+          )}
+
+          <button
+            onClick={handleReset}
+            className="px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold rounded-xl border border-red-200 flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Reset Demo Student Session</span>
+          </button>
+        </div>
       </div>
 
       {resetStatus && (
@@ -45,7 +127,112 @@ export function AdminStudentsView() {
         </div>
       )}
 
-      {/* Student Profile Card */}
+      {/* Cloud Supabase Registered Profiles Section */}
+      {isLiveSupabase && (
+        <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#EDF2F7]">
+            <div className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-[#2563EB]" />
+              <h3 className="text-base font-bold text-[#111827]">
+                Registered Cloud Accounts ({registeredStudents.length})
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Filter by name or email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 w-44"
+                />
+              </div>
+
+              <select
+                value={selectedClassFilter}
+                onChange={(e) => setSelectedClassFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                className="py-1.5 px-2.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none"
+              >
+                <option value="all">All Classes</option>
+                <option value="6">Class 6</option>
+                <option value="7">Class 7</option>
+                <option value="8">Class 8</option>
+                <option value="9">Class 9</option>
+                <option value="10">Class 10</option>
+              </select>
+            </div>
+          </div>
+
+          {profilesError && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+              <span>{profilesError}</span>
+            </div>
+          )}
+
+          {loadingProfiles ? (
+            <div className="py-8 text-center text-xs text-slate-500 flex items-center justify-center gap-2">
+              <RefreshCw className="w-4 h-4 animate-spin text-blue-600" />
+              <span>Loading registered accounts from Supabase...</span>
+            </div>
+          ) : filteredStudents.length === 0 ? (
+            <div className="py-6 text-center text-xs text-slate-500">
+              No registered accounts found matching the filter criteria.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-slate-100 text-slate-400 uppercase text-[10px] tracking-wider">
+                    <th className="py-2 font-semibold">User</th>
+                    <th className="py-2 font-semibold">Email</th>
+                    <th className="py-2 font-semibold">Enrolled Class</th>
+                    <th className="py-2 font-semibold">Role</th>
+                    <th className="py-2 font-semibold">Joined Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredStudents.map((s) => (
+                    <tr key={s.id} className="hover:bg-slate-50/60 transition-colors">
+                      <td className="py-2.5 font-medium text-slate-800 flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 font-bold flex items-center justify-center text-xs">
+                          {s.full_name?.charAt(0) || 'U'}
+                        </div>
+                        <span>{s.full_name || 'Unnamed'}</span>
+                      </td>
+                      <td className="py-2.5 text-slate-600 font-mono text-[11px]">{s.email}</td>
+                      <td className="py-2.5">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold text-[11px] border border-blue-100">
+                          <GraduationCap className="w-3 h-3" />
+                          Class {s.class_level}
+                        </span>
+                      </td>
+                      <td className="py-2.5">
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded-full font-semibold text-[10px] uppercase tracking-wide border ${
+                            s.role === 'admin'
+                              ? 'bg-amber-50 text-amber-700 border-amber-200'
+                              : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          }`}
+                        >
+                          {s.role}
+                        </span>
+                      </td>
+                      <td className="py-2.5 text-slate-400 text-[11px]">
+                        {s.created_at ? new Date(s.created_at).toLocaleDateString() : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Active Student Session Card */}
       <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 shadow-sm space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">

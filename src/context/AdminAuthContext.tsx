@@ -60,6 +60,19 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         console.warn('Error querying profiles table for role:', error);
+        // Detect when the table itself doesn't exist in Supabase
+        if (
+          error.code === '42P01' ||
+          error.message?.toLowerCase().includes('does not exist') ||
+          error.message?.toLowerCase().includes('relation') ||
+          error.code === 'PGRST204' ||
+          error.code === 'PGRST205'
+        ) {
+          return {
+            isAdmin: false,
+            error: '[HTTP 403 / Missing Database Table] Table "public.profiles" not found in Supabase project. Please execute the SQL migration in Supabase Dashboard > SQL Editor to initialize your database tables and administrator privileges.'
+          };
+        }
       }
 
       // Check role from profiles table OR app_metadata / user_metadata
@@ -69,7 +82,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       return {
         isAdmin,
         profile,
-        error: isAdmin ? undefined : 'This account does not have administrator privileges.'
+        error: isAdmin
+          ? undefined
+          : '[HTTP 403 Forbidden] Access denied. This account does not possess administrator privileges in Supabase. Please sign in with an authorized administrator account or assign role="admin" in public.profiles.'
       };
     } catch (e: any) {
       console.error('Exception during Supabase role check:', e);
@@ -211,7 +226,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
           await supabase.auth.signOut();
           return {
             success: false,
-            error: '[HTTP 403 Forbidden] Access denied. This account does not possess administrator privileges in Supabase. Please sign in with an authorized administrator account or assign role="admin" in public.profiles.'
+            error:
+              roleCheck.error ||
+              '[HTTP 403 Forbidden] Access denied. This account does not possess administrator privileges in Supabase. Please sign in with an authorized administrator account or assign role="admin" in public.profiles.'
           };
         }
 

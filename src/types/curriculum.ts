@@ -118,6 +118,23 @@ export interface Concept {
   subConcepts: SubConcept[];
 }
 
+export interface ChapterQuizLink {
+  id: string;
+  classLevel: ClassLevel;
+  subjectId: SubjectId;
+  conceptId: string;
+  chapterTitle?: string;
+  title: string;
+  quizUrl: string;
+  platformName?: string; // 'Quizizz' | 'Kahoot' | 'Google Forms' | 'Wordwall' | 'Quizlet' | 'Mentimeter' | 'Custom'
+  description?: string;
+  timeLimitMinutes?: number;
+  questionCount?: number;
+  isActive: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+
 export interface SubConceptProgress {
   subConceptId: string;
   lessonCompleted: boolean;     // 30% weight

@@ -8,7 +8,8 @@ import {
   addAuditLog,
   LearningRules,
   AppearanceConfig,
-  MediaItem
+  MediaItem,
+  ChapterQuizLink
 } from '../db.ts';
 import {
   requireAdmin,
@@ -250,6 +251,8 @@ apiRouter.get('/admin/stats', requireAdmin, (req: Request, res: Response) => {
     draftLessons: draftConcepts.length,
     totalQuestions: db.questions.length,
     totalMedia: db.media.length,
+    totalChapterQuizzes: (db.chapterQuizzes || []).length,
+    activeChapterQuizzes: (db.chapterQuizzes || []).filter((q) => q.isActive).length,
     recentAuditLogs: db.auditLogs.slice(0, 8)
   });
 });
@@ -719,4 +722,271 @@ apiRouter.put('/admin/appearance', requireAdmin, (req: Request, res: Response) =
   );
 
   res.json(db.appearance);
+});
+
+// ==========================================
+// CHAPTER EXTERNAL QUIZ LINKS
+// ==========================================
+
+function isValidQuizUrl(urlString: string): boolean {
+  if (!urlString || typeof urlString !== 'string') return false;
+  const trimmed = urlString.trim();
+  if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) return false;
+  try {
+    const parsed = new URL(trimmed);
+    return Boolean(parsed.hostname && parsed.hostname.includes('.'));
+  } catch (err) {
+    return false;
+  }
+}
+
+function detectQuizPlatform(url: string): string {
+  const lower = url.toLowerCase();
+  if (lower.includes('quizizz.com')) return 'Quizizz';
+  if (lower.includes('kahoot.it') || lower.includes('kahoot.com')) return 'Kahoot';
+  if (lower.includes('forms.google.com') || lower.includes('docs.google.com/forms')) return 'Google Forms';
+  if (lower.includes('wordwall.net')) return 'Wordwall';
+  if (lower.includes('quizlet.com')) return 'Quizlet';
+  if (lower.includes('menti.com') || lower.includes('mentimeter.com')) return 'Mentimeter';
+  if (lower.includes('blooket.com')) return 'Blooket';
+  if (lower.includes('nearpod.com')) return 'Nearpod';
+  if (lower.includes('edpuzzle.com')) return 'Edpuzzle';
+  return 'External Quiz';
+}
+
+// GET active quizzes for students (Public)
+apiRouter.get('/content/chapter-quizzes', (req: Request, res: Response) => {
+  const db = getDb();
+  const { classLevel, subjectId, conceptId } = req.query;
+  let quizzes = (db.chapterQuizzes || []).filter((q) => q.isActive);
+
+  if (classLevel) {
+    quizzes = quizzes.filter((q) => q.classLevel === Number(classLevel));
+  }
+  if (subjectId) {
+    quizzes = quizzes.filter((q) => q.subjectId === String(subjectId));
+  }
+  if (conceptId) {
+    quizzes = quizzes.filter((q) => q.conceptId === String(conceptId));
+  }
+
+  res.json(quizzes);
+});
+
+// GET all chapter quizzes (Admin)
+apiRouter.get('/admin/chapter-quizzes', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  res.json(db.chapterQuizzes || []);
+});
+
+// POST Add or Replace a Chapter Quiz Link (Admin)
+apiRouter.post('/admin/chapter-quizzes', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  const session = (req as any).adminSession;
+  const {
+    classLevel,
+    subjectId,
+    conceptId,
+    chapterTitle,
+    title,
+    quizUrl,
+    platformName,
+    description,
+    timeLimitMinutes,
+    questionCount,
+    isActive = true
+  } = req.body;
+
+  if (!classLevel || !subjectId || !conceptId) {
+    res.status(400).json({ error: 'Class, Subject, and Chapter selection are required.' });
+    return;
+  }
+
+  if (!quizUrl || !isValidQuizUrl(quizUrl)) {
+    res.status(400).json({
+      error: 'A valid external quiz URL starting with http:// or https:// is required.'
+    });
+    return;
+  }
+
+  // Lookup chapter title from curriculum if not supplied
+  const concept = db.concepts.find((c) => c.id === conceptId);
+  const resolvedChapterTitle = chapterTitle || concept?.title || 'Selected Chapter';
+
+  const finalTitle = title && title.trim().length > 0
+    ? title.trim()
+    : `${resolvedChapterTitle} Online Quiz`;
+
+  const finalPlatform = platformName && platformName.trim().length > 0
+    ? platformName.trim()
+    : detectQuizPlatform(quizUrl);
+
+  if (!db.chapterQuizzes) {
+    db.chapterQuizzes = [];
+  }
+
+  // Check if a quiz link already exists for this conceptId
+  const existingIndex = db.chapterQuizzes.findIndex((q) => q.conceptId === conceptId);
+
+  const newQuiz: ChapterQuizLink = {
+    id: existingIndex !== -1 ? db.chapterQuizzes[existingIndex].id : `quiz-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    classLevel: Number(classLevel),
+    subjectId: String(subjectId),
+    conceptId: String(conceptId),
+    chapterTitle: resolvedChapterTitle,
+    title: finalTitle,
+    quizUrl: quizUrl.trim(),
+    platformName: finalPlatform,
+    description: description ? description.trim() : undefined,
+    timeLimitMinutes: timeLimitMinutes ? Number(timeLimitMinutes) : undefined,
+    questionCount: questionCount ? Number(questionCount) : undefined,
+    isActive: Boolean(isActive),
+    createdAt: existingIndex !== -1 ? db.chapterQuizzes[existingIndex].createdAt : Date.now(),
+    updatedAt: Date.now()
+  };
+
+  if (existingIndex !== -1) {
+    db.chapterQuizzes[existingIndex] = newQuiz;
+    addAuditLog(
+      session.username,
+      'quizzes',
+      'Chapter Quiz Updated',
+      `Updated external quiz link for Class ${classLevel} ${subjectId} chapter "${resolvedChapterTitle}": ${finalTitle} (${quizUrl})`
+    );
+  } else {
+    db.chapterQuizzes.unshift(newQuiz);
+    addAuditLog(
+      session.username,
+      'quizzes',
+      'Chapter Quiz Added',
+      `Added external quiz link for Class ${classLevel} ${subjectId} chapter "${resolvedChapterTitle}": ${finalTitle} (${quizUrl})`
+    );
+  }
+
+  saveDb(db);
+  res.status(existingIndex !== -1 ? 200 : 201).json(newQuiz);
+});
+
+// PUT Update an existing Chapter Quiz Link (Admin)
+apiRouter.put('/admin/chapter-quizzes/:id', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  const session = (req as any).adminSession;
+  const id = req.params.id;
+
+  if (!db.chapterQuizzes) {
+    db.chapterQuizzes = [];
+  }
+
+  const index = db.chapterQuizzes.findIndex((q) => q.id === id);
+  if (index === -1) {
+    res.status(404).json({ error: 'Quiz link not found.' });
+    return;
+  }
+
+  const current = db.chapterQuizzes[index];
+  const {
+    classLevel,
+    subjectId,
+    conceptId,
+    chapterTitle,
+    title,
+    quizUrl,
+    platformName,
+    description,
+    timeLimitMinutes,
+    questionCount,
+    isActive
+  } = req.body;
+
+  if (quizUrl && !isValidQuizUrl(quizUrl)) {
+    res.status(400).json({
+      error: 'Invalid external URL. Must start with http:// or https://.'
+    });
+    return;
+  }
+
+  const updatedQuizUrl = quizUrl ? quizUrl.trim() : current.quizUrl;
+  const updatedPlatform = platformName || detectQuizPlatform(updatedQuizUrl);
+
+  const updated: ChapterQuizLink = {
+    ...current,
+    classLevel: classLevel !== undefined ? Number(classLevel) : current.classLevel,
+    subjectId: subjectId !== undefined ? String(subjectId) : current.subjectId,
+    conceptId: conceptId !== undefined ? String(conceptId) : current.conceptId,
+    chapterTitle: chapterTitle || current.chapterTitle,
+    title: title ? title.trim() : current.title,
+    quizUrl: updatedQuizUrl,
+    platformName: updatedPlatform,
+    description: description !== undefined ? description.trim() : current.description,
+    timeLimitMinutes: timeLimitMinutes !== undefined ? Number(timeLimitMinutes) : current.timeLimitMinutes,
+    questionCount: questionCount !== undefined ? Number(questionCount) : current.questionCount,
+    isActive: isActive !== undefined ? Boolean(isActive) : current.isActive,
+    updatedAt: Date.now()
+  };
+
+  db.chapterQuizzes[index] = updated;
+  saveDb(db);
+
+  addAuditLog(
+    session.username,
+    'quizzes',
+    'Chapter Quiz Modified',
+    `Modified external quiz "${updated.title}" for chapter "${updated.chapterTitle}"`
+  );
+
+  res.json(updated);
+});
+
+// DELETE Remove a Chapter Quiz Link (Admin)
+apiRouter.delete('/admin/chapter-quizzes/:id', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  const session = (req as any).adminSession;
+  const id = req.params.id;
+
+  if (!db.chapterQuizzes) {
+    db.chapterQuizzes = [];
+  }
+
+  const item = db.chapterQuizzes.find((q) => q.id === id);
+  db.chapterQuizzes = db.chapterQuizzes.filter((q) => q.id !== id);
+  saveDb(db);
+
+  addAuditLog(
+    session.username,
+    'quizzes',
+    'Chapter Quiz Deleted',
+    `Deleted external quiz link: ${item?.title || id} (Chapter: ${item?.chapterTitle || 'Unknown'})`
+  );
+
+  res.json({ success: true, message: 'External quiz link deleted successfully.' });
+});
+
+// POST Toggle Active Status (Admin)
+apiRouter.post('/admin/chapter-quizzes/:id/toggle', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  const session = (req as any).adminSession;
+  const id = req.params.id;
+
+  if (!db.chapterQuizzes) {
+    db.chapterQuizzes = [];
+  }
+
+  const quiz = db.chapterQuizzes.find((q) => q.id === id);
+  if (!quiz) {
+    res.status(404).json({ error: 'Quiz link not found.' });
+    return;
+  }
+
+  quiz.isActive = !quiz.isActive;
+  quiz.updatedAt = Date.now();
+  saveDb(db);
+
+  addAuditLog(
+    session.username,
+    'quizzes',
+    'Chapter Quiz Status Changed',
+    `Toggled quiz "${quiz.title}" to ${quiz.isActive ? 'Active' : 'Disabled'}`
+  );
+
+  res.json(quiz);
 });

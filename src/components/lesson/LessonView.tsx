@@ -10,10 +10,12 @@ import {
   FileText,
   Trophy,
   ChevronRight,
-  Lightbulb
+  Lightbulb,
+  ExternalLink
 } from 'lucide-react';
-import { SubConcept, Concept } from '../../types/curriculum';
+import { SubConcept, Concept, ChapterQuizLink } from '../../types/curriculum';
 import { useProgress } from '../../context/ProgressContext';
+import { getQuizForChapter, getCachedQuizLinks, QUIZ_LINKS_UPDATED_EVENT } from '../../services/quizLinkService';
 import { BalanceScaleActivity } from '../activities/BalanceScaleActivity';
 import { RayOpticsActivity } from '../activities/RayOpticsActivity';
 import { NumberLineActivity } from '../activities/NumberLineActivity';
@@ -46,6 +48,19 @@ export function LessonView({
   const [activeTab, setActiveTab] = useState<TabType>('explanation');
   const [practiceAnswers, setPracticeAnswers] = useState<Record<string, number>>({});
   const [showPracticeHints, setShowPracticeHints] = useState<Record<string, boolean>>({});
+
+  const [chapterQuiz, setChapterQuiz] = useState<ChapterQuizLink | undefined>(() =>
+    getQuizForChapter(getCachedQuizLinks(), concept.id)
+  );
+
+  React.useEffect(() => {
+    const updateQuiz = () => {
+      setChapterQuiz(getQuizForChapter(getCachedQuizLinks(), concept.id));
+    };
+    updateQuiz();
+    window.addEventListener(QUIZ_LINKS_UPDATED_EVENT, updateQuiz);
+    return () => window.removeEventListener(QUIZ_LINKS_UPDATED_EVENT, updateQuiz);
+  }, [concept.id]);
 
   const progress = state.progressBySubConcept[subConcept.id];
   const overallPercentage = calculateSubConceptCompletion(progress);
@@ -692,6 +707,7 @@ export function LessonView({
             questions={subConcept.assessmentQuestions}
             onPass={() => {}}
             onReviewRequested={() => setActiveTab('explanation')}
+            chapterQuiz={chapterQuiz}
           />
         )}
       </div>
@@ -748,13 +764,28 @@ export function LessonView({
             )}
           </button>
         ) : (
-          <button
-            onClick={onBackToConcepts}
-            className="w-full sm:w-auto px-5 py-2 bg-[#16A34A] hover:bg-[#15803D] text-white text-xs font-semibold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <span>Finish Chapter</span>
-            <CheckCircle2 className="w-4 h-4" />
-          </button>
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+            {chapterQuiz && chapterQuiz.isActive && (
+              <a
+                href={chapterQuiz.quizUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary px-4 py-2 text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer shadow-sm bg-gradient-to-r from-[#2563EB] to-[#1D4ED8]"
+                title={`Open official ${chapterQuiz.platformName || 'online'} quiz in a new tab`}
+              >
+                <Trophy className="w-3.5 h-3.5 text-amber-300" />
+                <span>Take Chapter Quiz ({chapterQuiz.platformName || 'Online'})</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
+            <button
+              onClick={onBackToConcepts}
+              className="px-5 py-2 bg-[#16A34A] hover:bg-[#15803D] text-white text-xs font-semibold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Finish Chapter</span>
+              <CheckCircle2 className="w-4 h-4" />
+            </button>
+          </div>
         )}
       </div>
     </div>

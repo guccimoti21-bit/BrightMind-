@@ -7,21 +7,27 @@ import {
   Clock,
   ChevronRight,
   Sparkles,
-  BookOpen
+  BookOpen,
+  ExternalLink,
+  Globe,
+  Trophy
 } from 'lucide-react';
-import { Concept } from '../../types/curriculum';
+import { Concept, ChapterQuizLink } from '../../types/curriculum';
 import { useProgress } from '../../context/ProgressContext';
+import { getQuizForChapter, getCachedQuizLinks, QUIZ_LINKS_UPDATED_EVENT } from '../../services/quizLinkService';
 
 interface ConceptDetailViewProps {
   concept: Concept;
   onBack: () => void;
   onSelectSubConcept: (subConceptId: string) => void;
+  quizLink?: ChapterQuizLink;
 }
 
 export function ConceptDetailView({
   concept,
   onBack,
-  onSelectSubConcept
+  onSelectSubConcept,
+  quizLink: propQuizLink
 }: ConceptDetailViewProps) {
   const {
     state,
@@ -31,6 +37,24 @@ export function ConceptDetailView({
   } = useProgress();
 
   const overallProgress = getConceptProgressPercentage(concept.id);
+
+  const [activeQuiz, setActiveQuiz] = React.useState<ChapterQuizLink | undefined>(() => {
+    if (propQuizLink) return propQuizLink;
+    return getQuizForChapter(getCachedQuizLinks(), concept.id);
+  });
+
+  React.useEffect(() => {
+    if (propQuizLink) {
+      setActiveQuiz(propQuizLink);
+      return;
+    }
+    const updateQuiz = () => {
+      setActiveQuiz(getQuizForChapter(getCachedQuizLinks(), concept.id));
+    };
+    updateQuiz();
+    window.addEventListener(QUIZ_LINKS_UPDATED_EVENT, updateQuiz);
+    return () => window.removeEventListener(QUIZ_LINKS_UPDATED_EVENT, updateQuiz);
+  }, [propQuizLink, concept.id]);
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-16">
@@ -233,6 +257,81 @@ export function ConceptDetailView({
               </div>
             );
           })}
+
+          {/* Chapter Finale External Quiz */}
+          {activeQuiz && activeQuiz.isActive && (
+            <div className="relative pt-4">
+              {/* Node Milestone Dot */}
+              <div
+                className={`absolute -left-6 sm:-left-8 top-10 -translate-x-1/2 w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-all ${
+                  overallProgress >= 80
+                    ? 'bg-[#FEF3C7] border-[#D97706] text-[#D97706] ring-4 ring-[#FEF3C7]'
+                    : 'bg-[#EFF6FF] border-[#2563EB] text-[#2563EB] ring-4 ring-[#DBEAFE]'
+                }`}
+              >
+                <Trophy className="w-3.5 h-3.5" />
+              </div>
+
+              {/* External Quiz Card */}
+              <div className="bg-gradient-to-br from-[#FFFFFF] via-[#F8FAFF] to-[#EFF6FF] border-2 border-[#BFDBFE] rounded-2xl p-6 shadow-[0_8px_30px_rgba(37,99,235,0.08)] relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/50 rounded-full blur-2xl pointer-events-none" />
+
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative">
+                  <div className="space-y-2 max-w-xl">
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <span className="bg-[#2563EB] text-white font-bold px-2.5 py-0.5 rounded-md flex items-center gap-1 shadow-2xs">
+                        <Sparkles className="w-3 h-3" />
+                        <span>Chapter Finale</span>
+                      </span>
+                      <span className="bg-[#FEF3C7] text-[#92400E] font-bold px-2.5 py-0.5 rounded-md border border-[#FDE68A]">
+                        {activeQuiz.platformName || 'Online Quiz'}
+                      </span>
+                      {activeQuiz.timeLimitMinutes && (
+                        <span className="text-[#64748B] flex items-center gap-1 font-medium">
+                          <Clock className="w-3 h-3" />
+                          {activeQuiz.timeLimitMinutes} mins
+                        </span>
+                      )}
+                      {activeQuiz.questionCount && (
+                        <span className="text-[#64748B] font-medium">
+                          · {activeQuiz.questionCount} questions
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="text-lg font-bold text-[#111827]">
+                      {activeQuiz.title}
+                    </h3>
+
+                    <p className="text-xs text-[#475569] leading-relaxed">
+                      {activeQuiz.description ||
+                        `Reinforce your mastery of ${concept.title} with an official external quiz. Click below to open and compete.`}
+                    </p>
+
+                    <div className="text-[11px] text-[#64748B] flex items-center gap-1 pt-1">
+                      <Globe className="w-3.5 h-3.5 text-[#2563EB]" />
+                      <span>Direct link opens in a new browser tab</span>
+                    </div>
+                  </div>
+
+                  <div className="shrink-0 flex flex-col sm:items-end gap-2">
+                    <a
+                      href={activeQuiz.quizUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary px-6 py-3 text-xs font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer group-hover:scale-102"
+                    >
+                      <span>Take Official Quiz</span>
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                    <span className="text-[10px] text-[#64748B] text-center sm:text-right font-medium">
+                      {activeQuiz.platformName || 'External Website'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

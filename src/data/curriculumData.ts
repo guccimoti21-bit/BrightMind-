@@ -2019,6 +2019,182 @@ export const CURRICULUM_DATA: Concept[] = [
         ]
       }
     ]
+  },
+  // ==========================================
+  // CLASS 7 SCIENCE
+  // ==========================================
+  {
+    id: 'c7-sci-nutrition',
+    classLevel: 7,
+    subjectId: 'science',
+    title: 'Nutrition in Plants and Animals',
+    description: 'Explore photosynthesis, stomatal gas exchange, autotrophic and heterotrophic modes, and the human digestive canal.',
+    category: 'Biology',
+    estimatedHours: 5,
+    iconName: 'Leaf',
+    subConcepts: [
+      {
+        id: 'c7-sci-sub1',
+        conceptId: 'c7-sci-nutrition',
+        order: 1,
+        title: 'Photosynthesis & Autotrophic Nutrition',
+        shortDescription: 'How green plants synthesize carbohydrates using sunlight, water, carbon dioxide, and chlorophyll.',
+        estimatedMinutes: 20,
+        learningObjectives: [
+          'Describe the chemical equation of photosynthesis',
+          'Understand the role of stomata and chlorophyll',
+          'Identify parasitic, saprotrophic, and symbiotic nutrition modes'
+        ],
+        explanation: {
+          introduction: 'All living organisms need food for energy, growth, and tissue repair. Green plants are autotrophs because they synthesize their own nourishment.',
+          keyDefinitions: [
+            { term: 'Autotroph', definition: 'Organisms that make food from simple raw inorganic substances (carbon dioxide and water).' },
+            { term: 'Photosynthesis', definition: 'Process by which chlorophyll-bearing cells synthesize food in the presence of sunlight.', formula: '6CO₂ + 6H₂O + Sunlight → C₆H₁₂O₆ + 6O₂' },
+            { term: 'Stomata', definition: 'Tiny pores on the surface of leaves enclosed by bean-shaped guard cells.' }
+          ],
+          breakdownSteps: [
+            { title: '1. Light Absorption', content: 'Chlorophyll within chloroplasts traps photon energy from solar radiation.' },
+            { title: '2. Gas Exchange', content: 'Carbon dioxide enters leaves through stomatal apertures while oxygen is released.' }
+          ],
+          rulesAndMistakes: [
+            { rule: 'Plants perform respiration continuously and photosynthesis only in light.', commonMistake: 'Believing plants only photosynthesize and do not respire.', whyItMatters: 'Cellular respiration occurs 24 hours a day in all plant tissues.' }
+          ],
+          keyTakeaway: 'Solar energy is converted into chemical energy stored in glucose.'
+        },
+        activity: {
+          id: 'act-c7-photosynthesis',
+          type: 'cell-explorer',
+          title: 'Stomatal Aperture and Chloroplast Simulator',
+          instructions: 'Adjust sunlight intensity and observe gas bubbles (oxygen release rate) from water plants.',
+          goal: 'Observe the relationship between light intensity and photosynthetic yield.',
+          defaultData: {}
+        },
+        workedExamples: [
+          {
+            id: 'we-c7-p1',
+            problem: 'Why do variegated leaves (like Croton or Coleus) only show blue-black starch test on green portions?',
+            steps: [
+              { stepNumber: 1, title: 'Analyze Chlorophyll Distribution', math: 'Starch = Product of Photosynthesis', explanation: 'Only the green parts contain chlorophyll.' },
+              { stepNumber: 2, title: 'Iodine Test Conclusion', math: 'Iodine + Starch → Blue-Black Color', explanation: 'Non-green portions lack chlorophyll and cannot synthesize starch.' }
+            ]
+          }
+        ],
+        guidedPractice: [
+          {
+            id: 'gp-c7-p1',
+            question: 'Which of the following is a parasitic plant that absorbs nutrients from a host tree?',
+            options: ['Cuscuta (Amarbel)', 'Pitcher plant', 'Mushroom', 'Algae'],
+            correctIndex: 0,
+            hint: 'It lacks chlorophyll and produces yellow tubular vines wrapping around trees.',
+            explanation: 'Cuscuta (Amarbel) is an obligate parasite with haustoria.'
+          }
+        ],
+        revisionSummary: {
+          title: 'Plant Nutrition Key Summary',
+          points: [
+            'Photosynthesis equation: CO₂ + H₂O + Light → Carbohydrate + O₂.',
+            'Stomata regulate transpiration and CO₂ intake.',
+            'Lichens are symbiotic partnerships between algae and fungi.'
+          ]
+        },
+        assessmentQuestions: [
+          { id: 'q-c7-s1', question: 'The raw materials required for photosynthesis are:', options: ['CO₂ and H₂O', 'CO₂ and O₂', 'O₂ and H₂O', 'Glucose and O₂'], correctIndex: 0, category: 'basic', explanation: 'Carbon dioxide from air and water from roots are essential.' },
+          { id: 'q-c7-s2', question: 'Tiny pores surrounded by guard cells on leaf surfaces are called:', options: ['Stomata', 'Lenticels', 'Hydathodes', 'Chloroplasts'], correctIndex: 0, category: 'basic', explanation: 'Stomata control gas exchange and transpiration.' },
+          { id: 'q-c7-s3', question: 'Pitcher plant traps insects because it:', options: ['Grows in nitrogen-deficient soil', 'Cannot perform photosynthesis', 'Lacks chlorophyll', 'Requires water from insects'], correctIndex: 0, category: 'reasoning', explanation: 'Insectivorous plants digest insects to absorb scarce nitrogen.' },
+          { id: 'q-c7-s4', question: 'Fungi obtain nutrition primarily through:', options: ['Saprotrophic mode', 'Autotrophic mode', 'Parasitic mode only', 'Holozoic mode'], correctIndex: 0, category: 'basic', explanation: 'Fungi secrete digestive enzymes onto dead organic matter.' },
+          { id: 'q-c7-s5', question: 'Which test confirms the occurrence of photosynthesis in a leaf?', options: ['Iodine test for starch', 'Biuret test for proteins', 'Benedict test for glucose', 'Alcohol test'], correctIndex: 0, category: 'application', explanation: 'Iodine turns blue-black in the presence of starch produced during photosynthesis.' }
+        ]
+      }
+    ]
+  },
+  // ==========================================
+  // CLASS 9 SCIENCE
+  // ==========================================
+  {
+    id: 'c9-sci-motion',
+    classLevel: 9,
+    subjectId: 'science',
+    title: 'Motion and Laws of Motion',
+    description: 'Master distance, displacement, speed, velocity, uniform acceleration, graphical analysis, and Newton’s three laws of motion.',
+    category: 'Physics',
+    estimatedHours: 6,
+    iconName: 'Activity',
+    subConcepts: [
+      {
+        id: 'c9-sci-sub1',
+        conceptId: 'c9-sci-motion',
+        order: 1,
+        title: 'Equations of Uniformly Accelerated Motion',
+        shortDescription: 'Derive and calculate using v = u + at, s = ut + ½at², and v² = u² + 2as.',
+        estimatedMinutes: 25,
+        learningObjectives: [
+          'Distinguish between scalar distance and vector displacement',
+          'Calculate uniform acceleration from velocity-time variations',
+          'Apply the kinematic equations to real-world vehicular deceleration'
+        ],
+        explanation: {
+          introduction: 'An object is in motion when its position changes with time relative to a stationary reference point (origin).',
+          keyDefinitions: [
+            { term: 'Displacement', definition: 'The shortest straight-line distance measured from initial to final position.' },
+            { term: 'Acceleration', definition: 'The rate of change of velocity with respect to time.', formula: 'a = (v - u) / t' },
+            { term: 'Kinematic Equations', definition: 'Formulas linking initial velocity u, final velocity v, acceleration a, time t, and distance s.', formula: 'v = u + at; s = ut + ½at²; v² = u² + 2as' }
+          ],
+          breakdownSteps: [
+            { title: '1. Displacement vs Distance', content: 'In a circular track of radius r, when a runner finishes one full lap, distance = 2πr, but displacement = 0.' },
+            { title: '2. Negative Acceleration (Retardation)', content: 'When brakes are applied, acceleration opposes velocity direction, resulting in negative acceleration.' }
+          ],
+          rulesAndMistakes: [
+            { rule: 'Kinematic equations apply only to uniform (constant) acceleration.', commonMistake: 'Applying v = u + at when acceleration varies with time.', whyItMatters: 'Variable acceleration requires calculus integrals.' }
+          ],
+          keyTakeaway: 'The area under a Velocity-Time graph represents displacement.'
+        },
+        activity: {
+          id: 'act-c9-motion',
+          type: 'balance-scale',
+          title: 'Kinematics Brake & Deceleration Simulator',
+          instructions: 'Input vehicle speed and braking friction to graph velocity curve and calculate stopping distance.',
+          goal: 'Verify s = v² / (2a) stopping distance formula.',
+          defaultData: { speed: 20, acceleration: -5 }
+        },
+        workedExamples: [
+          {
+            id: 'we-c9-m1',
+            problem: 'A car accelerates uniformly from 18 km/h to 36 km/h in 5 seconds. Calculate its acceleration and distance covered.',
+            steps: [
+              { stepNumber: 1, title: 'Convert units to SI (m/s)', math: 'u = 18 × (5/18) = 5 m/s, v = 36 × (5/18) = 10 m/s', explanation: 'Multiply km/h by 5/18.' },
+              { stepNumber: 2, title: 'Calculate acceleration', math: 'a = (v - u) / t = (10 - 5) / 5 = 1 m/s²', explanation: 'Rate of velocity change.' },
+              { stepNumber: 3, title: 'Calculate distance covered', math: 's = ut + ½at² = (5)(5) + ½(1)(25) = 25 + 12.5 = 37.5 m', explanation: 'Kinematic distance equation.' }
+            ]
+          }
+        ],
+        guidedPractice: [
+          {
+            id: 'gp-c9-m1',
+            question: 'A train starting from rest attains a velocity of 72 km/h in 5 minutes. Assuming uniform acceleration, what is the distance traveled?',
+            options: ['3 km', '6 km', '1.5 km', '12 km'],
+            correctIndex: 0,
+            hint: 'u = 0, v = 72 km/h = 20 m/s, t = 300 s. Find a = 20/300 = 1/15 m/s², then s = ½at².',
+            explanation: 's = ½ × (1/15) × (300)² = 90000 / 30 = 3000 m = 3 km.'
+          }
+        ],
+        revisionSummary: {
+          title: 'Kinematics Formula Sheet',
+          points: [
+            'v = u + at',
+            's = ut + ½at²',
+            'v² - u² = 2as',
+            'Newton\'s 2nd Law: F = ma = Δp/Δt'
+          ]
+        },
+        assessmentQuestions: [
+          { id: 'q-c9-m1', question: 'The slope of a velocity-time graph represents:', options: ['Acceleration', 'Distance', 'Displacement', 'Speed'], correctIndex: 0, category: 'basic', explanation: 'Slope = Δv / Δt = acceleration.' },
+          { id: 'q-c9-m2', question: 'An object travels 20 m in 2 s and another 20 m in 3 s. Its average speed is:', options: ['8 m/s', '10 m/s', '6.67 m/s', '4 m/s'], correctIndex: 0, category: 'application', explanation: 'Average speed = Total distance / Total time = 40 m / 5 s = 8 m/s.' },
+          { id: 'q-c9-m3', question: 'If the displacement of an object is proportional to the square of time, then the object moves with:', options: ['Uniform acceleration', 'Uniform velocity', 'Increasing acceleration', 'Decreasing acceleration'], correctIndex: 0, category: 'reasoning', explanation: 's = ½at² implies displacement ∝ t² when acceleration is constant.' },
+          { id: 'q-c9-m4', question: 'Which Newton’s law defines inertia and the qualitative definition of force?', options: ['First Law of Motion', 'Second Law of Motion', 'Third Law of Motion', 'Law of Universal Gravitation'], correctIndex: 0, category: 'basic', explanation: 'The First Law (Law of Inertia) states objects resist changes to their state of rest or uniform motion.' },
+          { id: 'q-c9-m5', question: 'A passenger lunges forward when a speeding bus suddenly applies brakes due to:', options: ['Inertia of motion', 'Inertia of rest', 'Inertia of direction', 'Gravitational pull'], correctIndex: 0, category: 'application', explanation: 'The upper body continues in its forward state of motion while feet decelerate with the bus floor.' }
+        ]
+      }
+    ]
   }
 ];
 

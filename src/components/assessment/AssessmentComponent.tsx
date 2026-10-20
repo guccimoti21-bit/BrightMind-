@@ -8,9 +8,10 @@ import {
   Sparkles,
   Trophy,
   ArrowRight,
-  BookOpen
+  BookOpen,
+  ExternalLink
 } from 'lucide-react';
-import { AssessmentQuestion, PASSING_ASSESSMENT_SCORE } from '../../types/curriculum';
+import { AssessmentQuestion, PASSING_ASSESSMENT_SCORE, ChapterQuizLink } from '../../types/curriculum';
 import { useProgress } from '../../context/ProgressContext';
 
 interface AssessmentComponentProps {
@@ -18,13 +19,15 @@ interface AssessmentComponentProps {
   questions: AssessmentQuestion[];
   onPass?: () => void;
   onReviewRequested?: () => void;
+  chapterQuiz?: ChapterQuizLink;
 }
 
 export function AssessmentComponent({
   subConceptId,
   questions,
   onPass,
-  onReviewRequested
+  onReviewRequested,
+  chapterQuiz
 }: AssessmentComponentProps) {
   const { recordAssessmentAttempt, state } = useProgress();
 
@@ -128,6 +131,18 @@ export function AssessmentComponent({
                   <RotateCcw className="w-4 h-4" />
                   <span>Practice Again</span>
                 </button>
+                {chapterQuiz && chapterQuiz.isActive && (
+                  <a
+                    href={chapterQuiz.quizUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary px-5 py-2.5 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md bg-gradient-to-r from-[#2563EB] to-[#1D4ED8]"
+                  >
+                    <Trophy className="w-4 h-4 text-amber-300" />
+                    <span>Launch {chapterQuiz.platformName || 'Official'} Quiz</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
               </div>
             </motion.div>
           ) : (

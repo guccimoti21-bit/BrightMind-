@@ -12,9 +12,26 @@ export interface AuditLog {
   timestamp: number;
   adminUsername: string;
   action: string;
-  category: 'auth' | 'content' | 'rules' | 'media' | 'security';
+  category: 'auth' | 'content' | 'rules' | 'media' | 'security' | 'quizzes';
   details: string;
   ip?: string;
+}
+
+export interface ChapterQuizLink {
+  id: string;
+  classLevel: number;
+  subjectId: string;
+  conceptId: string;
+  chapterTitle?: string;
+  title: string;
+  quizUrl: string;
+  platformName?: string;
+  description?: string;
+  timeLimitMinutes?: number;
+  questionCount?: number;
+  isActive: boolean;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface LearningRules {
@@ -84,6 +101,7 @@ export interface DatabaseSchema {
     status: 'published' | 'draft';
   })[];
   media: MediaItem[];
+  chapterQuizzes: ChapterQuizLink[];
   auditLogs: AuditLog[];
 }
 
@@ -102,6 +120,91 @@ export function verifyPassword(password: string, salt: string, storedHash: strin
   const storedBuf = Buffer.from(storedHash, 'hex');
   if (hashBuf.length !== storedBuf.length) return false;
   return crypto.timingSafeEqual(hashBuf, storedBuf);
+}
+
+export function getDefaultChapterQuizzes(): ChapterQuizLink[] {
+  return [
+    {
+      id: 'quiz-c8-math-linear-eq',
+      classLevel: 8,
+      subjectId: 'mathematics',
+      conceptId: 'c8-math-linear-eq',
+      chapterTitle: 'Linear Equations in One Variable',
+      title: 'Class 8 Linear Equations Interactive Quizizz Challenge',
+      quizUrl: 'https://quizizz.com/join?gc=842910',
+      platformName: 'Quizizz',
+      description: '15 rapid-fire questions testing equation balancing, variable transposition, and real-life algebraic problem modeling.',
+      timeLimitMinutes: 20,
+      questionCount: 15,
+      isActive: true,
+      createdAt: Date.now() - 86400000,
+      updatedAt: Date.now() - 86400000
+    },
+    {
+      id: 'quiz-c8-sci-light',
+      classLevel: 8,
+      subjectId: 'science',
+      conceptId: 'c8-sci-light',
+      chapterTitle: 'Light and Reflection',
+      title: 'Laws of Reflection & Plane Mirrors Kahoot Challenge',
+      quizUrl: 'https://kahoot.it/?pin=592814',
+      platformName: 'Kahoot',
+      description: 'Test your understanding of incident and reflected rays, angle of incidence equality, and lateral inversion in plane mirrors.',
+      timeLimitMinutes: 15,
+      questionCount: 12,
+      isActive: true,
+      createdAt: Date.now() - 86400000,
+      updatedAt: Date.now() - 86400000
+    },
+    {
+      id: 'quiz-c10-math-quadratic',
+      classLevel: 10,
+      subjectId: 'mathematics',
+      conceptId: 'c10-math-quadratic',
+      chapterTitle: 'Quadratic Equations',
+      title: 'Class 10 Quadratic Equations Board Practice Assessment',
+      quizUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSc-Sample-Quadratic/viewform',
+      platformName: 'Google Forms',
+      description: 'Board-pattern multiple choice questions on finding roots, discriminant nature (real, equal, distinct), and formula derivation.',
+      timeLimitMinutes: 30,
+      questionCount: 20,
+      isActive: true,
+      createdAt: Date.now() - 86400000,
+      updatedAt: Date.now() - 86400000
+    },
+    {
+      id: 'quiz-c10-sci-electricity',
+      classLevel: 10,
+      subjectId: 'science',
+      conceptId: 'c10-sci-electricity',
+      chapterTitle: 'Electricity and Circuits',
+      title: 'Electric Current, Ohm’s Law & Resistance Quizizz',
+      quizUrl: 'https://quizizz.com/join?gc=194820',
+      platformName: 'Quizizz',
+      description: 'Numerical calculations on series/parallel resistance combinations, potential difference, and electrical power consumption.',
+      timeLimitMinutes: 25,
+      questionCount: 15,
+      isActive: true,
+      createdAt: Date.now() - 86400000,
+      updatedAt: Date.now() - 86400000
+    },
+    {
+      id: 'quiz-c6-math-fractions',
+      classLevel: 6,
+      subjectId: 'mathematics',
+      conceptId: 'c6-math-fractions',
+      chapterTitle: 'Fractions and Decimals',
+      title: 'Class 6 Fractions & Decimals Visual Matching Quiz',
+      quizUrl: 'https://wordwall.net/resource/sample-fractions-math',
+      platformName: 'Wordwall',
+      description: 'Engaging visual matching game to compare like and unlike fractions, decimal conversions, and number line placements.',
+      timeLimitMinutes: 12,
+      questionCount: 10,
+      isActive: true,
+      createdAt: Date.now() - 86400000,
+      updatedAt: Date.now() - 86400000
+    }
+  ];
 }
 
 function getDefaultDatabase(): DatabaseSchema {
@@ -134,7 +237,7 @@ function getDefaultDatabase(): DatabaseSchema {
       email: 'admin@scimath.academy',
       passwordHash: initialHash,
       salt: initialSalt,
-      mustChangePassword: true, // Forces password change on initial login!
+      mustChangePassword: true,
       role: 'super_admin',
       createdAt: Date.now()
     },
@@ -212,6 +315,7 @@ function getDefaultDatabase(): DatabaseSchema {
         uploadedAt: Date.now() - 3600000
       }
     ],
+    chapterQuizzes: getDefaultChapterQuizzes(),
     auditLogs: [
       {
         id: 'audit-init',
@@ -228,7 +332,12 @@ function getDefaultDatabase(): DatabaseSchema {
 let inMemoryDb: DatabaseSchema | null = null;
 
 export function getDb(): DatabaseSchema {
-  if (inMemoryDb) return inMemoryDb;
+  if (inMemoryDb) {
+    if (!inMemoryDb.chapterQuizzes) {
+      inMemoryDb.chapterQuizzes = getDefaultChapterQuizzes();
+    }
+    return inMemoryDb;
+  }
 
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -238,6 +347,10 @@ export function getDb(): DatabaseSchema {
     try {
       const content = fs.readFileSync(DB_FILE, 'utf-8');
       inMemoryDb = JSON.parse(content);
+      if (!inMemoryDb!.chapterQuizzes) {
+        inMemoryDb!.chapterQuizzes = getDefaultChapterQuizzes();
+        saveDb(inMemoryDb!);
+      }
       return inMemoryDb!;
     } catch (err) {
       console.error('Failed reading DB file, recreating default:', err);

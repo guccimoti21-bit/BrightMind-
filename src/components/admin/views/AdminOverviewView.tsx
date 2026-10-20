@@ -12,7 +12,8 @@ import {
   ShieldAlert,
   Flame,
   Binary,
-  Atom
+  Atom,
+  ExternalLink
 } from 'lucide-react';
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 
@@ -25,6 +26,8 @@ interface AdminStats {
   draftLessons: number;
   totalQuestions: number;
   totalMedia: number;
+  totalChapterQuizzes?: number;
+  activeChapterQuizzes?: number;
   recentAuditLogs: {
     id: string;
     timestamp: number;
@@ -227,6 +230,34 @@ export function AdminOverviewView({ onNavigateSection }: AdminOverviewViewProps)
             {stats.totalMedia}
           </div>
           <div className="text-[11px] text-[#64748B]">Illustrations &amp; assets</div>
+        </div>
+
+        {/* External Quiz Links */}
+        <div
+          onClick={() => onNavigateSection('chapter-quizzes')}
+          className="bg-[#FFFFFF] border border-[#E2E8F0] hover:border-[#BFDBFE] hover:shadow-[0_16px_40px_rgba(37,99,235,0.08)] p-5 rounded-2xl cursor-pointer transition-all space-y-1 group shadow-sm col-span-2 lg:col-span-4"
+        >
+          <div className="flex items-center justify-between text-[#64748B] text-xs">
+            <span className="font-bold text-[#111827]">External Chapter Quiz Links</span>
+            <ExternalLink className="w-4 h-4 text-[#2563EB]" />
+          </div>
+          <div className="flex items-center justify-between mt-1">
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-mono font-bold text-[#111827] group-hover:text-[#2563EB]">
+                {stats.totalChapterQuizzes ?? 5}
+              </span>
+              <span className="text-xs text-[#16A34A] font-semibold">
+                ({stats.activeChapterQuizzes ?? 5} active)
+              </span>
+            </div>
+            <span className="text-xs text-[#2563EB] font-semibold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+              <span>Manage Chapter Quizzes</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </span>
+          </div>
+          <div className="text-[11px] text-[#64748B]">
+            Assign interactive Quizizz, Kahoot, Google Forms, and Wordwall tests for every Science &amp; Math chapter.
+          </div>
         </div>
       </div>
     </div>

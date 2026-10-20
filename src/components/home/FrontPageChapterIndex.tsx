@@ -18,10 +18,14 @@ import {
   Scale,
   Sun,
   ShieldCheck,
-  FileText
+  FileText,
+  Trophy,
+  ExternalLink,
+  Globe
 } from 'lucide-react';
-import { Concept, ClassLevel, SubjectId, SubConcept } from '../../types/curriculum';
+import { Concept, ClassLevel, SubjectId, SubConcept, ChapterQuizLink } from '../../types/curriculum';
 import { CLASS_METADATA } from '../../data/curriculumData';
+import { getQuizForChapter, getCachedQuizLinks, QUIZ_LINKS_UPDATED_EVENT } from '../../services/quizLinkService';
 
 interface FrontPageChapterIndexProps {
   concepts: Concept[];
@@ -49,6 +53,14 @@ export function FrontPageChapterIndex({
     subConcept: SubConcept;
   } | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const [quizzes, setQuizzes] = useState<ChapterQuizLink[]>(() => getCachedQuizLinks());
+
+  React.useEffect(() => {
+    const update = () => setQuizzes(getCachedQuizLinks());
+    window.addEventListener(QUIZ_LINKS_UPDATED_EVENT, update);
+    return () => window.removeEventListener(QUIZ_LINKS_UPDATED_EVENT, update);
+  }, []);
 
   // Filter concepts based on class, subject, and search query
   const filteredConcepts = useMemo(() => {
@@ -311,6 +323,19 @@ export function FrontPageChapterIndex({
                         <Clock className="w-3 h-3" />
                         <span>~{chapter.estimatedHours} Hours</span>
                       </span>
+                      {(() => {
+                        const q = getQuizForChapter(quizzes, chapter.id);
+                        if (!q || !q.isActive) return null;
+                        return (
+                          <>
+                            <span className="text-[#64748B]">·</span>
+                            <span className="bg-[#FEF3C7] text-[#92400E] font-bold px-2 py-0.5 rounded border border-[#FDE68A] flex items-center gap-1 text-[11px]">
+                              <Trophy className="w-3 h-3 text-[#D97706]" />
+                              <span>{q.platformName || 'Online'} Quiz</span>
+                            </span>
+                          </>
+                        );
+                      })()}
                     </div>
 
                     <h3 className="text-xl font-bold text-[#111827] hover:text-[#2563EB] transition-colors">
@@ -426,6 +451,43 @@ export function FrontPageChapterIndex({
                         </div>
                       ))}
                     </div>
+
+                    {/* Official Chapter Quiz Banner if configured */}
+                    {(() => {
+                      const quiz = getQuizForChapter(quizzes, chapter.id);
+                      if (!quiz || !quiz.isActive) return null;
+                      return (
+                        <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-[#EFF6FF] via-[#F8FAFF] to-[#EFF6FF] border border-[#BFDBFE] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                          <div className="space-y-0.5">
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-[#2563EB]">
+                              <Trophy className="w-3.5 h-3.5 text-[#D97706]" />
+                              <span>Official Chapter Quiz ({quiz.platformName || 'Online Platform'})</span>
+                              {quiz.timeLimitMinutes && (
+                                <span className="text-[#64748B] font-normal">· {quiz.timeLimitMinutes} mins</span>
+                              )}
+                              {quiz.questionCount && (
+                                <span className="text-[#64748B] font-normal">· {quiz.questionCount} questions</span>
+                              )}
+                            </div>
+                            <div className="text-xs font-bold text-[#111827]">
+                              {quiz.title}
+                            </div>
+                            {quiz.description && (
+                              <p className="text-[11px] text-[#475569]">{quiz.description}</p>
+                            )}
+                          </div>
+                          <a
+                            href={quiz.quizUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn-primary px-4 py-2 text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 shadow-sm"
+                          >
+                            <span>Open Official Quiz</span>
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
               </div>

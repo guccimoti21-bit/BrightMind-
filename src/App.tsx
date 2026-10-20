@@ -25,6 +25,7 @@ import { AdminLayout } from './components/admin/AdminLayout';
 import { AdminPasswordModal } from './components/admin/AdminPasswordModal';
 import { CURRICULUM_DATA } from './data/curriculumData';
 import { ClassLevel, SubjectId, Concept } from './types/curriculum';
+import { fetchChapterQuizzes } from './services/quizLinkService';
 import { ShieldAlert, LogIn, UserPlus, X, Lock, Atom } from 'lucide-react';
 
 type AppRoute =
@@ -94,6 +95,12 @@ function AppContent() {
       }
     } catch (e) {
       console.log('Using local curriculum baseline');
+    }
+
+    try {
+      await fetchChapterQuizzes();
+    } catch (e) {
+      // Ignored - fallback handled inside service
     }
   }, []);
 

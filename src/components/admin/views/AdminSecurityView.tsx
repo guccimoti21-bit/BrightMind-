@@ -174,8 +174,14 @@ export function AdminSecurityView() {
                 <span className="text-[#2563EB] font-mono font-semibold capitalize">{admin?.role}</span>
               </div>
               <div className="flex justify-between">
+                <span className="text-[#64748B]">Auth Provider:</span>
+                <span className="text-[#2563EB] font-mono font-semibold capitalize">{admin?.authProvider === 'supabase' ? 'Supabase Auth (Cloud)' : 'Local Server Session'}</span>
+              </div>
+              <div className="flex justify-between">
                 <span className="text-[#64748B]">Hash Algorithm:</span>
-                <span className="text-[#16A34A] font-mono font-medium">scrypt (Node.js crypto)</span>
+                <span className="text-[#16A34A] font-mono font-medium">
+                  {admin?.authProvider === 'supabase' ? 'bcrypt / Argon2 (Cloud)' : 'scrypt (Node.js crypto)'}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[#64748B]">Password Policy:</span>

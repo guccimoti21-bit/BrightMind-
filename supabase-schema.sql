@@ -144,6 +144,43 @@ CREATE POLICY "Students can insert their own stats"
   ON public.student_stats FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+-- 8. Admin Policies: Administrators can view all profiles and student data
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid() AND role = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP POLICY IF EXISTS "Admins can view all profiles" ON public.profiles;
+CREATE POLICY "Admins can view all profiles"
+  ON public.profiles FOR SELECT
+  USING (auth.uid() = id OR public.is_admin());
+
+DROP POLICY IF EXISTS "Admins can view all student progress" ON public.student_progress;
+CREATE POLICY "Admins can view all student progress"
+  ON public.student_progress FOR SELECT
+  USING (auth.uid() = user_id OR public.is_admin());
+
+DROP POLICY IF EXISTS "Admins can view all student stats" ON public.student_stats;
+CREATE POLICY "Admins can view all student stats"
+  ON public.student_stats FOR SELECT
+  USING (auth.uid() = user_id OR public.is_admin());
+
 -- Indexes for lightning fast queries
 CREATE INDEX IF NOT EXISTS idx_progress_user_id ON public.student_progress (user_id);
 CREATE INDEX IF NOT EXISTS idx_progress_subconcept ON public.student_progress (sub_concept_id);
+CREATE INDEX IF NOT EXISTS idx_profiles_role ON public.profiles (role);
+
+-- ==============================================================
+-- 9. ADMINISTRATOR ACCOUNT PROMOTION
+-- To grant an administrator access after creating an account in
+-- Supabase Dashboard > Authentication > Users, execute:
+--
+-- UPDATE public.profiles
+-- SET role = 'admin'
+-- WHERE email = 'admin@scimath.academy';
+-- ==============================================================

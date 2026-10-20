@@ -48,7 +48,7 @@ export function AdminPasswordModal({
     }
 
     if (newPassword === currentPassword) {
-      setErrorMsg('New password cannot be identical to the current setup password.');
+      setErrorMsg('New password cannot be identical to the current password.');
       return;
     }
 
@@ -76,7 +76,7 @@ export function AdminPasswordModal({
           <div>
             <h3 className="text-lg font-bold text-[#111827]">Security Update Required</h3>
             <p className="text-xs text-[#475569]">
-              Please change the initial setup password (<code className="text-[#D97706] font-mono font-bold bg-[#FEF3C7] px-1.5 py-0.5 rounded">434241</code>) to proceed.
+              Please change your temporary administrator password to a secure custom password to proceed.
             </p>
           </div>
         </div>

@@ -86,6 +86,23 @@ export interface AdminUser {
   lastLoginAt?: number;
 }
 
+export interface HomepageImageEntry {
+  id: 'image1' | 'image2';
+  imageUrl: string;
+  title?: string;
+  altText?: string;
+  storagePath?: string;
+  fileName?: string;
+  fileSize?: number;
+  mimeType?: string;
+  updatedAt: number;
+}
+
+export interface HomepageImagesData {
+  image1: HomepageImageEntry | null;
+  image2: HomepageImageEntry | null;
+}
+
 export interface DatabaseSchema {
   admin: AdminUser;
   rules: LearningRules;
@@ -102,6 +119,7 @@ export interface DatabaseSchema {
   })[];
   media: MediaItem[];
   chapterQuizzes: ChapterQuizLink[];
+  homepageImages?: HomepageImagesData;
   auditLogs: AuditLog[];
 }
 
@@ -236,6 +254,10 @@ function getDefaultDatabase(): DatabaseSchema {
       }
     ],
     chapterQuizzes: getDefaultChapterQuizzes(),
+    homepageImages: {
+      image1: null,
+      image2: null
+    },
     auditLogs: [
       {
         id: 'audit-init',
@@ -256,6 +278,9 @@ export function getDb(): DatabaseSchema {
     if (!inMemoryDb.chapterQuizzes) {
       inMemoryDb.chapterQuizzes = getDefaultChapterQuizzes();
     }
+    if (!inMemoryDb.homepageImages) {
+      inMemoryDb.homepageImages = { image1: null, image2: null };
+    }
     return inMemoryDb;
   }
 
@@ -269,7 +294,9 @@ export function getDb(): DatabaseSchema {
       inMemoryDb = JSON.parse(content);
       if (!inMemoryDb!.chapterQuizzes) {
         inMemoryDb!.chapterQuizzes = getDefaultChapterQuizzes();
-        saveDb(inMemoryDb!);
+      }
+      if (!inMemoryDb!.homepageImages) {
+        inMemoryDb!.homepageImages = { image1: null, image2: null };
       }
       return inMemoryDb!;
     } catch (err) {

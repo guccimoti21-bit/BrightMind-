@@ -7,12 +7,13 @@
 -- 1. Open your Supabase Dashboard: https://supabase.com/dashboard/project/sjlmhdckpshyqeqihjgr
 -- 2. In the left navigation, click "SQL Editor" -> "New query".
 -- 3. Paste this entire script into the editor and click "Run".
--- 4. After running, verify that the 5 tables appear in Table Editor:
+-- 4. After running, verify that the 6 tables appear in Table Editor:
 --    - public.profiles
 --    - public.chapters
 --    - public.chapter_quizzes
 --    - public.student_progress
 --    - public.student_stats
+--    - public.homepage_images
 -- ==============================================================================
 
 -- ------------------------------------------------------------------------------
@@ -106,6 +107,19 @@ CREATE TABLE IF NOT EXISTS public.student_stats (
   study_minutes INT NOT NULL DEFAULT 0 CHECK (study_minutes >= 0),
   last_active_date DATE DEFAULT CURRENT_DATE,
   last_active_sub_concept_id TEXT DEFAULT 'c8-math-linear-sub2',
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+-- 2.6 Homepage Images (Configured via Admin Panel: Image 1 and Image 2)
+CREATE TABLE IF NOT EXISTS public.homepage_images (
+  id TEXT PRIMARY KEY CHECK (id IN ('image1', 'image2')),
+  image_url TEXT NOT NULL,
+  title TEXT,
+  alt_text TEXT,
+  storage_path TEXT,
+  file_name TEXT,
+  file_size INT,
+  mime_type TEXT,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
@@ -223,6 +237,7 @@ ALTER TABLE public.chapters ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.chapter_quizzes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.student_progress ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.student_stats ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.homepage_images ENABLE ROW LEVEL SECURITY;
 
 -- 5.1 Profiles Policies
 DROP POLICY IF EXISTS "profiles_select_policy" ON public.profiles;
@@ -323,6 +338,28 @@ CREATE POLICY "stats_update_policy"
   ON public.student_stats FOR UPDATE
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
+
+-- 5.6 Homepage Images Policies (Public read; admin insert/update/delete)
+DROP POLICY IF EXISTS "homepage_images_select_policy" ON public.homepage_images;
+CREATE POLICY "homepage_images_select_policy"
+  ON public.homepage_images FOR SELECT
+  USING (true);
+
+DROP POLICY IF EXISTS "homepage_images_admin_insert" ON public.homepage_images;
+CREATE POLICY "homepage_images_admin_insert"
+  ON public.homepage_images FOR INSERT
+  WITH CHECK (public.is_admin());
+
+DROP POLICY IF EXISTS "homepage_images_admin_update" ON public.homepage_images;
+CREATE POLICY "homepage_images_admin_update"
+  ON public.homepage_images FOR UPDATE
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
+
+DROP POLICY IF EXISTS "homepage_images_admin_delete" ON public.homepage_images;
+CREATE POLICY "homepage_images_admin_delete"
+  ON public.homepage_images FOR DELETE
+  USING (public.is_admin());
 
 -- ------------------------------------------------------------------------------
 -- STEP 6: Pre-seed Curriculum Chapters (Classes 6 to 10)
@@ -462,6 +499,43 @@ $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 REVOKE ALL ON FUNCTION public.bootstrap_admin_account(TEXT) FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.bootstrap_admin_account(TEXT) FROM anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.bootstrap_admin_account(TEXT) TO postgres, service_role;
+
+-- ------------------------------------------------------------------------------
+-- STEP 8: Supabase Storage Bucket Setup for Homepage Images
+-- ------------------------------------------------------------------------------
+-- Create the public bucket 'homepage-images' if it doesn't already exist
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('homepage-images', 'homepage-images', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- Storage Policy: Anyone can view homepage images (Public Read)
+DROP POLICY IF EXISTS "Public View Homepage Images" ON storage.objects;
+CREATE POLICY "Public View Homepage Images"
+  ON storage.objects FOR SELECT
+  TO public
+  USING (bucket_id = 'homepage-images');
+
+-- Storage Policy: Administrators can upload homepage images
+DROP POLICY IF EXISTS "Admin Upload Homepage Images" ON storage.objects;
+CREATE POLICY "Admin Upload Homepage Images"
+  ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (bucket_id = 'homepage-images' AND public.is_admin());
+
+-- Storage Policy: Administrators can update/replace homepage images
+DROP POLICY IF EXISTS "Admin Update Homepage Images" ON storage.objects;
+CREATE POLICY "Admin Update Homepage Images"
+  ON storage.objects FOR UPDATE
+  TO authenticated
+  USING (bucket_id = 'homepage-images' AND public.is_admin())
+  WITH CHECK (bucket_id = 'homepage-images' AND public.is_admin());
+
+-- Storage Policy: Administrators can delete homepage images
+DROP POLICY IF EXISTS "Admin Delete Homepage Images" ON storage.objects;
+CREATE POLICY "Admin Delete Homepage Images"
+  ON storage.objects FOR DELETE
+  TO authenticated
+  USING (bucket_id = 'homepage-images' AND public.is_admin());
 
 -- ==============================================================================
 -- END OF MIGRATION

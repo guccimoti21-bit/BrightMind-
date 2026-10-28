@@ -60,6 +60,15 @@ apiRouter.get('/content/appearance', (req: Request, res: Response) => {
   res.json(db.appearance);
 });
 
+// GET public homepage images (Image 1 and Image 2)
+apiRouter.get('/content/homepage-images', (req: Request, res: Response) => {
+  const db = getDb();
+  res.json({
+    image1: db.homepageImages?.image1 || null,
+    image2: db.homepageImages?.image2 || null
+  });
+});
+
 // ==========================================
 // ADMIN AUTHENTICATION
 // ==========================================
@@ -995,3 +1004,97 @@ apiRouter.post('/admin/chapter-quizzes/:id/toggle', requireAdmin, (req: Request,
 
   res.json(quiz);
 });
+
+// ==========================================
+// HOMEPAGE IMAGES (ADMIN)
+// ==========================================
+
+// GET all homepage images (Admin)
+apiRouter.get('/admin/homepage-images', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  res.json({
+    image1: db.homepageImages?.image1 || null,
+    image2: db.homepageImages?.image2 || null
+  });
+});
+
+// POST save / replace homepage image slot (Admin)
+apiRouter.post('/admin/homepage-images/:slot', requireAdmin, (req: Request, res: Response) => {
+  const slot = req.params.slot as 'image1' | 'image2';
+  if (slot !== 'image1' && slot !== 'image2') {
+    res.status(400).json({ error: 'Invalid image slot. Must be "image1" or "image2".' });
+    return;
+  }
+
+  const { imageUrl, title, altText, storagePath, fileName, fileSize, mimeType } = req.body;
+  if (!imageUrl || typeof imageUrl !== 'string') {
+    res.status(400).json({ error: 'Image URL is required.' });
+    return;
+  }
+
+  const db = getDb();
+  if (!db.homepageImages) {
+    db.homepageImages = { image1: null, image2: null };
+  }
+
+  const session = (req as any).adminSession;
+  const imageEntry = {
+    id: slot,
+    imageUrl,
+    title: title || '',
+    altText: altText || '',
+    storagePath: storagePath || '',
+    fileName: fileName || '',
+    fileSize: typeof fileSize === 'number' ? fileSize : undefined,
+    mimeType: mimeType || '',
+    updatedAt: Date.now()
+  };
+
+  db.homepageImages[slot] = imageEntry;
+  saveDb(db);
+
+  addAuditLog(
+    session?.username || 'admin',
+    'media',
+    `Homepage ${slot === 'image1' ? 'Image 1' : 'Image 2'} Saved`,
+    `Uploaded / updated homepage image: ${fileName || title || slot}`
+  );
+
+  res.json({
+    success: true,
+    data: imageEntry,
+    message: `${slot === 'image1' ? 'Image 1' : 'Image 2'} updated successfully.`
+  });
+});
+
+// DELETE remove homepage image slot (Admin)
+apiRouter.delete('/admin/homepage-images/:slot', requireAdmin, (req: Request, res: Response) => {
+  const slot = req.params.slot as 'image1' | 'image2';
+  if (slot !== 'image1' && slot !== 'image2') {
+    res.status(400).json({ error: 'Invalid image slot. Must be "image1" or "image2".' });
+    return;
+  }
+
+  const db = getDb();
+  if (!db.homepageImages) {
+    db.homepageImages = { image1: null, image2: null };
+  }
+
+  const prev = db.homepageImages[slot];
+  db.homepageImages[slot] = null;
+  saveDb(db);
+
+  const session = (req as any).adminSession;
+  addAuditLog(
+    session?.username || 'admin',
+    'media',
+    `Homepage ${slot === 'image1' ? 'Image 1' : 'Image 2'} Removed`,
+    `Removed homepage image: ${prev?.fileName || prev?.title || slot}`
+  );
+
+  res.json({
+    success: true,
+    message: `${slot === 'image1' ? 'Image 1' : 'Image 2'} removed successfully.`
+  });
+});
+

@@ -32,6 +32,7 @@ import { AdminAppearanceView } from './views/AdminAppearanceView';
 import { AdminSecurityView } from './views/AdminSecurityView';
 import { AdminAuditLogsView } from './views/AdminAuditLogsView';
 import { AdminChapterQuizzesView } from './views/AdminChapterQuizzesView';
+import { AdminHomepageImagesView } from './views/AdminHomepageImagesView';
 import { BalanceScaleActivity } from '../activities/BalanceScaleActivity';
 import { RayOpticsActivity } from '../activities/RayOpticsActivity';
 
@@ -52,6 +53,7 @@ export type AdminSection =
   | 'curriculum'
   | 'rules'
   | 'media'
+  | 'homepage-images'
   | 'students'
   | 'appearance'
   | 'security'
@@ -76,6 +78,7 @@ export function AdminLayout({ onReturnToStudent }: AdminLayoutProps) {
     { id: 'lesson-editor', label: 'Lesson Editor', icon: FileText, category: 'Content' },
     { id: 'activities', label: 'Activities & Labs', icon: Scale, category: 'Content' },
     { id: 'questions', label: 'MCQ Question Bank', icon: HelpCircle, category: 'Content' },
+    { id: 'homepage-images', label: 'Homepage Images', icon: ImageIcon, category: 'Content' },
     { id: 'media', label: 'Media Library', icon: ImageIcon, category: 'Content' },
     { id: 'rules', label: '80% Unlocking Rules', icon: ShieldCheck, category: 'Configuration' },
     { id: 'students', label: 'Student Management', icon: Users, category: 'Configuration' },
@@ -268,6 +271,8 @@ export function AdminLayout({ onReturnToStudent }: AdminLayoutProps) {
           {currentSection === 'rules' && <AdminRulesView />}
 
           {currentSection === 'media' && <AdminMediaView />}
+
+          {currentSection === 'homepage-images' && <AdminHomepageImagesView />}
 
           {currentSection === 'students' && <AdminStudentsView />}
 

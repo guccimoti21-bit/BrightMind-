@@ -22,6 +22,12 @@ import { FrontPageChapterIndex } from './FrontPageChapterIndex';
 import heroArtworkImg from '../../assets/images/hero_scimath_academy_1792233656985.jpg';
 import scienceBannerImg from '../../assets/images/science_discipline_banner_1792233656005.jpg';
 import mathBannerImg from '../../assets/images/math_discipline_banner_1792233657743.jpg';
+import {
+  HomepageImagesConfig,
+  getCachedHomepageImages,
+  fetchHomepageImages,
+  HOMEPAGE_IMAGES_UPDATED_EVENT
+} from '../../services/homepageImageService';
 
 interface LandingPageProps {
   concepts: Concept[];
@@ -50,6 +56,36 @@ export function LandingPage({
   onRequireAuthPrompt,
   onRefreshCurriculum
 }: LandingPageProps) {
+  const [homepageImages, setHomepageImages] = React.useState<HomepageImagesConfig>(() =>
+    getCachedHomepageImages()
+  );
+
+  React.useEffect(() => {
+    let isMounted = true;
+    fetchHomepageImages()
+      .then((cfg) => {
+        if (isMounted && cfg) {
+          setHomepageImages(cfg);
+        }
+      })
+      .catch((err) => {
+        console.warn('Failed loading homepage images:', err);
+      });
+
+    const handleUpdate = (e: Event) => {
+      const customEvt = e as CustomEvent<HomepageImagesConfig>;
+      if (customEvt.detail) {
+        setHomepageImages(customEvt.detail);
+      }
+    };
+
+    window.addEventListener(HOMEPAGE_IMAGES_UPDATED_EVENT, handleUpdate);
+    return () => {
+      isMounted = false;
+      window.removeEventListener(HOMEPAGE_IMAGES_UPDATED_EVENT, handleUpdate);
+    };
+  }, []);
+
   const handleProtectedAction = (
     action: () => void,
     reason: string,
@@ -185,6 +221,97 @@ export function LandingPage({
           </div>
         </div>
       </section>
+
+      {/* HOMEPAGE FEATURED IMAGES (MANAGED VIA ADMIN PANEL - DISPLAY ONLY IF UPLOADED) */}
+      {(Boolean(homepageImages.image1?.imageUrl) || Boolean(homepageImages.image2?.imageUrl)) && (
+        <section aria-label="Campus & Featured Highlights" className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <div className="text-xs text-[#2563EB] font-bold uppercase tracking-wider">
+                Highlights &amp; Announcements
+              </div>
+              <h2 className="text-2xl font-extrabold text-[#111827] tracking-tight">
+                Featured Highlights
+              </h2>
+            </div>
+            <p className="text-xs text-slate-500">
+              Official campus and academic announcements
+            </p>
+          </div>
+
+          <div
+            className={`grid gap-6 ${
+              homepageImages.image1?.imageUrl && homepageImages.image2?.imageUrl
+                ? 'grid-cols-1 md:grid-cols-2'
+                : 'grid-cols-1 max-w-2xl mx-auto'
+            }`}
+          >
+            {homepageImages.image1?.imageUrl && (
+              <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col transition hover:shadow-md">
+                <div className="relative aspect-[16/9] w-full bg-slate-100 overflow-hidden">
+                  <img
+                    src={homepageImages.image1.imageUrl}
+                    alt={
+                      homepageImages.image1.altText ||
+                      homepageImages.image1.title ||
+                      'SciMathenova Homepage Highlight 1'
+                    }
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                {(homepageImages.image1.title || homepageImages.image1.altText) && (
+                  <div className="p-4 bg-white border-t border-slate-100">
+                    {homepageImages.image1.title && (
+                      <h3 className="font-bold text-slate-900 text-base leading-snug">
+                        {homepageImages.image1.title}
+                      </h3>
+                    )}
+                    {homepageImages.image1.altText &&
+                      homepageImages.image1.altText !== homepageImages.image1.title && (
+                        <p className="text-xs text-slate-500 mt-1">
+                          {homepageImages.image1.altText}
+                        </p>
+                      )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {homepageImages.image2?.imageUrl && (
+              <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col transition hover:shadow-md">
+                <div className="relative aspect-[16/9] w-full bg-slate-100 overflow-hidden">
+                  <img
+                    src={homepageImages.image2.imageUrl}
+                    alt={
+                      homepageImages.image2.altText ||
+                      homepageImages.image2.title ||
+                      'SciMathenova Homepage Highlight 2'
+                    }
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                {(homepageImages.image2.title || homepageImages.image2.altText) && (
+                  <div className="p-4 bg-white border-t border-slate-100">
+                    {homepageImages.image2.title && (
+                      <h3 className="font-bold text-slate-900 text-base leading-snug">
+                        {homepageImages.image2.title}
+                      </h3>
+                    )}
+                    {homepageImages.image2.altText &&
+                      homepageImages.image2.altText !== homepageImages.image2.title && (
+                        <p className="text-xs text-slate-500 mt-1">
+                          {homepageImages.image2.altText}
+                        </p>
+                      )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* CORE REQUIREMENT: CHAPTER INDEX FOR CLASSES 6-10 ON FRONT PAGE (OPEN ACCESS) */}
       <FrontPageChapterIndex

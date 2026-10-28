@@ -8,7 +8,7 @@
     "mustChangePassword": false,
     "role": "super_admin",
     "createdAt": 1792235558702,
-    "lastLoginAt": 1792509750908
+    "lastLoginAt": 1793163819177
   },
   "rules": {
     "lessonWeight": 30,
@@ -4560,6 +4560,31 @@
   ],
   "auditLogs": [
     {
+      "id": "log-1793163819206-f0r50",
+      "timestamp": 1793163819206,
+      "adminUsername": "admin@scimath.academy",
+      "category": "media",
+      "action": "Homepage Image 1 Removed",
+      "details": "Removed homepage image: science_fair_2026.jpg"
+    },
+    {
+      "id": "log-1793163819192-l6kbe",
+      "timestamp": 1793163819192,
+      "adminUsername": "admin@scimath.academy",
+      "category": "media",
+      "action": "Homepage Image 1 Saved",
+      "details": "Uploaded / updated homepage image: science_fair_2026.jpg"
+    },
+    {
+      "id": "log-1793163819179-40le8",
+      "timestamp": 1793163819179,
+      "adminUsername": "admin@scimath.academy",
+      "category": "auth",
+      "action": "Administrator Login",
+      "details": "Successful authentication",
+      "ip": "127.0.0.1"
+    },
+    {
       "id": "log-1792509750909-2ctdh",
       "timestamp": 1792509750909,
       "adminUsername": "admin@scimath.academy",
@@ -4762,5 +4787,9 @@
       "details": "Initial administrator account and curriculum database seeded securely."
     }
   ],
-  "chapterQuizzes": []
+  "chapterQuizzes": [],
+  "homepageImages": {
+    "image1": null,
+    "image2": null
+  }
 }

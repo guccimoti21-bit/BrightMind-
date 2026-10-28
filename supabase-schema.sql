@@ -7,10 +7,11 @@
 -- 1. Open your Supabase Dashboard: https://supabase.com/dashboard/project/sjlmhdckpshyqeqihjgr
 -- 2. In the left navigation, click "SQL Editor" -> "New query".
 -- 3. Paste this entire script into the editor and click "Run".
--- 4. After running, verify that the 6 tables appear in Table Editor:
+-- 4. After running, verify that the 7 tables appear in Table Editor:
 --    - public.profiles
 --    - public.chapters
 --    - public.chapter_quizzes
+--    - public.learning_resources
 --    - public.student_progress
 --    - public.student_stats
 --    - public.homepage_images
@@ -123,6 +124,24 @@ CREATE TABLE IF NOT EXISTS public.homepage_images (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
+-- 2.7 Learning Resources (Google Drive files/notes & YouTube videos managed by Admins)
+CREATE TABLE IF NOT EXISTS public.learning_resources (
+  id TEXT PRIMARY KEY DEFAULT ('res-' || floor(random() * 899999 + 100000)::text),
+  title TEXT NOT NULL,
+  description TEXT,
+  resource_type TEXT NOT NULL CHECK (resource_type IN ('google_drive', 'youtube')),
+  resource_url TEXT NOT NULL,
+  class_level SMALLINT NOT NULL CHECK (class_level BETWEEN 6 AND 10),
+  subject TEXT NOT NULL CHECK (subject IN ('science', 'mathematics')),
+  chapter_id TEXT NOT NULL REFERENCES public.chapters(id) ON DELETE CASCADE,
+  sub_concept_id TEXT,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
 -- ------------------------------------------------------------------------------
 -- STEP 3: Performance Indexes
 -- ------------------------------------------------------------------------------
@@ -131,6 +150,9 @@ CREATE INDEX IF NOT EXISTS idx_profiles_class ON public.profiles (class_level);
 CREATE INDEX IF NOT EXISTS idx_chapters_class_subject ON public.chapters (class_level, subject_id);
 CREATE INDEX IF NOT EXISTS idx_quizzes_lookup ON public.chapter_quizzes (class_level, subject_id, concept_id);
 CREATE INDEX IF NOT EXISTS idx_quizzes_active ON public.chapter_quizzes (is_active);
+CREATE INDEX IF NOT EXISTS idx_resources_lookup ON public.learning_resources (class_level, subject, chapter_id);
+CREATE INDEX IF NOT EXISTS idx_resources_active ON public.learning_resources (is_active);
+CREATE INDEX IF NOT EXISTS idx_resources_sort ON public.learning_resources (sort_order);
 CREATE INDEX IF NOT EXISTS idx_progress_user_id ON public.student_progress (user_id);
 CREATE INDEX IF NOT EXISTS idx_progress_subconcept ON public.student_progress (sub_concept_id);
 CREATE INDEX IF NOT EXISTS idx_student_stats_active_date ON public.student_stats (last_active_date);
@@ -238,6 +260,7 @@ ALTER TABLE public.chapter_quizzes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.student_progress ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.student_stats ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.homepage_images ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.learning_resources ENABLE ROW LEVEL SECURITY;
 
 -- 5.1 Profiles Policies
 DROP POLICY IF EXISTS "profiles_select_policy" ON public.profiles;
@@ -359,6 +382,28 @@ CREATE POLICY "homepage_images_admin_update"
 DROP POLICY IF EXISTS "homepage_images_admin_delete" ON public.homepage_images;
 CREATE POLICY "homepage_images_admin_delete"
   ON public.homepage_images FOR DELETE
+  USING (public.is_admin());
+
+-- 5.7 Learning Resources Policies (Public read for active items; admin manage)
+DROP POLICY IF EXISTS "resources_select_policy" ON public.learning_resources;
+CREATE POLICY "resources_select_policy"
+  ON public.learning_resources FOR SELECT
+  USING (is_active = true OR public.is_admin());
+
+DROP POLICY IF EXISTS "resources_admin_insert" ON public.learning_resources;
+CREATE POLICY "resources_admin_insert"
+  ON public.learning_resources FOR INSERT
+  WITH CHECK (public.is_admin());
+
+DROP POLICY IF EXISTS "resources_admin_update" ON public.learning_resources;
+CREATE POLICY "resources_admin_update"
+  ON public.learning_resources FOR UPDATE
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
+
+DROP POLICY IF EXISTS "resources_admin_delete" ON public.learning_resources;
+CREATE POLICY "resources_admin_delete"
+  ON public.learning_resources FOR DELETE
   USING (public.is_admin());
 
 -- ------------------------------------------------------------------------------

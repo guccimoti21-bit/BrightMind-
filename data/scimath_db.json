@@ -8,7 +8,7 @@
     "mustChangePassword": false,
     "role": "super_admin",
     "createdAt": 1792235558702,
-    "lastLoginAt": 1793163819177
+    "lastLoginAt": 1793166149417
   },
   "rules": {
     "lessonWeight": 30,
@@ -4560,6 +4560,55 @@
   ],
   "auditLogs": [
     {
+      "id": "log-1793166149540-dafii",
+      "timestamp": 1793166149540,
+      "adminUsername": "admin@scimath.academy",
+      "category": "resources",
+      "action": "Learning Resource Deleted",
+      "details": "Deleted youtube resource: \"Ray Optics & Laws of Reflection Experiment Demonstration\" (ID: res-1793166149475-4ihvd)"
+    },
+    {
+      "id": "log-1793166149525-1bkml",
+      "timestamp": 1793166149525,
+      "adminUsername": "admin@scimath.academy",
+      "category": "resources",
+      "action": "Learning Resource Deleted",
+      "details": "Deleted google_drive resource: \"Class 8 Light Handwritten Revision Notes\" (ID: res-1793166149460-pzewi)"
+    },
+    {
+      "id": "log-1793166149506-pzbi2",
+      "timestamp": 1793166149506,
+      "adminUsername": "admin@scimath.academy",
+      "category": "resources",
+      "action": "Learning Resource Visibility Changed",
+      "details": "Toggled resource \"Class 8 Light Handwritten Revision Notes\" to Hidden"
+    },
+    {
+      "id": "log-1793166149478-zg79q",
+      "timestamp": 1793166149478,
+      "adminUsername": "admin@scimath.academy",
+      "category": "resources",
+      "action": "Learning Resource Created",
+      "details": "Added youtube resource: \"Ray Optics & Laws of Reflection Experiment Demonstration\" for Chapter: c8-sci-light"
+    },
+    {
+      "id": "log-1793166149464-piazo",
+      "timestamp": 1793166149464,
+      "adminUsername": "admin@scimath.academy",
+      "category": "resources",
+      "action": "Learning Resource Created",
+      "details": "Added google_drive resource: \"Class 8 Light Handwritten Revision Notes\" for Chapter: c8-sci-light"
+    },
+    {
+      "id": "log-1793166149420-tmuke",
+      "timestamp": 1793166149420,
+      "adminUsername": "admin@scimath.academy",
+      "category": "auth",
+      "action": "Administrator Login",
+      "details": "Successful authentication",
+      "ip": "127.0.0.1"
+    },
+    {
       "id": "log-1793163819206-f0r50",
       "timestamp": 1793163819206,
       "adminUsername": "admin@scimath.academy",
@@ -4791,5 +4840,6 @@
   "homepageImages": {
     "image1": null,
     "image2": null
-  }
+  },
+  "learningResources": []
 }

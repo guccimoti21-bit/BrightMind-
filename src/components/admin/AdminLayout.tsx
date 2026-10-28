@@ -17,7 +17,8 @@ import {
   Menu,
   X,
   Atom,
-  Scale
+  Scale,
+  Video
 } from 'lucide-react';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 import { AdminOverviewView } from './views/AdminOverviewView';
@@ -33,6 +34,7 @@ import { AdminSecurityView } from './views/AdminSecurityView';
 import { AdminAuditLogsView } from './views/AdminAuditLogsView';
 import { AdminChapterQuizzesView } from './views/AdminChapterQuizzesView';
 import { AdminHomepageImagesView } from './views/AdminHomepageImagesView';
+import { AdminLearningResourcesView } from './views/AdminLearningResourcesView';
 import { BalanceScaleActivity } from '../activities/BalanceScaleActivity';
 import { RayOpticsActivity } from '../activities/RayOpticsActivity';
 
@@ -47,6 +49,7 @@ export type AdminSection =
   | 'concepts'
   | 'subconcepts'
   | 'chapter-quizzes'
+  | 'learning-resources'
   | 'lesson-editor'
   | 'activities'
   | 'questions'
@@ -74,6 +77,7 @@ export function AdminLayout({ onReturnToStudent }: AdminLayoutProps) {
     { id: 'concepts', label: 'Manage Chapters', icon: FileText, category: 'Curriculum' },
     { id: 'subconcepts', label: 'Manage Sub-concepts', icon: ChevronRight, category: 'Curriculum' },
     { id: 'chapter-quizzes', label: 'External Quiz Links', icon: ExternalLink, category: 'Curriculum' },
+    { id: 'learning-resources', label: 'Learning Resources', icon: Video, category: 'Curriculum' },
     { id: 'curriculum', label: 'Curriculum Paths', icon: Layers, category: 'Curriculum' },
     { id: 'lesson-editor', label: 'Lesson Editor', icon: FileText, category: 'Content' },
     { id: 'activities', label: 'Activities & Labs', icon: Scale, category: 'Content' },
@@ -226,6 +230,8 @@ export function AdminLayout({ onReturnToStudent }: AdminLayoutProps) {
           )}
 
           {currentSection === 'chapter-quizzes' && <AdminChapterQuizzesView />}
+
+          {currentSection === 'learning-resources' && <AdminLearningResourcesView />}
 
           {currentSection === 'curriculum' && (
             <AdminConceptsView onEditLesson={handleLaunchEditorForConcept} />

@@ -69,6 +69,40 @@ apiRouter.get('/content/homepage-images', (req: Request, res: Response) => {
   });
 });
 
+// GET public active learning resources (filtered by class, subject, chapter, subConcept)
+apiRouter.get('/content/learning-resources', (req: Request, res: Response) => {
+  const db = getDb();
+  if (!db.learningResources) {
+    db.learningResources = [];
+  }
+
+  const { classLevel, subject, chapterId, subConceptId } = req.query;
+
+  let filtered = db.learningResources.filter((r) => r.isActive);
+
+  if (classLevel) {
+    const lvl = parseInt(String(classLevel), 10);
+    if (!isNaN(lvl)) {
+      filtered = filtered.filter((r) => r.classLevel === lvl);
+    }
+  }
+
+  if (subject) {
+    filtered = filtered.filter((r) => r.subject === String(subject).toLowerCase());
+  }
+
+  if (chapterId) {
+    filtered = filtered.filter((r) => r.chapterId === String(chapterId));
+  }
+
+  if (subConceptId) {
+    filtered = filtered.filter((r) => r.subConceptId === String(subConceptId));
+  }
+
+  filtered.sort((a, b) => a.sortOrder - b.sortOrder);
+  res.json(filtered);
+});
+
 // ==========================================
 // ADMIN AUTHENTICATION
 // ==========================================
@@ -1097,4 +1131,275 @@ apiRouter.delete('/admin/homepage-images/:slot', requireAdmin, (req: Request, re
     message: `${slot === 'image1' ? 'Image 1' : 'Image 2'} removed successfully.`
   });
 });
+
+// ==========================================
+// LEARNING RESOURCES (ADMIN)
+// ==========================================
+
+function isValidResourceDomain(type: string, urlStr: string): boolean {
+  try {
+    const parsed = new URL(urlStr);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return false;
+    const host = parsed.hostname.toLowerCase();
+    if (type === 'google_drive') {
+      return host === 'drive.google.com' || host === 'docs.google.com' || host.endsWith('.drive.google.com') || host.endsWith('.docs.google.com');
+    }
+    if (type === 'youtube') {
+      return host === 'youtube.com' || host === 'www.youtube.com' || host === 'm.youtube.com' || host === 'youtu.be' || host.endsWith('.youtube.com');
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+// GET all learning resources (Admin)
+apiRouter.get('/admin/learning-resources', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  if (!db.learningResources) {
+    db.learningResources = [];
+  }
+  const sorted = [...db.learningResources].sort((a, b) => a.sortOrder - b.sortOrder);
+  res.json(sorted);
+});
+
+// POST create learning resource (Admin)
+apiRouter.post('/admin/learning-resources', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  if (!db.learningResources) {
+    db.learningResources = [];
+  }
+
+  const {
+    title,
+    description,
+    resourceType,
+    resourceUrl,
+    classLevel,
+    subject,
+    chapterId,
+    chapterTitle,
+    subConceptId,
+    subConceptTitle,
+    isActive,
+    sortOrder
+  } = req.body;
+
+  if (!title || typeof title !== 'string' || !title.trim()) {
+    res.status(400).json({ error: 'Resource title is required.' });
+    return;
+  }
+
+  if (resourceType !== 'google_drive' && resourceType !== 'youtube') {
+    res.status(400).json({ error: 'Resource type must be "google_drive" or "youtube".' });
+    return;
+  }
+
+  if (!resourceUrl || typeof resourceUrl !== 'string' || !isValidResourceDomain(resourceType, resourceUrl)) {
+    res.status(400).json({ error: `Invalid ${resourceType === 'google_drive' ? 'Google Drive' : 'YouTube'} URL.` });
+    return;
+  }
+
+  const session = (req as any).adminSession;
+  const newId = req.body.id || `res-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+  const now = Date.now();
+
+  const newResource = {
+    id: newId,
+    title: title.trim(),
+    description: description ? String(description).trim() : '',
+    resourceType: resourceType as 'google_drive' | 'youtube',
+    resourceUrl: resourceUrl.trim(),
+    classLevel: Number(classLevel) || 8,
+    subject: String(subject || 'mathematics').toLowerCase(),
+    chapterId: String(chapterId || ''),
+    chapterTitle: chapterTitle ? String(chapterTitle) : undefined,
+    subConceptId: subConceptId ? String(subConceptId) : undefined,
+    subConceptTitle: subConceptTitle ? String(subConceptTitle) : undefined,
+    isActive: isActive !== false,
+    sortOrder: typeof sortOrder === 'number' ? sortOrder : db.learningResources.length,
+    createdBy: session?.username || 'admin',
+    createdAt: now,
+    updatedAt: now
+  };
+
+  db.learningResources.push(newResource);
+  saveDb(db);
+
+  addAuditLog(
+    session?.username || 'admin',
+    'resources',
+    'Learning Resource Created',
+    `Added ${newResource.resourceType} resource: "${newResource.title}" for Chapter: ${newResource.chapterId}`
+  );
+
+  res.status(201).json(newResource);
+});
+
+// PUT update learning resource (Admin)
+apiRouter.put('/admin/learning-resources/:id', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  if (!db.learningResources) {
+    db.learningResources = [];
+  }
+
+  const id = req.params.id;
+  const index = db.learningResources.findIndex((r) => r.id === id);
+  if (index === -1) {
+    res.status(404).json({ error: 'Learning resource not found.' });
+    return;
+  }
+
+  const {
+    title,
+    description,
+    resourceType,
+    resourceUrl,
+    classLevel,
+    subject,
+    chapterId,
+    chapterTitle,
+    subConceptId,
+    subConceptTitle,
+    isActive,
+    sortOrder
+  } = req.body;
+
+  if (title && (!title.trim() || typeof title !== 'string')) {
+    res.status(400).json({ error: 'Resource title cannot be empty.' });
+    return;
+  }
+
+  const type = resourceType || db.learningResources[index].resourceType;
+  const url = resourceUrl || db.learningResources[index].resourceUrl;
+
+  if (resourceUrl && !isValidResourceDomain(type, url)) {
+    res.status(400).json({ error: `Invalid ${type === 'google_drive' ? 'Google Drive' : 'YouTube'} URL.` });
+    return;
+  }
+
+  const session = (req as any).adminSession;
+  const existing = db.learningResources[index];
+
+  const updatedResource = {
+    ...existing,
+    title: title ? title.trim() : existing.title,
+    description: description !== undefined ? String(description).trim() : existing.description,
+    resourceType: type,
+    resourceUrl: url.trim(),
+    classLevel: classLevel !== undefined ? Number(classLevel) : existing.classLevel,
+    subject: subject ? String(subject).toLowerCase() : existing.subject,
+    chapterId: chapterId !== undefined ? String(chapterId) : existing.chapterId,
+    chapterTitle: chapterTitle !== undefined ? String(chapterTitle) : existing.chapterTitle,
+    subConceptId: subConceptId !== undefined ? (subConceptId ? String(subConceptId) : undefined) : existing.subConceptId,
+    subConceptTitle: subConceptTitle !== undefined ? (subConceptTitle ? String(subConceptTitle) : undefined) : existing.subConceptTitle,
+    isActive: isActive !== undefined ? Boolean(isActive) : existing.isActive,
+    sortOrder: typeof sortOrder === 'number' ? sortOrder : existing.sortOrder,
+    updatedAt: Date.now()
+  };
+
+  db.learningResources[index] = updatedResource;
+  saveDb(db);
+
+  addAuditLog(
+    session?.username || 'admin',
+    'resources',
+    'Learning Resource Updated',
+    `Updated resource "${updatedResource.title}" (ID: ${id})`
+  );
+
+  res.json(updatedResource);
+});
+
+// POST toggle active / visibility status (Admin)
+apiRouter.post('/admin/learning-resources/:id/toggle', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  if (!db.learningResources) {
+    db.learningResources = [];
+  }
+
+  const id = req.params.id;
+  const item = db.learningResources.find((r) => r.id === id);
+  if (!item) {
+    res.status(404).json({ error: 'Learning resource not found.' });
+    return;
+  }
+
+  item.isActive = !item.isActive;
+  item.updatedAt = Date.now();
+  saveDb(db);
+
+  const session = (req as any).adminSession;
+  addAuditLog(
+    session?.username || 'admin',
+    'resources',
+    'Learning Resource Visibility Changed',
+    `Toggled resource "${item.title}" to ${item.isActive ? 'Visible' : 'Hidden'}`
+  );
+
+  res.json(item);
+});
+
+// POST reorder learning resources (Admin)
+apiRouter.post('/admin/learning-resources/reorder', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  if (!db.learningResources) {
+    db.learningResources = [];
+  }
+
+  const { orderedIds } = req.body;
+  if (!Array.isArray(orderedIds)) {
+    res.status(400).json({ error: 'orderedIds array is required.' });
+    return;
+  }
+
+  orderedIds.forEach((id: string, idx: number) => {
+    const item = db.learningResources?.find((r) => r.id === id);
+    if (item) {
+      item.sortOrder = idx;
+      item.updatedAt = Date.now();
+    }
+  });
+
+  saveDb(db);
+
+  const session = (req as any).adminSession;
+  addAuditLog(
+    session?.username || 'admin',
+    'resources',
+    'Learning Resources Reordered',
+    `Reordered ${orderedIds.length} learning resources`
+  );
+
+  res.json({ success: true, message: 'Resources reordered successfully.' });
+});
+
+// DELETE learning resource (Admin)
+apiRouter.delete('/admin/learning-resources/:id', requireAdmin, (req: Request, res: Response) => {
+  const db = getDb();
+  if (!db.learningResources) {
+    db.learningResources = [];
+  }
+
+  const id = req.params.id;
+  const item = db.learningResources.find((r) => r.id === id);
+  if (!item) {
+    res.status(404).json({ error: 'Learning resource not found.' });
+    return;
+  }
+
+  db.learningResources = db.learningResources.filter((r) => r.id !== id);
+  saveDb(db);
+
+  const session = (req as any).adminSession;
+  addAuditLog(
+    session?.username || 'admin',
+    'resources',
+    'Learning Resource Deleted',
+    `Deleted ${item.resourceType} resource: "${item.title}" (ID: ${id})`
+  );
+
+  res.json({ success: true, message: 'Learning resource deleted successfully.' });
+});
+
 

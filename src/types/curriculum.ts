@@ -172,3 +172,30 @@ export const COMPLETION_WEIGHTS = {
 
 export const PASSING_ASSESSMENT_SCORE = 80;
 export const UNLOCK_REQUIRED_COMPLETION = 80;
+
+export type ResourceType = 'google_drive' | 'youtube';
+
+export interface LearningResource {
+  id: string;
+  title: string;
+  description?: string;
+  resourceType: ResourceType;
+  resourceUrl: string;
+  classLevel: ClassLevel;
+  subject: SubjectId;
+  chapterId: string;
+  chapterTitle?: string;
+  subConceptId?: string;
+  subConceptTitle?: string;
+  isActive: boolean;
+  sortOrder: number;
+  createdBy?: string;
+  createdAt: number;
+  updatedAt: number;
+  // Computed helpers for player and previews
+  embedUrl?: string;
+  thumbnailUrl?: string;
+  driveKind?: 'document' | 'presentation' | 'spreadsheet' | 'pdf' | 'folder' | 'file';
+  youtubeKind?: 'video' | 'shorts' | 'playlist';
+}
+

@@ -15,6 +15,7 @@ import {
 import { Concept, ChapterQuizLink } from '../../types/curriculum';
 import { useProgress } from '../../context/ProgressContext';
 import { getQuizForChapter, getCachedQuizLinks, QUIZ_LINKS_UPDATED_EVENT } from '../../services/quizLinkService';
+import { LearningResourcesSection } from './LearningResourcesSection';
 
 interface ConceptDetailViewProps {
   concept: Concept;
@@ -257,6 +258,14 @@ export function ConceptDetailView({
               </div>
             );
           })}
+
+          {/* Chapter Curated Learning Resources (Google Drive & YouTube) */}
+          <div className="relative pt-2">
+            <LearningResourcesSection
+              chapterId={concept.id}
+              chapterTitle={concept.title}
+            />
+          </div>
 
           {/* Chapter Finale External Quiz */}
           {activeQuiz && activeQuiz.isActive && (

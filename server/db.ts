@@ -12,9 +12,28 @@ export interface AuditLog {
   timestamp: number;
   adminUsername: string;
   action: string;
-  category: 'auth' | 'content' | 'rules' | 'media' | 'security' | 'quizzes';
+  category: 'auth' | 'content' | 'rules' | 'media' | 'security' | 'quizzes' | 'resources';
   details: string;
   ip?: string;
+}
+
+export interface LearningResourceItem {
+  id: string;
+  title: string;
+  description?: string;
+  resourceType: 'google_drive' | 'youtube';
+  resourceUrl: string;
+  classLevel: number;
+  subject: string;
+  chapterId: string;
+  chapterTitle?: string;
+  subConceptId?: string;
+  subConceptTitle?: string;
+  isActive: boolean;
+  sortOrder: number;
+  createdBy?: string;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface ChapterQuizLink {
@@ -120,6 +139,7 @@ export interface DatabaseSchema {
   media: MediaItem[];
   chapterQuizzes: ChapterQuizLink[];
   homepageImages?: HomepageImagesData;
+  learningResources?: LearningResourceItem[];
   auditLogs: AuditLog[];
 }
 
@@ -258,6 +278,7 @@ function getDefaultDatabase(): DatabaseSchema {
       image1: null,
       image2: null
     },
+    learningResources: [],
     auditLogs: [
       {
         id: 'audit-init',
@@ -281,6 +302,9 @@ export function getDb(): DatabaseSchema {
     if (!inMemoryDb.homepageImages) {
       inMemoryDb.homepageImages = { image1: null, image2: null };
     }
+    if (!inMemoryDb.learningResources) {
+      inMemoryDb.learningResources = [];
+    }
     return inMemoryDb;
   }
 
@@ -297,6 +321,9 @@ export function getDb(): DatabaseSchema {
       }
       if (!inMemoryDb!.homepageImages) {
         inMemoryDb!.homepageImages = { image1: null, image2: null };
+      }
+      if (!inMemoryDb!.learningResources) {
+        inMemoryDb!.learningResources = [];
       }
       return inMemoryDb!;
     } catch (err) {

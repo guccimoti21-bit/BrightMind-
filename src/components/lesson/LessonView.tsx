@@ -11,7 +11,8 @@ import {
   Trophy,
   ChevronRight,
   Lightbulb,
-  ExternalLink
+  ExternalLink,
+  Video
 } from 'lucide-react';
 import { SubConcept, Concept, ChapterQuizLink } from '../../types/curriculum';
 import { useProgress } from '../../context/ProgressContext';
@@ -20,6 +21,7 @@ import { BalanceScaleActivity } from '../activities/BalanceScaleActivity';
 import { RayOpticsActivity } from '../activities/RayOpticsActivity';
 import { NumberLineActivity } from '../activities/NumberLineActivity';
 import { AssessmentComponent } from '../assessment/AssessmentComponent';
+import { LearningResourcesSection } from '../concept/LearningResourcesSection';
 
 interface LessonViewProps {
   concept: Concept;
@@ -28,7 +30,7 @@ interface LessonViewProps {
   onNavigateSubConcept: (subConceptId: string) => void;
 }
 
-type TabType = 'explanation' | 'activity' | 'examples' | 'practice' | 'revision' | 'assessment';
+type TabType = 'explanation' | 'activity' | 'examples' | 'practice' | 'revision' | 'assessment' | 'resources';
 
 export function LessonView({
   concept,
@@ -307,6 +309,18 @@ export function LessonView({
             {progress?.assessmentPassed && (
               <CheckCircle2 className="w-3.5 h-3.5 text-[#16A34A] ml-1" />
             )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab('resources')}
+            className={`px-3.5 py-2 text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
+              activeTab === 'resources'
+                ? 'btn-primary'
+                : 'bg-[#F8FAFF] text-[#475569] hover:bg-[#F1F5FF] border border-[#E2E8F0]'
+            }`}
+          >
+            <Video className="w-3.5 h-3.5" />
+            <span>7. Resources &amp; Videos</span>
           </button>
         </div>
       </div>
@@ -709,6 +723,18 @@ export function LessonView({
             onReviewRequested={() => setActiveTab('explanation')}
             chapterQuiz={chapterQuiz}
           />
+        )}
+
+        {/* TAB 7: LEARNING RESOURCES (GOOGLE DRIVE & YOUTUBE) */}
+        {activeTab === 'resources' && (
+          <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-6 shadow-sm space-y-4">
+            <LearningResourcesSection
+              chapterId={concept.id}
+              subConceptId={subConcept.id}
+              chapterTitle={concept.title}
+              subConceptTitle={subConcept.title}
+            />
+          </div>
         )}
       </div>
 
